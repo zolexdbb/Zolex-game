@@ -80,12 +80,16 @@
 }
 .field::placeholder { color: #8a7c63; font-weight: 400; }
 .field-code {
-  font: 400 1.4rem var(--display);
-  letter-spacing: .3em;
+  min-width: 0;
+  padding-inline: 4px;
+  font: 400 1.3rem var(--display);
+  letter-spacing: .25em;
   text-align: center;
   text-transform: uppercase;
 }
-.join { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+.join { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+/* Le code occupe toute la largeur pour rester lisible en entier, le bouton passe dessous. */
+.join-code { grid-template-columns: minmax(0, 1fr); }
 
 /* ---- Boutons : pièces de carton épais ---- */
 .btn {

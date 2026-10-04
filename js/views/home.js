@@ -4,9 +4,8 @@ import { games, upcoming } from "../registry.js";
 
 export function lid() {
   return h("header", { class: "lid" },
-    h("p", { class: "lid-top" }, "Soirée jeux en ligne"),
     h("h1", { class: "lid-title" }, "La Table", h("br"), "de Zolex"),
-    h("p", { class: "lid-bottom" }, "Jeux de société entre amis · dès 3 joueurs")
+    h("p", { class: "lid-bottom" }, "Jeux de société en ligne")
   );
 }
 
@@ -34,7 +33,7 @@ export function homeView({ name, code, message, onCreate, onJoin }) {
   createBtn.addEventListener("click", busy(createBtn, () => onCreate(player()), fail));
 
   const joinBtn = h("button", { class: "btn btn-ink", type: "submit" }, "Rejoindre");
-  const joinForm = h("form", { class: "join" }, codeInput, joinBtn);
+  const joinForm = h("form", { class: "join join-code" }, codeInput, joinBtn);
   joinForm.addEventListener("submit", busy(joinBtn, () => {
     const who = player();
     if (codeInput.value.length !== 4) { codeInput.focus(); throw new Error("Le code d'une table compte 4 lettres."); }
