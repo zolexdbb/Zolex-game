@@ -4,7 +4,7 @@ import undercover from "./games/undercover/index.js";
 
 export const games = [undercover];
 
-// Boîtes encore fermées, affichées sur l'étagère du salon.
+// Jeux pas encore disponibles, affichés avec la mention « Bientôt ».
 export const upcoming = [
   { id: "loupgarou", name: "Loup-Garou", tagline: "Le village s'endort" },
   { id: "uno", name: "Uno", tagline: "Plus qu'une carte" }
