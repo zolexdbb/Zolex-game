@@ -1,0 +1,40 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$code": {
+        ".read": "auth != null",
+        ".write": "auth != null && !newData.exists() && (data.child('meta/hostUid').val() === auth.uid || data.child('meta/touchedAt').val() < now - 21600000)",
+        ".validate": "$code.matches(/^[A-Z]{4}$/)",
+        "meta": {
+          ".write": "auth != null && ((!data.exists() && newData.child('hostUid').val() === auth.uid) || data.child('hostUid').val() === auth.uid)",
+          ".validate": "newData.hasChildren(['hostUid', 'gameId', 'status', 'touchedAt'])",
+          "hostUid": {
+            ".write": "auth != null && newData.val() === auth.uid && root.child('rooms/' + $code + '/players/' + auth.uid).exists() && root.child('rooms/' + $code + '/players/' + data.val() + '/online').val() !== true",
+            ".validate": "newData.isString() && newData.parent().parent().child('players/' + newData.val()).exists()"
+          },
+          "gameId": { ".validate": "newData.isString() && newData.val().length <= 24" },
+          "status": { ".validate": "newData.val() === 'lobby' || newData.val() === 'playing'" },
+          "createdAt": { ".validate": "newData.isNumber()" },
+          "touchedAt": { ".validate": "newData.isNumber() && newData.val() <= now" },
+          "settings": { ".validate": true },
+          "$other": { ".validate": false }
+        },
+        "players": {
+          "$uid": {
+            ".write": "auth != null && ((auth.uid === $uid && (!newData.exists() || newData.parent().parent().child('meta').exists())) || (!newData.exists() && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid))",
+            ".validate": "newData.hasChildren(['name', 'joinedAt', 'online'])",
+            "name": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 20" },
+            "joinedAt": { ".validate": "newData.isNumber()" },
+            "online": { ".validate": "newData.isBoolean()" },
+            "$other": { ".validate": false }
+          }
+        },
+        "state": {
+          ".write": "auth != null && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid"
+        }
+      }
+    }
+  }
+}
