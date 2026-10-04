@@ -1,0 +1,68 @@
+/* Undercover : un dossier d'enquête en papier kraft, tapé à la machine. */
+@import url("https://fonts.googleapis.com/css2?family=Special+Elite&display=swap");
+
+.theme-undercover { --type: "Special Elite", "Courier New", monospace; }
+
+.theme-undercover .case-head { text-align: center; color: var(--cream); }
+.theme-undercover .case-head h1 {
+  font: 400 1.9rem/1 var(--display);
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0 var(--felt-dark);
+}
+
+/* La chemise cartonnée, avec son onglet. */
+.theme-undercover .sheet {
+  position: relative;
+  margin-top: 14px;
+  background: var(--grain), var(--card);
+}
+.theme-undercover .sheet::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: -16px;
+  width: 96px;
+  height: 16px;
+  background: var(--grain), var(--card);
+  border: 2px solid var(--black);
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+}
+.theme-undercover .sheet h2 { border-bottom-color: var(--black); }
+
+.theme-undercover .stamp-big {
+  padding: 4px 10px;
+  font: 400 1.05rem var(--type);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #f0b7a6;
+  border: 3px double #f0b7a6;
+  transform: rotate(-9deg);
+}
+.theme-undercover .card-front strong { font-family: var(--type); text-transform: none; font-size: 1.7rem; }
+.theme-undercover .role-undercover.card .card-front,
+.theme-undercover .roles-list .role-undercover { background: var(--ink); color: #fff8ea; }
+.theme-undercover .role-mrwhite.card .card-front,
+.theme-undercover .roles-list .role-mrwhite { background: #fff; }
+
+/* Les indices, comme des pièces versées au dossier. */
+.theme-undercover .evidence {
+  padding: 12px 14px;
+  background: var(--grain), var(--cream);
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  box-shadow: 0 4px 0 var(--felt-dark);
+}
+.theme-undercover .evidence summary {
+  font: 400 1.05rem var(--display);
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+}
+.theme-undercover .evidence table { width: 100%; margin-top: 8px; border-collapse: collapse; }
+.theme-undercover .evidence th,
+.theme-undercover .evidence td { padding: 6px 4px; text-align: left; vertical-align: top; border-top: 2px dashed var(--card); }
+.theme-undercover .evidence th { width: 38%; overflow-wrap: anywhere; }
+.theme-undercover .evidence .is-out th { text-decoration: line-through; opacity: .6; }
+.theme-undercover .clue { font-family: var(--type); }
+.theme-undercover .clue + .clue::before { content: " · "; }

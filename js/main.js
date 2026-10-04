@@ -3,13 +3,27 @@ import { isConfigured, initFirebase, uid } from "./firebase.js";
 import {
   createRoom, joinRoom, watchRoom, leaveRoom, closeRoom, removePlayer, updateMeta, sweepOldRooms
 } from "./room.js";
-import { games, getGame } from "./registry.js";
+import { games } from "./registry.js";
 import { homeView, noticeView } from "./views/home.js";
 import { lobbyView } from "./views/lobby.js";
+import { createPlay, startGame } from "./play.js";
 
 const app = document.getElementById("app");
-const show = (view) => app.replaceChildren(view);
 let stopWatching = null;
+let play = null;
+
+// Remplace l'écran en gardant le champ en cours de saisie.
+function show(view) {
+  const active = document.activeElement;
+  const id = active?.id;
+  const caret = active?.selectionStart;
+  app.replaceChildren(view);
+  const again = id && document.getElementById(id);
+  if (again) {
+    again.focus();
+    try { again.setSelectionRange(caret, caret); } catch { /* champ sans curseur */ }
+  }
+}
 
 function explain(error) {
   const code = String(error?.code || error?.message || "");
@@ -28,6 +42,8 @@ function explain(error) {
 function goHome(message, code = "") {
   stopWatching?.();
   stopWatching = null;
+  play?.stop();
+  play = null;
   sessionStorage.removeItem("room");
   history.replaceState(null, "", location.pathname);
   show(homeView({
@@ -46,12 +62,19 @@ function goHome(message, code = "") {
 async function enter(code, name, alreadySeated = false) {
   if (!alreadySeated) await joinRoom(code, name);
   localStorage.setItem("name", name);
+  sessionStorage.setItem("name", name); // par onglet : sert au retour après rafraîchissement
   sessionStorage.setItem("room", code);
   history.replaceState(null, "", `?room=${code}`);
 
   stopWatching = watchRoom(code, (room) => {
     if (!room?.meta) return goHome("La table a été rangée.");
     if (!room.players?.[uid]) return goHome("Tu n'es plus assis à cette table.");
+    if (room.meta.status === "playing" && room.state) {
+      play ??= createPlay(code, show, { onLeave: (current) => leaveRoom(code, current).catch((e) => alert(explain(e))) });
+      return play.update(room);
+    }
+    play?.stop();
+    play = null;
     render(code, room);
   });
 }
@@ -69,7 +92,7 @@ function render(code, room) {
     onRemove: (playerId) => guard(removePlayer(code, playerId)),
     onPickGame: (game) => guard(updateMeta(code, { gameId: game.id, settings: game.defaultSettings })),
     onSettings: (settings) => guard(updateMeta(code, { settings })),
-    onStart: async () => { await getGame(room.meta.gameId).start?.({ code, room }); }
+    onStart: () => guard(startGame(code, room))
   }));
 }
 
@@ -88,7 +111,7 @@ async function boot() {
 
   const wanted = (new URLSearchParams(location.search).get("room") || "").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4);
   const seated = sessionStorage.getItem("room");
-  const name = localStorage.getItem("name");
+  const name = sessionStorage.getItem("name");
   sweepOldRooms(seated || wanted);
 
   // Après un rafraîchissement, on se rassoit à la même table.

@@ -1,25 +1,8 @@
 import { h, busy } from "../ui/dom.js";
 import { icon } from "../ui/icons.js";
+import { pawn } from "../ui/widgets.js";
+import { sortedPlayers } from "../room.js";
 import { games, upcoming, getGame } from "../registry.js";
-
-const PAWN_COLORS = 8;
-
-export function sortedPlayers(room) {
-  return Object.entries(room.players || {})
-    .sort((a, b) => a[1].joinedAt - b[1].joinedAt || a[0].localeCompare(b[0]))
-    .map(([id, p], index) => ({ id, index, ...p }));
-}
-
-export function pawn(player, { isHost, isMe } = {}) {
-  return h("div", { class: `pawn pawn-${player.index % PAWN_COLORS}${player.online ? "" : " is-away"}` },
-    h("div", { class: "pawn-disc" },
-      isHost && h("span", { class: "pawn-crown", title: "Hôte de la table" }, icon("crown")),
-      h("span", { "aria-hidden": "true" }, player.name.charAt(0).toUpperCase())
-    ),
-    h("span", { class: "pawn-name" }, player.name, isMe && h("em", null, " (toi)")),
-    !player.online && h("span", { class: "pawn-away" }, "absent")
-  );
-}
 
 export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove, onPickGame, onSettings, onStart }) {
   const { meta } = room;

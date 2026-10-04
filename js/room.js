@@ -95,8 +95,18 @@ export function watchRoom(code, onChange) {
   };
 }
 
+// Range la table et tout ce qui s'y rattache (secrets, coffre, actions, enveloppes).
 export function closeRoom(code) {
-  return remove(roomRef(code));
+  return update(ref(db), {
+    [`rooms/${code}`]: null, [`secrets/${code}`]: null, [`vault/${code}`]: null,
+    [`actions/${code}`]: null, [`sealed/${code}`]: null
+  });
+}
+
+export function sortedPlayers(room) {
+  return Object.entries(room.players || {})
+    .sort((a, b) => a[1].joinedAt - b[1].joinedAt || a[0].localeCompare(b[0]))
+    .map(([id, p], index) => ({ id, index, ...p }));
 }
 
 // Quitter : passe la main si on est l'hôte, range la table si plus personne n'est connecté.
@@ -127,7 +137,7 @@ export async function sweepOldRooms(keep) {
     if (code === keep) { left.push(code); continue; }
     try {
       if (!(await get(roomRef(code, "meta"))).exists()) continue;
-      await remove(roomRef(code));
+      await closeRoom(code);
     } catch {
       left.push(code);
     }

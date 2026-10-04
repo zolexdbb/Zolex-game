@@ -33,6 +33,110 @@
         },
         "state": {
           ".write": "auth != null && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid"
+        },
+        "out": {
+          "$g": {
+            "$uid": {
+              ".write": "auth != null && !data.exists() && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid",
+              ".validate": "newData.val() === true"
+            }
+          }
+        },
+        "ended": {
+          "$g": {
+            ".write": "auth != null && !data.exists() && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid",
+            ".validate": "newData.val() === true"
+          }
+        },
+        "done": {
+          "$g": {
+            "$step": {
+              "$uid": {
+                ".write": "auth != null && auth.uid === $uid && !data.exists()",
+                ".validate": "newData.val() === true"
+              }
+            }
+          }
+        },
+        "closed": {
+          "$g": {
+            "$step": {
+              ".write": "auth != null && !data.exists() && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid",
+              ".validate": "newData.val() === true"
+            }
+          }
+        },
+        "reveals": {
+          "$g": {
+            "$uid": {
+              ".write": "auth != null && !data.exists() && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid && root.child('rooms/' + $code + '/out/' + $g + '/' + $uid).val() === true",
+              ".validate": "newData.isString() && newData.val() === root.child('vault/' + $code + '/' + $g + '/roles/' + $uid).val()"
+            }
+          }
+        },
+        "guess": {
+          "$g": {
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid && !data.exists() && root.child('rooms/' + $code + '/out/' + $g + '/' + $uid).val() === true",
+              ".validate": "newData.hasChildren(['text', 'key']) && newData.child('text').isString() && newData.child('text').val().length <= 40 && newData.child('key').isString() && newData.child('key').val().length <= 40"
+            }
+          }
+        },
+        "verdict": {
+          "$g": {
+            "$uid": {
+              ".write": "auth != null && !data.exists() && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid && root.child('rooms/' + $code + '/guess/' + $g + '/' + $uid).exists()",
+              ".validate": "newData.isBoolean() && newData.val() === (root.child('rooms/' + $code + '/guess/' + $g + '/' + $uid + '/key').val() === root.child('vault/' + $code + '/' + $g + '/civilKey').val())"
+            }
+          }
+        }
+      }
+    },
+    "secrets": {
+      "$code": {
+        ".write": "auth != null && !newData.exists() && !newData.parent().parent().child('rooms/' + $code).exists()",
+        "$g": {
+          ".write": "auth != null && !data.exists() && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid",
+          "$uid": {
+            ".read": "auth != null && auth.uid === $uid"
+          }
+        }
+      }
+    },
+    "vault": {
+      "$code": {
+        ".write": "auth != null && !newData.exists() && !newData.parent().parent().child('rooms/' + $code).exists()",
+        "$g": {
+          ".read": "auth != null && root.child('rooms/' + $code + '/ended/' + $g).val() === true",
+          ".write": "auth != null && !data.exists() && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid"
+        }
+      }
+    },
+    "sealed": {
+      "$code": {
+        ".write": "auth != null && !newData.exists() && !newData.parent().parent().child('rooms/' + $code).exists()",
+        "$g": {
+          "$step": {
+            ".read": "auth != null && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid && root.child('rooms/' + $code + '/closed/' + $g + '/' + $step).val() === true",
+            "$uid": {
+              ".read": "auth != null && auth.uid === $uid",
+              ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists() && root.child('rooms/' + $code + '/state/g').val() === $g && root.child('rooms/' + $code + '/state/step').val() === $step && root.child('rooms/' + $code + '/players/' + $uid).exists() && !root.child('rooms/' + $code + '/closed/' + $g + '/' + $step).exists()"
+            }
+          }
+        }
+      }
+    },
+    "actions": {
+      "$code": {
+        ".read": "auth != null && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid",
+        ".write": "auth != null && !newData.exists() && !newData.parent().parent().child('rooms/' + $code).exists()",
+        "$g": {
+          "$step": {
+            "$uid": {
+              ".read": "auth != null && auth.uid === $uid",
+              ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists() && root.child('rooms/' + $code + '/state/g').val() === $g && root.child('rooms/' + $code + '/state/step').val() === $step && root.child('rooms/' + $code + '/players/' + $uid).exists()"
+            }
+          }
         }
       }
     }

@@ -9,8 +9,12 @@ export function h(tag, attrs, ...children) {
     else if (key in el && typeof value !== "string") el[key] = value;
     else el.setAttribute(key, value === true ? "" : value);
   }
-  el.append(...children.flat().filter((c) => c != null && c !== false));
+  el.append(...children.flat(Infinity).filter((c) => c != null && c !== false));
   return el;
+}
+
+export function loadStyle(href) {
+  if (!document.querySelector(`link[href="${href}"]`)) document.head.append(h("link", { rel: "stylesheet", href }));
 }
 
 // Désactive un bouton pendant une action asynchrone et affiche l'erreur éventuelle.
