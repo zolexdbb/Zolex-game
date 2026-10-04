@@ -45,5 +45,29 @@ export const GROUPS = [
   ["Tennis", "Ping-pong", "Badminton", "Squash", "Pétanque"],
   ["Ski", "Snowboard", "Luge", "Patinage", "Surf"],
   ["Échecs", "Dames", "Dominos", "Petits chevaux", "Belote"],
-  ["Désert", "Savane", "Jungle", "Banquise", "Steppe"]
+  ["Désert", "Savane", "Jungle", "Banquise", "Steppe"],
+
+  // Jeux vidéo
+  ["Mario", "Sonic", "Kirby", "Donkey Kong", "Crash Bandicoot"],
+  ["Minecraft", "Fortnite", "Roblox", "Among Us", "Fall Guys"],
+  ["Zelda", "Final Fantasy", "Skyrim", "Elden Ring", "The Witcher"],
+  ["PlayStation", "Xbox", "Switch", "Game Boy", "Steam Deck"],
+  ["FIFA", "Rocket League", "NBA 2K", "Mario Kart", "Gran Turismo"],
+  ["Call of Duty", "Valorant", "Overwatch", "Counter-Strike", "Apex Legends"],
+  ["League of Legends", "Dota", "Clash Royale", "Brawl Stars", "Clash of Clans"],
+  ["Pikachu", "Dracaufeu", "Évoli", "Mewtwo", "Ronflex"],
+  ["Tetris", "Pac-Man", "Candy Crush", "Snake", "Space Invaders"],
+  ["GTA", "Red Dead Redemption", "Cyberpunk", "Assassin's Creed", "Watch Dogs"],
+
+  // Manga et animé
+  ["Naruto", "One Piece", "Dragon Ball", "Bleach", "Hunter x Hunter"],
+  ["Luffy", "Goku", "Ichigo", "Gon", "Deku"],
+  ["Sasuke", "Vegeta", "Zoro", "Kirua", "Bakugo"],
+  ["L'Attaque des Titans", "Demon Slayer", "Jujutsu Kaisen", "Chainsaw Man", "Tokyo Ghoul"],
+  ["Death Note", "Code Geass", "Fullmetal Alchemist", "Steins;Gate", "Monster"],
+  ["Totoro", "Chihiro", "Mononoké", "Ponyo", "Kiki"],
+  ["Sharingan", "Kamehameha", "Bankai", "Haki", "Nen"],
+  ["Hokage", "Pirate", "Shinigami", "Super Saiyan", "Alchimiste"],
+  ["Pokémon", "Digimon", "Yu-Gi-Oh!", "Beyblade", "Inazuma Eleven"],
+  ["Haikyu", "Captain Tsubasa", "Slam Dunk", "Blue Lock", "Kuroko's Basket"]
 ];
