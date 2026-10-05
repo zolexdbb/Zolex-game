@@ -34,6 +34,34 @@ export function pawn(player, { isHost, isMe, out, turn, done, note } = {}) {
   );
 }
 
+// Joueurs assis en cercle autour d'une table. `seats` : nœuds dans l'ordre du
+// tour de table ; `center` : ce qui est posé au milieu.
+export function roundTable(seats, center) {
+  const n = seats.length;
+  return h("section", { class: `round${n > 10 ? " is-crowded" : ""}` },
+    h("div", { class: "round-top" }, center),
+    seats.map((seat, i) => {
+      const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+      const spot = h("div", { class: "round-seat" }, seat);
+      spot.style.left = `${50 + 43 * Math.cos(angle)}%`;
+      spot.style.top = `${50 + 41 * Math.sin(angle)}%`;
+      return spot;
+    })
+  );
+}
+
+// Compte à rebours jusqu'à `until` (heure donnée par `now`).
+export function countdown(until, now) {
+  const el = h("span", { class: "countdown" });
+  const draw = () => {
+    const left = Math.max(0, Math.ceil((until - now()) / 1000));
+    el.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+  };
+  draw();
+  const timer = setInterval(() => (el.isConnected ? draw() : clearInterval(timer)), 500);
+  return el;
+}
+
 // Carte à jouer recto/verso. `onToggle` absent : carte non cliquable.
 export function flipCard({ open, back, front, cls = "", label, onToggle, deal }) {
   const faces = h("span", { class: "card-inner" },

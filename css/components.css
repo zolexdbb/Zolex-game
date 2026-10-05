@@ -354,3 +354,55 @@ div.card { cursor: default; }
   border-radius: 3px;
 }
 .verdict { font: 400 1.35rem/1.15 var(--display); color: var(--brick); text-transform: uppercase; }
+
+/* ---- Table ronde : les joueurs assis en cercle ---- */
+.round {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 26px auto 34px;
+  aspect-ratio: 1 / 1.04;
+}
+.round-top {
+  position: absolute;
+  inset: 21%;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+  color: var(--cream);
+  background:
+    var(--grain),
+    repeating-radial-gradient(circle at 50% 50%, rgb(0 0 0 / .1) 0 2px, transparent 2px 13px),
+    var(--wood);
+  border: 3px solid var(--black);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 6px rgb(255 255 255 / .08), 0 6px 0 rgb(0 0 0 / .35);
+}
+.round-top strong { font: 400 1.25rem/1 var(--display); text-transform: uppercase; }
+.round-seat {
+  position: absolute;
+  width: 84px;
+  transform: translate(-50%, -50%);
+}
+.round .pawn-disc { width: 46px; height: 46px; font-size: 1.2rem; }
+.round .pawn-name { font-size: .78rem; }
+.round .pawn-away { font-size: .6rem; }
+.round.is-crowded .round-seat { width: 64px; }
+.round.is-crowded .pawn-disc { width: 36px; height: 36px; font-size: 1rem; }
+.round.is-crowded .pawn-name { font-size: .68rem; }
+
+/* Illustration d'un rôle : un médaillon gravé, teinté selon le camp. */
+.role-art {
+  display: grid;
+  place-items: center;
+  width: 2.1em;
+  height: 2.1em;
+  font-size: 1.5rem;
+  color: var(--black);
+  background: var(--ochre);
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 3px rgb(255 255 255 / .35);
+}

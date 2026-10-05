@@ -1,7 +1,7 @@
 import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
 import { pawn, flipCard } from "../../ui/widgets.js";
-import { ROLE_NAMES, WINNERS, norm, skipTurn, goVote, forceClose, skipGuess, proceed } from "./logic.js";
+import { ROLE_NAMES, ROLE_ICONS, WINNERS, norm, skipTurn, goVote, forceClose, skipGuess, proceed } from "./logic.js";
 
 // État d'affichage propre à cet appareil (carte retournée, brouillons).
 const ui = { g: null, open: false, clue: "", guess: "", shown: null };
@@ -11,6 +11,10 @@ const ROLE_HINTS = {
   undercover: "Son mot n'était pas tout à fait le vôtre.",
   mrwhite: "Il n'avait aucun mot depuis le début."
 };
+
+export function roleArt(role) {
+  return h("span", { class: `role-art role-art-${role}` }, icon(ROLE_ICONS[role]));
+}
 
 function hostTools(...buttons) {
   return h("div", { class: "host-tools" }, h("span", { class: "eyebrow" }, "Main de l'hôte"), buttons);
@@ -24,7 +28,7 @@ function action(label, iconName, run, cls = "btn-cream") {
 
 function secretCard({ secret }) {
   const front = secret.mrWhite
-    ? [h("small", null, "Tu es"), h("strong", null, "Mr White"), h("small", null, "Aucun mot pour toi. Écoute, bluffe, devine.")]
+    ? [h("small", null, "Tu es"), roleArt("mrwhite"), h("strong", null, "Mr White"), h("small", null, "Aucun mot pour toi. Écoute, bluffe, devine.")]
     : [h("small", null, "Ton mot secret"), h("strong", null, secret.word), h("small", null, "Civil ou Undercover ? À toi de le découvrir.")];
   return flipCard({
     open: ui.open, cls: "card-secret", label: "Ta carte secrète",
@@ -142,7 +146,7 @@ function roleCard(ctx, role) {
   return flipCard({
     open: true, deal, cls: `card-role role-${role}`,
     back: h("span", { class: "stamp-big" }, "Confidentiel"),
-    front: [h("small", null, ctx.state.names[ctx.state.last.uid].name, " était"), h("strong", null, ROLE_NAMES[role]), h("small", null, ROLE_HINTS[role])]
+    front: [h("small", null, ctx.state.names[ctx.state.last.uid].name, " était"), roleArt(role), h("strong", null, ROLE_NAMES[role]), h("small", null, ROLE_HINTS[role])]
   });
 }
 
@@ -202,7 +206,7 @@ function endPanel(ctx) {
       h("ul", { class: "roles-list" }, s.base.map((id) =>
         h("li", { class: `role-${vault.roles[id]}` },
           h("span", null, s.names[id].name),
-          h("b", null, ROLE_NAMES[vault.roles[id]]))))
+          h("b", null, roleArt(vault.roles[id]), ROLE_NAMES[vault.roles[id]]))))
     ],
     isHost
       ? action("Rejouer", "play", () => ctx.backToLobby(), "btn-brick btn-big")

@@ -66,3 +66,14 @@
 .theme-undercover .evidence .is-out th { text-decoration: line-through; opacity: .6; }
 .theme-undercover .clue { font-family: var(--type); }
 .theme-undercover .clue + .clue::before { content: " · "; }
+
+/* Médaillons des trois rôles. */
+.role-art-civil { background: #9db88f; }
+.role-art-undercover { background: var(--ink); color: #fff8ea; }
+.role-art-mrwhite { background: #fff; }
+.theme-undercover .card .role-art { font-size: 2.2rem; }
+.theme-undercover .role-undercover.card .role-art { box-shadow: inset 0 0 0 3px rgb(255 255 255 / .2), 0 0 0 2px #fff8ea; }
+.roles-list b { display: inline-flex; align-items: center; gap: 6px; }
+.roles-list .role-art { font-size: .8rem; }
+.role-chip { display: inline-flex; align-items: center; gap: 5px; }
+.role-chip .role-art { font-size: .7rem; box-shadow: none; }

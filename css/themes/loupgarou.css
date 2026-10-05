@@ -1,0 +1,148 @@
+/* Loup-Garou : un village de bois gravé, qui bascule dans le bleu nuit. */
+@import url("https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap");
+
+.theme-loupgarou {
+  --tale: "IM Fell English", Georgia, serif;
+  --night: #1c2a44;
+  --night-dark: #101a2e;
+  --moon: #f0e4b8;
+}
+
+/* La nuit, le tapis lui-même change de couleur et se pique d'étoiles. */
+.theme-loupgarou:has(.is-night) {
+  border-color: var(--night-dark);
+  background:
+    radial-gradient(circle at 12% 4%, var(--moon) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 78% 2%, var(--moon) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 91% 12%, var(--moon) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 34% 1.5%, var(--moon) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 5% 16%, var(--moon) 0 1px, transparent 1.5px),
+    var(--fibres), var(--grain), var(--night);
+}
+
+.theme-loupgarou .sky {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 1.15rem;
+  color: var(--black);
+  background: var(--ochre);
+  border: 2px solid var(--black);
+  border-radius: 50%;
+}
+.theme-loupgarou:has(.is-night) .sky { background: var(--moon); }
+.theme-loupgarou:has(.is-night) .round-top { background-color: #3a2c22; }
+.theme-loupgarou .countdown { font: 400 1.3rem var(--display); font-variant-numeric: tabular-nums; }
+
+.theme-loupgarou .sheet p:not(.rule):not(.verdict) { font-family: var(--tale); font-size: 1.08rem; line-height: 1.4; }
+.theme-loupgarou:has(.is-night) .sheet {
+  color: var(--cream);
+  background: var(--grain), #2a3a5c;
+  border-color: var(--night-dark);
+  box-shadow: 0 4px 0 var(--night-dark);
+}
+.theme-loupgarou:has(.is-night) .sheet h2 { color: var(--moon); border-bottom-color: rgb(240 228 184 / .4); }
+
+.role-art.camp-loups { background: var(--brick); color: #fff8ea; }
+.role-art.camp-village { background: #9db88f; }
+
+/* Cartes de rôle. */
+.theme-loupgarou .card-back { background-color: var(--night); color: var(--moon); }
+.theme-loupgarou .card-back .role-art { background: var(--moon); }
+.theme-loupgarou .card .role-art { font-size: 2.2rem; }
+.theme-loupgarou .card-front strong { font-size: 1.2rem; }
+.theme-loupgarou .card.role-loup .card-front,
+.theme-loupgarou .roles-list .role-loup { background: #3b2a2a; color: #fff8ea; }
+.theme-loupgarou .roles-list.obituary li { display: block; }
+.theme-loupgarou .love-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 8px 12px;
+  text-align: center;
+  color: var(--black);
+  background: #f6d9c9;
+  border: 2px solid var(--brick-dark);
+  border-radius: 4px;
+}
+.theme-loupgarou .love-note .icon { color: var(--brick); }
+
+.theme-loupgarou .vote-list .btn[aria-pressed="true"] { --face: var(--brick); --edge: var(--brick-dark); }
+.theme-loupgarou .poison summary { font-weight: 700; cursor: pointer; padding: 6px 0; }
+.theme-loupgarou .poison[open] summary { margin-bottom: 10px; }
+
+/* ---- Composition dans le salon : filtres et tuiles de rôle ---- */
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filter-chip {
+  padding: 4px 12px;
+  font-weight: 700;
+  font-size: .85rem;
+  background: #fffaf0;
+  border: 2px solid var(--black);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.filter-chip[aria-pressed="true"] { background: var(--ink); color: #fff8ea; }
+
+.role-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 8px; }
+.role-tile {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 8px;
+  text-align: left;
+  color: var(--black);
+  background: #fffaf0;
+  border: 2px dashed #8a7c63;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: .72;
+}
+.role-tile strong { font-size: .92rem; line-height: 1.15; }
+.role-tile small { grid-column: 1 / -1; font-size: .74rem; line-height: 1.3; }
+.role-tile .role-art { font-size: 1.05rem; }
+.role-tile.is-on {
+  opacity: 1;
+  border-style: solid;
+  border-color: var(--black);
+  box-shadow: 0 3px 0 var(--ochre), 0 3px 0 2px var(--black);
+}
+.role-tile:disabled { cursor: default; color: var(--black); }
+
+/* ---- Carte de rôle au premier plan, puis rappel dans le coin ---- */
+.role-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 18px;
+  padding: 20px;
+  background: rgb(16 26 46 / .92);
+}
+.role-intro .card { width: min(260px, 70vw); }
+.role-intro .rule { color: var(--cream); text-align: center; }
+.role-badge {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px 3px 3px;
+  font-weight: 700;
+  font-size: .82rem;
+  color: var(--black);
+  background: var(--cream);
+  border: 2px solid var(--black);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 var(--black);
+  cursor: pointer;
+}
+.role-badge .role-art { font-size: .95rem; }

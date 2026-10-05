@@ -1,14 +1,14 @@
 import { h, loadStyle } from "../../ui/dom.js";
 import { stepper } from "../../ui/widgets.js";
 import { checkSettings, start, hostTick } from "./logic.js";
-import { view } from "./view.js";
+import { view, roleArt } from "./view.js";
 
 loadStyle("css/themes/undercover.css");
 
 function lobbyView({ settings, playerCount, isHost, setSettings }) {
   const civils = playerCount - settings.undercover - settings.mrWhite;
-  const role = (count, name, cls) =>
-    h("li", { class: `role-chip ${cls}` }, h("b", null, String(Math.max(count, 0))), " ", name);
+  const role = (count, name, cls, id) =>
+    h("li", { class: `role-chip ${cls}` }, roleArt(id), h("b", null, String(Math.max(count, 0))), " ", name);
   return h("div", { class: "game-settings" },
     stepper({
       label: "Undercover", value: settings.undercover, min: 1, max: 3, disabled: !isHost,
@@ -19,9 +19,9 @@ function lobbyView({ settings, playerCount, isHost, setSettings }) {
       onChange: (mrWhite) => setSettings({ ...settings, mrWhite })
     }),
     h("ul", { class: "role-chips", "aria-label": "Composition de la partie" },
-      role(civils, "Civils", "is-civil"),
-      role(settings.undercover, "Undercover", "is-undercover"),
-      role(settings.mrWhite, "Mr White", "is-white")
+      role(civils, "Civils", "is-civil", "civil"),
+      role(settings.undercover, "Undercover", "is-undercover", "undercover"),
+      role(settings.mrWhite, "Mr White", "is-white", "mrwhite")
     )
   );
 }

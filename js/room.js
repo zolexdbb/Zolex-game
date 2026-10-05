@@ -99,7 +99,7 @@ export function watchRoom(code, onChange) {
 export function closeRoom(code) {
   return update(ref(db), {
     [`rooms/${code}`]: null, [`secrets/${code}`]: null, [`vault/${code}`]: null,
-    [`actions/${code}`]: null, [`sealed/${code}`]: null
+    [`actions/${code}`]: null, [`sealed/${code}`]: null, [`night/${code}`]: null
   });
 }
 

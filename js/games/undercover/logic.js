@@ -1,6 +1,7 @@
 import { GROUPS } from "./words.js";
 
 export const ROLE_NAMES = { civil: "Civil", undercover: "Undercover", mrwhite: "Mr White" };
+export const ROLE_ICONS = { civil: "person", undercover: "spy", mrwhite: "question" };
 export const WINNERS = {
   civils: "Les Civils ont démasqué tout le monde",
   infiltres: "Les infiltrés ont pris le contrôle",

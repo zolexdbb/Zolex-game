@@ -6,13 +6,18 @@ import { getGame } from "./registry.js";
 import { h } from "./ui/dom.js";
 import { icon } from "./ui/icons.js";
 
+// Heure du serveur, pour que les comptes à rebours soient les mêmes chez tous.
+let clockOffset = 0;
+let clockWatched = false;
+const serverNow = () => Date.now() + clockOffset;
+
 export async function startGame(code, room) {
   const game = getGame(room.meta.gameId);
   const players = sortedPlayers(room).filter((p) => p.online);
   const settings = { ...game.defaultSettings, ...room.meta.settings };
   // La donne n'existe que le temps de cette fonction : elle part dans des
   // enveloppes que l'hôte ne peut plus relire.
-  const deal = game.start({ players, settings });
+  const deal = game.start({ players, settings, now: serverNow() });
   const g = "g" + Date.now().toString(36);
   await update(ref(db), {
     [`secrets/${code}/${g}`]: deal.secrets,
@@ -29,6 +34,32 @@ export function createPlay(code, show, { onLeave }) {
   let gKey = null, stepKey = null, sealKey = null, vaultFor = null;
   let stopSecret = null, stopActions = null, stopMySealed = null, stopSealed = null;
   let ticking = false, again = false;
+  let timer = null;
+  const watches = new Map();
+
+  if (!clockWatched) {
+    clockWatched = true;
+    onValue(ref(db, ".info/serverTimeOffset"), (snap) => { clockOffset = snap.val() || 0; });
+  }
+
+  // Donnée privée propre à un jeu : lue à la demande, tenue à jour, oubliée en fin de partie.
+  // `tag` relance l'écoute quand il change : utile si le droit de lecture
+  // n'arrive qu'en cours de partie (une écoute refusée ne reprend pas seule).
+  function watch(path, tag = "") {
+    let entry = watches.get(path);
+    if (!entry || entry.tag !== tag) {
+      entry?.stop?.();
+      entry = { tag, value: entry?.value ?? null, stop: null };
+      watches.set(path, entry);
+      entry.stop = onValue(ref(db, path), (snap) => { entry.value = snap.val(); refresh(); }, () => {});
+    }
+    return entry.value;
+  }
+
+  function unwatchAll() {
+    for (const entry of watches.values()) entry.stop?.();
+    watches.clear();
+  }
 
   const isHost = () => room.meta.hostUid === uid;
 
@@ -36,6 +67,11 @@ export function createPlay(code, show, { onLeave }) {
     const state = room.state;
     return {
       code, room, state, me: uid, isHost: isHost(), secret, vault, myAction, actions, mySealed, sealed,
+      now: serverNow, watch,
+      // Écritures à des chemins absolus (données privées d'un jeu).
+      write: (path, value) => set(ref(db, path), value),
+      read: (path) => get(ref(db, path)).then((snap) => snap.val(), () => null),
+      multi: (changes) => update(ref(db), changes),
       nextStep: () => String(Number(state.step) + 1),
       // Action du joueur pour l'étape en cours : une seule, non modifiable.
       act: (payload) => set(ref(db, `actions/${code}/${state.g}/${state.step}/${uid}`), payload),
@@ -57,6 +93,7 @@ export function createPlay(code, show, { onLeave }) {
     if (g !== gKey) {
       gKey = g;
       stopSecret?.();
+      unwatchAll();
       secret = null; vault = null; vaultFor = null;
       stopSecret = onValue(ref(db, `secrets/${code}/${g}/${uid}`), (snap) => { secret = snap.val(); refresh(); }, () => {});
     }
@@ -81,6 +118,10 @@ export function createPlay(code, show, { onLeave }) {
         ? onValue(ref(db, `sealed/${code}/${g}/${step}`), (snap) => { sealed = snap.val() || {}; refresh(); }, () => {})
         : null;
     }
+    // Les phases chronométrées (state.until) réveillent l'hôte à l'échéance.
+    clearTimeout(timer);
+    const wait = room.state.until - serverNow();
+    if (wait > 0) timer = setTimeout(refresh, wait + 50);
     if (room.ended?.[g] && vaultFor !== g) {
       vaultFor = g;
       get(ref(db, `vault/${code}/${g}`)).then((snap) => { vault = snap.val(); refresh(); }, () => { vaultFor = null; });
@@ -119,6 +160,6 @@ export function createPlay(code, show, { onLeave }) {
 
   return {
     update(next) { room = next; sync(); refresh(); },
-    stop() { stopSecret?.(); stopActions?.(); stopMySealed?.(); stopSealed?.(); room = null; }
+    stop() { stopSecret?.(); stopActions?.(); stopMySealed?.(); stopSealed?.(); unwatchAll(); clearTimeout(timer); room = null; }
   };
 }
