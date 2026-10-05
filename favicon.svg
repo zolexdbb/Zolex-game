@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Un pion rouge brique marqué d'un Z, posé sur le tapis de feutrine. -->
+  <rect width="64" height="64" rx="12" fill="#2f5d46"/>
+  <rect x="5" y="5" width="54" height="54" rx="8" fill="none" stroke="#f3e9d2" stroke-opacity=".4" stroke-width="2" stroke-dasharray="4 4"/>
+  <circle cx="32" cy="35" r="21" fill="#1d1a16"/>
+  <circle cx="32" cy="31" r="21" fill="#b5452f" stroke="#1d1a16" stroke-width="3"/>
+  <circle cx="32" cy="31" r="15.5" fill="none" stroke="#fff8ea" stroke-opacity=".3" stroke-width="2"/>
+  <path d="M23 21h18v5L30.5 36H41v6H23v-5l10.5-10H23z" fill="#fff8ea"/>
+</svg>
