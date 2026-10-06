@@ -4,6 +4,8 @@ const LETTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sans I ni O, trop faciles à conf
 const CLAIM_DELAY = 4000; // laisse à l'hôte le temps d'un rafraîchissement
 const TOUCH_EVERY = 10 * 60 * 1000;
 const VISITED_KEY = "tables";
+// Tout ce qui est rangé avec une table.
+const TREES = ["rooms", "secrets", "vault", "actions", "sealed", "night", "draw", "tries", "strokes"];
 
 const roomRef = (code, path = "") => ref(db, `rooms/${code}${path && "/" + path}`);
 
@@ -11,6 +13,9 @@ function randomCode() {
   const n = crypto.getRandomValues(new Uint8Array(4));
   return Array.from(n, (x) => LETTERS[x % LETTERS.length]).join("");
 }
+
+// L'avatar choisi à l'accueil, gardé sur cet appareil.
+const myAvatar = () => localStorage.getItem("avatar") || null;
 
 export function cleanName(name) {
   return String(name || "").replace(/\s+/g, " ").trim().slice(0, 20);
@@ -35,7 +40,7 @@ export async function createRoom(name, gameId, settings) {
         hostUid: uid, gameId, status: "lobby", settings,
         createdAt: serverTimestamp(), touchedAt: serverTimestamp()
       },
-      [`rooms/${code}/players/${uid}`]: { name: cleanName(name), joinedAt: serverTimestamp(), online: true }
+      [`rooms/${code}/players/${uid}`]: { name: cleanName(name), joinedAt: serverTimestamp(), online: true, avatar: myAvatar() }
     });
     remember(code);
     return code;
@@ -48,7 +53,7 @@ export async function joinRoom(code, name) {
     throw new Error(`Aucune table ne porte le code ${code}.`);
   }
   const mine = roomRef(code, `players/${uid}`);
-  const patch = { name: cleanName(name), online: true };
+  const patch = { name: cleanName(name), online: true, avatar: myAvatar() };
   if (!(await get(mine)).exists()) patch.joinedAt = serverTimestamp();
   await update(mine, patch);
   remember(code);
@@ -97,10 +102,7 @@ export function watchRoom(code, onChange) {
 
 // Range la table et tout ce qui s'y rattache (secrets, coffre, actions, enveloppes).
 export function closeRoom(code) {
-  return update(ref(db), {
-    [`rooms/${code}`]: null, [`secrets/${code}`]: null, [`vault/${code}`]: null,
-    [`actions/${code}`]: null, [`sealed/${code}`]: null, [`night/${code}`]: null
-  });
+  return update(ref(db), Object.fromEntries(TREES.map((tree) => [`${tree}/${code}`, null])));
 }
 
 export function sortedPlayers(room) {

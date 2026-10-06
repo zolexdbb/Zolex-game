@@ -93,6 +93,19 @@ code {
   .mat { padding: 30px 28px 26px; }
 }
 
+/* Sur téléphone, les colonnes n'existent pas : leur contenu s'empile tel quel. */
+.col { display: contents; }
+.mat-narrow { max-width: 540px; margin-inline: auto; }
+
+/* Grand écran : le tapis s'élargit et se partage en deux colonnes. */
+@media (min-width: 900px) {
+  #app { max-width: 1120px; }
+  .mat { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 28px; align-items: start; }
+  .mat > * { grid-column: 1 / -1; }
+  .mat > .col { grid-column: auto; display: grid; gap: 18px; align-content: start; }
+  .mat-home > .sheet { grid-column: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }

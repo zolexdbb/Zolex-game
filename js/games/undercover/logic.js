@@ -1,4 +1,4 @@
-import { GROUPS } from "./words.js";
+import { siteGroups, parseGroups, checkWords } from "../../ui/wordbank.js";
 
 export const ROLE_NAMES = { civil: "Civil", undercover: "Undercover", mrwhite: "Mr White" };
 export const ROLE_ICONS = { civil: "person", undercover: "spy", mrwhite: "question" };
@@ -29,7 +29,7 @@ const civils = (s, n) => n - s.undercover - s.mrWhite;
 export function checkSettings(s, n) {
   if (civils(s, n) < 2) return "Il faut au moins 2 Civils autour de la table.";
   if (civils(s, n) <= s.undercover) return "Les Civils doivent être plus nombreux que les Undercover.";
-  return null;
+  return checkWords(s, true);
 }
 
 export function start({ players, settings }) {
@@ -39,7 +39,11 @@ export function start({ players, settings }) {
     roles[id] = i < settings.undercover ? "undercover"
       : i < settings.undercover + settings.mrWhite ? "mrwhite" : "civil";
   });
-  const [civilWord, undercoverWord] = shuffle(GROUPS[rand(GROUPS.length)]);
+  // Deux mots proches, tirés dans un même groupe : ceux de l'hôte ou ceux du site.
+  const pool = settings.source === "perso"
+    ? parseGroups(settings.customText).groups.map((group) => group.words)
+    : siteGroups(settings);
+  const [civilWord, undercoverWord] = shuffle(pool[rand(pool.length)]);
 
   const secrets = {};
   for (const id of ids) {
@@ -83,6 +87,7 @@ function giveClue({ state: s, patch, nextStep }, who, clue) {
   const again = last && s.tour < s.tours;
   return patch({
     [`state/clues/c${s.lap}/${who}`]: clue,
+    "state/spoke": { uid: who, text: clue },
     "state/turn": last ? 0 : s.turn + 1,
     "state/tour": again ? s.tour + 1 : s.tour,
     "state/lap": again ? s.lap + 1 : s.lap,

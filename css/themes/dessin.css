@@ -1,0 +1,104 @@
+/* What's Drawing ? : un carnet de croquis à spirale et une boîte de crayons. */
+@import url("https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap");
+
+.theme-dessin { --hand: "Gochi Hand", "Comic Sans MS", cursive; }
+
+.theme-dessin .sketch-head { text-align: center; color: var(--cream); }
+.theme-dessin .sketch-head h1 {
+  font: 400 1.7rem/1.05 var(--display);
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0 var(--felt-dark);
+}
+.theme-dessin .countdown {
+  display: inline-block;
+  padding: 0 8px;
+  color: var(--black);
+  background: var(--ochre);
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  text-shadow: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* La feuille, tenue par une spirale en haut du carnet. */
+.theme-dessin .pad-frame {
+  position: relative;
+  padding: 16px 6px 6px;
+  background: var(--grain), var(--card);
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  box-shadow: 0 4px 0 var(--felt-dark);
+}
+.theme-dessin .pad-frame::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 3px;
+  height: 12px;
+  background: radial-gradient(circle at 50% 50%, var(--black) 0 3px, transparent 3.5px) 0 0 / 22px 12px repeat-x;
+}
+.theme-dessin .pad {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fffdf6;
+  border: 2px solid var(--black);
+  border-radius: 2px;
+}
+.theme-dessin .pad.is-mine { cursor: crosshair; touch-action: none; }
+
+.theme-dessin .the-word { font: 400 1.5rem var(--hand); text-transform: none; color: var(--brick); }
+.theme-dessin .hint { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; font: 400 1.7rem/1 var(--hand); }
+.theme-dessin .hint span { min-width: .7em; text-align: center; }
+.theme-dessin .hint .gap { min-width: 1em; }
+
+/* Boîte de crayons. */
+.theme-dessin .tools { display: grid; gap: 10px; }
+.theme-dessin .swatches { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+.theme-dessin .swatch {
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.theme-dessin .swatch[aria-pressed="true"],
+.theme-dessin .nib[aria-pressed="true"] { outline: 3px solid var(--ochre); outline-offset: 2px; }
+.theme-dessin .tool-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.theme-dessin .nib {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  background: #fffaf0;
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.theme-dessin .nib span { display: block; background: var(--black); border-radius: 50%; }
+
+/* Les trois mots proposés, comme des étiquettes à piocher. */
+.theme-dessin .word-cards { display: grid; gap: 10px; }
+.theme-dessin .word-card {
+  padding: 14px 10px;
+  font: 400 1.5rem var(--hand);
+  color: var(--black);
+  background: #fffdf6;
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  box-shadow: 0 4px 0 var(--card), 0 4px 0 2px var(--black);
+  cursor: pointer;
+}
+.theme-dessin .word-card:nth-child(odd) { transform: rotate(-1deg); }
+.theme-dessin .word-card:nth-child(even) { transform: rotate(1deg); }
+.theme-dessin .word-card:disabled { opacity: .5; cursor: wait; }
+
+.theme-dessin .chatter { display: grid; gap: 3px; font-size: .92rem; }
+.theme-dessin .chatter li { padding: 2px 8px; background: #fffaf0; border-radius: 3px; overflow-wrap: anywhere; }
+.theme-dessin .chatter .is-hit { display: flex; align-items: center; gap: 5px; background: #cfe3c4; }
+.theme-dessin .podium { counter-reset: rank; }
+.theme-dessin .podium li { counter-increment: rank; }
+.theme-dessin .podium li span::before { content: counter(rank) ". "; font-weight: 700; }

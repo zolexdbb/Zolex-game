@@ -1,10 +1,11 @@
 import { h } from "./dom.js";
 import { icon } from "./icons.js";
+import { avatarNode } from "./avatar.js";
 
 const PAWN_COLORS = 8;
 
 // Compteur à deux boutons, façon roue de score.
-export function stepper({ label, value, min, max, disabled, onChange }) {
+export function stepper({ label, value, min, max, disabled, onChange, by = 1 }) {
   const step = (delta, name, text) =>
     h("button", {
       class: "btn btn-round", type: "button", "aria-label": `${text} : ${label}`,
@@ -13,24 +14,34 @@ export function stepper({ label, value, min, max, disabled, onChange }) {
     }, icon(name));
   return h("div", { class: "stepper" },
     h("span", { class: "stepper-label" }, label),
-    step(-1, "minus", "Moins"),
+    step(-by, "minus", "Moins"),
     h("output", { class: "stepper-value" }, String(value)),
-    step(1, "plus", "Plus")
+    step(by, "plus", "Plus")
   );
 }
 
-// Pion d'un joueur. `player` : { name, index, online }.
-export function pawn(player, { isHost, isMe, out, turn, done, note } = {}) {
+// Petit jeton d'un joueur, pour le reconnaître dans une liste.
+export function token(player) {
+  const face = avatarNode(player.avatar);
+  return h("span", { class: `token pawn-${player.index % PAWN_COLORS}${face ? " has-avatar" : ""}`, "aria-hidden": "true" },
+    face || player.name.charAt(0).toUpperCase());
+}
+
+// Pion d'un joueur. `player` : { name, index, online, avatar }.
+// `bubble` : ce qu'il vient de dire, affiché au-dessus de lui.
+export function pawn(player, { isHost, isMe, out, turn, done, note, bubble } = {}) {
+  const face = avatarNode(player.avatar);
   const cls = ["pawn", `pawn-${player.index % PAWN_COLORS}`,
     !player.online && "is-away", out && "is-out", turn && "is-turn"].filter(Boolean).join(" ");
   return h("div", { class: cls },
-    h("div", { class: "pawn-disc" },
+    bubble != null && h("span", { class: "pawn-bubble" }, bubble),
+    h("div", { class: `pawn-disc${face ? " has-avatar" : ""}` },
       isHost && h("span", { class: "pawn-crown", title: "Hôte de la table" }, icon("crown")),
       done && h("span", { class: "pawn-done", title: "A joué" }, icon("check")),
-      h("span", { "aria-hidden": "true" }, player.name.charAt(0).toUpperCase())
+      face || h("span", { "aria-hidden": "true" }, player.name.charAt(0).toUpperCase())
     ),
     h("span", { class: "pawn-name" }, player.name, isMe && h("em", null, " (toi)")),
-    note ? h("span", { class: "pawn-away" }, note) : !player.online && h("span", { class: "pawn-away" }, "absent")
+    note ? h("span", { class: "pawn-away" }, note) : !player.online && h("span", { class: "pawn-away" }, "hors ligne")
   );
 }
 

@@ -1,15 +1,16 @@
 import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
-import { pawn, flipCard } from "../../ui/widgets.js";
+import { pawn, token, flipCard } from "../../ui/widgets.js";
+import { chatBox } from "../../ui/chat.js";
 import { ROLE_NAMES, ROLE_ICONS, WINNERS, norm, skipTurn, goVote, forceClose, skipGuess, proceed } from "./logic.js";
 
 // État d'affichage propre à cet appareil (carte retournée, brouillons).
 const ui = { g: null, open: false, clue: "", guess: "", shown: null };
 
 const ROLE_HINTS = {
-  civil: "Il faisait partie de la majorité.",
+  civil: "Son mot était celui de la majorité.",
   undercover: "Son mot n'était pas tout à fait le vôtre.",
-  mrwhite: "Il n'avait aucun mot depuis le début."
+  mrwhite: "Aucun mot depuis le début de la partie."
 };
 
 export function roleArt(role) {
@@ -53,25 +54,28 @@ function table({ state: s, room, me }) {
       // La carte en cours de retournement n'est pas annoncée avant l'heure.
       const shown = role && !(s.phase === "reveal" && !s.resolved && s.last?.uid === id);
       return h("div", { class: "seat" }, pawn(
-        { name: s.names[id].name, index: s.names[id].pawn, online: !!seated?.online },
+        { name: s.names[id].name, index: s.names[id].pawn, online: !!seated?.online, avatar: seated?.avatar },
         {
           isHost: id === room.meta.hostUid, isMe: id === me, out, turn: id === current,
+          // Le dernier indice reste affiché jusqu'à ce qu'un autre joueur parle.
+          bubble: s.spoke?.uid === id && s.phase !== "end" ? s.spoke.text || "(passe)" : null,
           done: s.phase === "vote" && room.done?.[s.g]?.[s.step]?.[id],
-          note: out ? (shown ? ROLE_NAMES[role] : "sorti") : !seated ? "parti" : null
+          note: out ? (shown ? ROLE_NAMES[role] : "hors jeu") : !seated ? "a quitté" : null
         }
       ));
     }))
   );
 }
 
-function clueBoard({ state: s }) {
+function clueBoard({ state: s, room }) {
   const rounds = Object.keys(s.clues || {}).sort((a, b) => a.slice(1) - b.slice(1));
   if (!rounds.length) return null;
   return h("details", { class: "evidence", open: true },
     h("summary", null, "Pièces à conviction"),
     h("table", null, h("tbody", null,
       s.base.map((id) => h("tr", { class: s.alive?.[id] ? "" : "is-out" },
-        h("th", { scope: "row" }, s.names[id].name),
+        h("th", { scope: "row" },
+          token({ name: s.names[id].name, index: s.names[id].pawn, avatar: room.players?.[id]?.avatar }), s.names[id].name),
         h("td", null, rounds.map((r) => s.clues[r][id]).map((clue) =>
           clue == null ? null : h("span", { class: "clue" }, clue || "(passe)")))
       ))
@@ -154,7 +158,7 @@ function revealPanel(ctx) {
   const { state: s, room, isHost } = ctx;
   const name = s.names[s.last.uid].name;
   const role = room.reveals?.[s.g]?.[s.last.uid];
-  const title = h("h2", null, s.last.left ? `${name} a quitté la table` : `${name} est éliminé`);
+  const title = h("h2", null, s.last.left ? `${name} a quitté la table` : `Le vote désigne ${name}`);
   if (!s.resolved || !role) return [title, h("p", { class: "rule" }, "On retourne sa carte…")];
   return [title,
     s.last.tie && h("p", { class: "rule" }, "Égalité des voix : le sort a tranché."),
@@ -174,7 +178,7 @@ function mrWhitePanel(ctx) {
   const sent = room.guess?.[s.g]?.[who];
   if (who !== me) {
     return [title,
-      h("p", null, "Démasqué, il lui reste une chance : s'il devine le mot des Civils, il gagne la partie à lui seul."),
+      h("p", null, "Mr White est démasqué, mais garde une chance : deviner le mot des Civils, c'est gagner la partie en solo."),
       votesRecap(ctx),
       isHost && !sent && hostTools(action("Passer (Mr White ne répond pas)", "skip", () => skipGuess(ctx)))];
   }
@@ -221,13 +225,15 @@ export function view(ctx) {
   if (ui.g !== s.g) Object.assign(ui, { g: s.g, open: false, clue: "", guess: "", shown: null });
   const seated = !!s.names[me];
   return [
-    h("header", { class: "case-head" },
+    h("div", { class: "col" }, h("header", { class: "case-head" },
       h("p", { class: "eyebrow" }, "Dossier Undercover"),
       h("h1", null, s.phase === "end" ? "Fin de l'enquête" : `Manche ${s.round}`)),
     seated && secret ? secretCard(ctx)
-      : !seated && h("p", { class: "rule" }, "Tu es arrivé en cours de partie : observe, tu joueras la prochaine."),
-    table(ctx),
-    h("section", { class: "sheet" }, PANELS[s.phase]?.(ctx)),
-    s.phase !== "end" && clueBoard(ctx)
+      : !seated && h("p", { class: "rule" }, "La partie a commencé sans toi : observe, tu joueras la prochaine."),
+    table(ctx)),
+    h("div", { class: "col" },
+      h("section", { class: "sheet" }, PANELS[s.phase]?.(ctx)),
+      s.phase !== "end" && clueBoard(ctx),
+      chatBox(ctx))
   ];
 }

@@ -180,6 +180,8 @@ function afterDeaths(ctx, loss, after, news, extra = {}) {
     "state/forceClose": null, "state/step": ctx.nextStep(), ...extra
   };
   for (const id of dead) changes[`state/alive/${id}`] = null;
+  // Les deux voix du corbeau ne valent que pour le vote qui vient de se clore.
+  if (after === "dusk") changes["state/crow"] = null;
   if (hunter && left.length) {
     Object.assign(changes, { "state/phase": "hunter", "state/hunter": hunter, "state/after": after });
   } else {
@@ -280,7 +282,7 @@ export async function hostTick(ctx) {
     if (role === "idiot" && s.idiot !== tied[0]) {
       // L'idiot est épargné : sa carte est connue, il reste en jeu sans voter.
       return ctx.patch({
-        "state/news": { ...news, spared: tied[0] }, "state/idiot": tied[0],
+        "state/news": { ...news, spared: tied[0] }, "state/idiot": tied[0], "state/crow": null,
         "state/phase": "dusk", "state/pending": null, "state/forceClose": null, "state/step": ctx.nextStep()
       });
     }

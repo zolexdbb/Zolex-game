@@ -29,7 +29,7 @@ export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove,
   startBtn.addEventListener("click", busy(startBtn, onStart));
 
   return h("main", { class: `mat theme-${game.id}` },
-    h("header", { class: "table-head" },
+    h("div", { class: "col" }, h("header", { class: "table-head" },
       h("p", { class: "eyebrow" }, "Code de la table"),
       h("div", { class: "tiles", "aria-label": `Code ${code}` },
         [...code].map((letter) => h("span", { class: "tile" }, letter))),
@@ -46,9 +46,9 @@ export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove,
           }, "Retirer")
         ))
       )
-    ),
+    )),
 
-    h("section", { class: "sheet" },
+    h("div", { class: "col" }, h("section", { class: "sheet" },
       h("h2", null, "Le jeu du soir"),
       h("div", { class: "shelf" },
         games.map((g) => h("button", {
@@ -62,8 +62,8 @@ export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove,
       game.lobbyView?.({ settings, playerCount: present, isHost, setSettings: onSettings }),
       isHost
         ? [startBtn, blocker && h("p", { class: "rule" }, blocker)]
-        : h("p", { class: "rule" }, `${host?.name || "L'hôte"} tient la boîte : la partie commence quand il distribue les cartes.`)
-    ),
+        : h("p", { class: "rule" }, `${host?.name || "L'hôte"} tient la boîte : la partie commence dès la distribution des cartes.`)
+    )),
 
     h("footer", { class: "table-foot" },
       h("button", { class: "btn btn-cream", type: "button", onclick: onLeave }, icon("leave"), "Quitter la table"),

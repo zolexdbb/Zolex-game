@@ -6,7 +6,7 @@ import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase
 import { firebaseConfig } from "./firebase-config.js";
 
 export {
-  ref, get, set, update, remove, onValue, onDisconnect, serverTimestamp
+  ref, get, set, update, remove, onValue, onDisconnect, serverTimestamp, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 export let db = null;

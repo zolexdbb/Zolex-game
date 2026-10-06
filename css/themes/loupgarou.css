@@ -127,22 +127,75 @@
 }
 .role-intro .card { width: min(260px, 70vw); }
 .role-intro .rule { color: var(--cream); text-align: center; }
-.role-badge {
-  position: fixed;
-  top: 8px;
-  right: 8px;
-  z-index: 10;
-  display: flex;
+
+/* ---- Plateau : ce qui se passe en haut, la table au centre ---- */
+.theme-loupgarou .stage { width: 100%; max-width: 760px; margin-inline: auto; }
+.lg-board { display: grid; gap: 18px; }
+.lg-board .round { order: -1; }
+.lg-side { display: grid; gap: 14px; align-content: start; min-width: 0; }
+@media (min-width: 900px) {
+  .lg-board { grid-template-columns: minmax(0, 1fr) minmax(400px, 480px) minmax(0, 1fr); align-items: start; }
+  .lg-board .round { order: 0; }
+}
+
+/* Mon rôle, toujours visible dans le tapis. */
+.role-block {
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 6px;
-  padding: 3px 12px 3px 3px;
-  font-weight: 700;
-  font-size: .82rem;
+  gap: 12px;
+  padding: 10px 12px;
+  color: var(--black);
+  background: var(--grain), #fffaf0;
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  box-shadow: 0 4px 0 rgb(0 0 0 / .35);
+}
+.role-block small { display: block; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.role-block strong { font: 400 1.15rem/1.1 var(--display); text-transform: uppercase; }
+.role-block p { font-size: .82rem; line-height: 1.3; }
+.role-block.role-loup { background: #3b2a2a; color: #fff8ea; }
+
+/* Bouton d'aide, dans le coin du tapis. */
+.mat > .info-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 1.2rem;
   color: var(--black);
   background: var(--cream);
   border: 2px solid var(--black);
-  border-radius: 999px;
+  border-radius: 50%;
   box-shadow: 0 3px 0 var(--black);
   cursor: pointer;
 }
-.role-badge .role-art { font-size: .95rem; }
+.mat > .role-intro { position: fixed; }
+.guide {
+  display: grid;
+  gap: 12px;
+  width: min(560px, 100%);
+  max-height: 86vh;
+  padding: 16px;
+  overflow-y: auto;
+  color: var(--black);
+  background: var(--grain), var(--cream);
+  border: 2px solid var(--black);
+  border-radius: 6px;
+}
+.guide h2 { font: 400 1.25rem var(--display); text-transform: uppercase; color: var(--ink); }
+.guide-list { display: grid; gap: 10px; }
+.guide-list li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
+.guide-list .role-art { font-size: 1.1rem; }
+.guide-list p { font-size: .88rem; line-height: 1.35; }
+.guide-list em { font-weight: 400; font-size: .8rem; }
+.guide-list .is-off { opacity: .55; }
+
+/* Messages des canaux privés, dans le fil commun. */
+.theme-loupgarou .from-pack { background: #f6d9c9; border-radius: 3px; }
+.theme-loupgarou .from-dead { background: #dcdde6; border-radius: 3px; font-style: italic; }

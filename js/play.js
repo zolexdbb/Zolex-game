@@ -1,6 +1,6 @@
 // Moteur de partie commun à tous les jeux : abonnements privés du joueur,
 // boucle de l'hôte, et contexte passé aux modules de jeu.
-import { db, uid, ref, get, set, update, onValue, serverTimestamp } from "./firebase.js";
+import { db, uid, ref, get, set, update, onValue, serverTimestamp, runTransaction } from "./firebase.js";
 import { sortedPlayers } from "./room.js";
 import { getGame } from "./registry.js";
 import { h } from "./ui/dom.js";
@@ -35,6 +35,7 @@ export function createPlay(code, show, { onLeave }) {
   let stopSecret = null, stopActions = null, stopMySealed = null, stopSealed = null;
   let ticking = false, again = false;
   let timer = null;
+  const session = {}; // identifie cette partie pour les modules qui gardent un état
   const watches = new Map();
 
   if (!clockWatched) {
@@ -56,7 +57,17 @@ export function createPlay(code, show, { onLeave }) {
     return entry.value;
   }
 
+  // Écoute directe, sans redessiner l'écran à chaque changement (traits d'un dessin).
+  const listeners = new Set();
+  function listen(path, onChange) {
+    const stop = onValue(ref(db, path), (snap) => onChange(snap.val()), () => {});
+    listeners.add(stop);
+    return () => { stop(); listeners.delete(stop); };
+  }
+
   function unwatchAll() {
+    for (const stop of listeners) stop();
+    listeners.clear();
     for (const entry of watches.values()) entry.stop?.();
     watches.clear();
   }
@@ -84,6 +95,10 @@ export function createPlay(code, show, { onLeave }) {
       // Écritures dans rooms/{code} (chemins relatifs).
       patch: (changes) => update(ref(db, `rooms/${code}`), changes),
       tryWrite: (path, value) => set(ref(db, `rooms/${code}/${path}`), value).then(() => true, () => false),
+      // Comme tryWrite, mais rien n'apparaît à l'écran tant que la base n'a pas accepté.
+      claim: (path, value) => runTransaction(ref(db, `rooms/${code}/${path}`), () => value, { applyLocally: false })
+        .then((result) => result.committed, () => false),
+      listen, session, refresh,
       backToLobby: () => update(ref(db, `rooms/${code}/meta`), { status: "lobby", touchedAt: serverTimestamp() })
     };
   }
