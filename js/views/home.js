@@ -1,5 +1,6 @@
 import { h, busy } from "../ui/dom.js";
 import { cleanName } from "../room.js";
+import { soundControl } from "../ui/sound.js";
 import { games, upcoming } from "../registry.js";
 import { PARTS, parseAvatar, makeAvatar, randomAvatar, avatarNode, imageAvatar } from "../ui/avatar.js";
 
@@ -116,7 +117,8 @@ export function homeView({ name, code, message, onCreate, onJoin }) {
         sealed.map((u) => h("div", { class: `gamebox box-${u.id} is-sealed` },
           h("strong", null, u.name), h("small", null, u.tagline), h("span", { class: "stamp" }, "Bientôt")))
       )
-    )
+    ),
+    soundControl()
   );
 }
 

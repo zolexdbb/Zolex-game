@@ -2,6 +2,7 @@ import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
 import { pawn, flipCard, countdown, roundTable } from "../../ui/widgets.js";
 import { chatBox } from "../../ui/chat.js";
+import { play, ambience } from "../../ui/sound.js";
 import { ROLES, WINNERS, neighbours, openVote, forceClose, skipHunter, announce, fallNight } from "./logic.js";
 
 // État d'affichage propre à cet appareil.
@@ -512,6 +513,16 @@ export function view(ctx) {
   }
   const seated = !!s.names[me];
   const dark = s.phase === "night" || s.phase === "dawn";
+
+  // Ambiance selon l'heure, et un son à la tombée de la nuit, au lever du jour, à chaque mort.
+  ambience(s.phase === "end" ? null : dark ? "night" : "day");
+  const cue = `${s.g}/${s.nightNo}/${dark}`;
+  const dead = Object.keys(s.names).filter((id) => !s.alive?.[id]).length;
+  if (ui.cue !== cue) {
+    if (ui.cue?.startsWith(s.g) || dark) play(dark ? "howl" : "rooster");
+    ui.cue = cue;
+  } else if (dead > ui.dead) play("death");
+  ui.dead = dead;
 
   // Le panneau d'abord : c'est lui qui dit quels pions peuvent être désignés.
   pick = null;

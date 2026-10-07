@@ -1,6 +1,7 @@
 import { h } from "./dom.js";
 import { icon } from "./icons.js";
 import { avatarNode } from "./avatar.js";
+import { tick } from "./sound.js";
 
 const PAWN_COLORS = 8;
 
@@ -46,13 +47,13 @@ export function pawn(player, { isHost, isMe, out, turn, done, note, bubble } = {
 }
 
 // Joueurs assis en cercle autour d'une table. `seats` : nœuds dans l'ordre du
-// tour de table ; `center` : ce qui est posé au milieu.
-export function roundTable(seats, center) {
+// tour de table ; `center` : ce qui est posé au milieu ; `start` : angle du premier siège (en haut par défaut).
+export function roundTable(seats, center, start = -Math.PI / 2) {
   const n = seats.length;
   return h("section", { class: `round${n > 10 ? " is-crowded" : ""}` },
     h("div", { class: "round-top" }, center),
     seats.map((seat, i) => {
-      const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+      const angle = (2 * Math.PI * i) / n + start;
       const spot = h("div", { class: "round-seat" }, seat);
       spot.style.left = `${50 + 43 * Math.cos(angle)}%`;
       spot.style.top = `${50 + 41 * Math.sin(angle)}%`;
@@ -67,6 +68,7 @@ export function countdown(until, now) {
   const draw = () => {
     const left = Math.max(0, Math.ceil((until - now()) / 1000));
     el.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+    tick(until, left);
   };
   draw();
   const timer = setInterval(() => (el.isConnected ? draw() : clearInterval(timer)), 500);

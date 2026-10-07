@@ -160,7 +160,7 @@
 .mat > .info-btn {
   position: absolute;
   top: 12px;
-  right: 12px;
+  right: 60px; /* à gauche du bouton des paramètres */
   z-index: 5;
   display: grid;
   place-items: center;

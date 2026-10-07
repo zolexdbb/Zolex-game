@@ -3,12 +3,11 @@
 import undercover from "./games/undercover/index.js";
 import loupgarou from "./games/loupgarou/index.js";
 import dessin from "./games/dessin/index.js";
+import uno from "./games/uno/index.js";
 
-export const games = [undercover, loupgarou, dessin];
+export const games = [undercover, loupgarou, dessin, uno];
 
 // Jeux pas encore disponibles, affichés avec la mention « Bientôt ».
-export const upcoming = [
-  { id: "uno", name: "Uno", tagline: "Plus qu'une carte" }
-];
+export const upcoming = [];
 
 export const getGame = (id) => games.find((g) => g.id === id) || games[0];

@@ -1,6 +1,7 @@
 import { h, busy } from "../ui/dom.js";
 import { icon } from "../ui/icons.js";
 import { pawn } from "../ui/widgets.js";
+import { soundControl } from "../ui/sound.js";
 import { sortedPlayers } from "../room.js";
 import { games, upcoming, getGame } from "../registry.js";
 
@@ -68,6 +69,7 @@ export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove,
     h("footer", { class: "table-foot" },
       h("button", { class: "btn btn-cream", type: "button", onclick: onLeave }, icon("leave"), "Quitter la table"),
       isHost && h("button", { class: "btn btn-cream", type: "button", onclick: onClose }, icon("box"), "Ranger la table")
-    )
+    ),
+    soundControl()
   );
 }

@@ -5,6 +5,7 @@ import { sortedPlayers } from "./room.js";
 import { getGame } from "./registry.js";
 import { h } from "./ui/dom.js";
 import { icon } from "./ui/icons.js";
+import { soundControl, ambience } from "./ui/sound.js";
 
 // Heure du serveur, pour que les comptes à rebours soient les mêmes chez tous.
 let clockOffset = 0;
@@ -169,12 +170,13 @@ export function createPlay(code, show, { onLeave }) {
           class: "btn btn-cream", type: "button",
           onclick: () => confirm("Arrêter la partie et revenir au salon ?") && ctx.backToLobby()
         }, icon("box"), "Arrêter la partie")
-      )
+      ),
+      soundControl()
     ));
   }
 
   return {
     update(next) { room = next; sync(); refresh(); },
-    stop() { stopSecret?.(); stopActions?.(); stopMySealed?.(); stopSealed?.(); unwatchAll(); clearTimeout(timer); room = null; }
+    stop() { stopSecret?.(); stopActions?.(); stopMySealed?.(); stopSealed?.(); unwatchAll(); clearTimeout(timer); ambience(null); room = null; }
   };
 }

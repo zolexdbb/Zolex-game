@@ -32,7 +32,9 @@ const PATHS = {
   undo: "M9 6L4 11l5 5M4 11h10a5 5 0 0 1 0 10h-3",
   trash: "M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6",
   info: "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M12 11v6M12 7.5h.01",
-  play: "M7 4.5v15l12-7.5z"
+  play: "M7 4.5v15l12-7.5z",
+  sound: "M4 9.5v5h3.5L12 19V5L7.5 9.5zM15.5 9.5a3.5 3.5 0 0 1 0 5M18 7a7 7 0 0 1 0 10",
+  sliders: "M4 7h9M19 7h1M4 17h1M11 17h9M13 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M5 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"
 };
 
 export function icon(name) {

@@ -1,0 +1,170 @@
+{
+  ".claude/launch.json": {
+    "mtime": 1791129281.5762508,
+    "seen": 1791364542.8292155,
+    "ast_hash": "e5fbfb7183ec8402e431be7be5e7477b",
+    "semantic_hash": "e5fbfb7183ec8402e431be7be5e7477b"
+  },
+  "database.rules.json": {
+    "mtime": 1791305912.4596632,
+    "seen": 1791364542.82922,
+    "ast_hash": "17dbda8fde27eb8cf25c22e97ce153f6",
+    "semantic_hash": "17dbda8fde27eb8cf25c22e97ce153f6"
+  },
+  "js/firebase-config.js": {
+    "mtime": 1791129001.4950466,
+    "seen": 1791364542.8292222,
+    "ast_hash": "9c233f6b7e38bcfe36921e58620b4e46",
+    "semantic_hash": "9c233f6b7e38bcfe36921e58620b4e46"
+  },
+  "js/firebase.js": {
+    "mtime": 1791302402.819624,
+    "seen": 1791364542.8292234,
+    "ast_hash": "159e471a30d920a3eff9c20014dee215",
+    "semantic_hash": "159e471a30d920a3eff9c20014dee215"
+  },
+  "js/games/dessin/index.js": {
+    "mtime": 1791305277.5610645,
+    "seen": 1791364542.829224,
+    "ast_hash": "b02eded4b957835a4ab4cdce5375901b",
+    "semantic_hash": "b02eded4b957835a4ab4cdce5375901b"
+  },
+  "js/games/dessin/logic.js": {
+    "mtime": 1791305277.562066,
+    "seen": 1791364542.8292253,
+    "ast_hash": "53bdc29c4a207281e3cad5c2a9b3d9a1",
+    "semantic_hash": "53bdc29c4a207281e3cad5c2a9b3d9a1"
+  },
+  "js/games/dessin/view.js": {
+    "mtime": 1791305277.5633414,
+    "seen": 1791364542.8292263,
+    "ast_hash": "991ba1e9b0dddba5ff0689f7c0608fb4",
+    "semantic_hash": "991ba1e9b0dddba5ff0689f7c0608fb4"
+  },
+  "js/games/loupgarou/index.js": {
+    "mtime": 1791197355.080359,
+    "seen": 1791364542.8292272,
+    "ast_hash": "ba2126265f4541778201c73431606f7f",
+    "semantic_hash": "ba2126265f4541778201c73431606f7f"
+  },
+  "js/games/loupgarou/logic.js": {
+    "mtime": 1791307443.8759513,
+    "seen": 1791364542.8292284,
+    "ast_hash": "1f8f793233360daaed2a81e0aea7c2fb",
+    "semantic_hash": "1f8f793233360daaed2a81e0aea7c2fb"
+  },
+  "js/games/loupgarou/view.js": {
+    "mtime": 1791307895.5649507,
+    "seen": 1791364542.8292294,
+    "ast_hash": "c7c358ad4fc56be362feb61fa5875610",
+    "semantic_hash": "c7c358ad4fc56be362feb61fa5875610"
+  },
+  "js/games/undercover/index.js": {
+    "mtime": 1791305277.5610645,
+    "seen": 1791364542.82923,
+    "ast_hash": "40215836c0bc8ee2b9d4107bc9791dad",
+    "semantic_hash": "40215836c0bc8ee2b9d4107bc9791dad"
+  },
+  "js/games/undercover/logic.js": {
+    "mtime": 1791305277.560066,
+    "seen": 1791364542.829231,
+    "ast_hash": "9fd271f5899e2f8bf42cc970b1f1945f",
+    "semantic_hash": "9fd271f5899e2f8bf42cc970b1f1945f"
+  },
+  "js/games/undercover/view.js": {
+    "mtime": 1791307895.5649507,
+    "seen": 1791364542.8292322,
+    "ast_hash": "49b18397e78a7ef7c4e178b8131227c0",
+    "semantic_hash": "49b18397e78a7ef7c4e178b8131227c0"
+  },
+  "js/games/undercover/words.js": {
+    "mtime": 1791304217.7800033,
+    "seen": 1791364542.829233,
+    "ast_hash": "9a8a6482ee0ca583229097b10c4642cc",
+    "semantic_hash": "9a8a6482ee0ca583229097b10c4642cc"
+  },
+  "js/main.js": {
+    "mtime": 1791305277.5643473,
+    "seen": 1791364542.829234,
+    "ast_hash": "26ee35c189f50b9eeac768900e05b27a",
+    "semantic_hash": "26ee35c189f50b9eeac768900e05b27a"
+  },
+  "js/play.js": {
+    "mtime": 1791307443.8759513,
+    "seen": 1791364542.8292346,
+    "ast_hash": "fc85a2b1b2d40d98bfc9c1c8fa727f5f",
+    "semantic_hash": "fc85a2b1b2d40d98bfc9c1c8fa727f5f"
+  },
+  "js/registry.js": {
+    "mtime": 1791302402.8220057,
+    "seen": 1791364542.8292358,
+    "ast_hash": "925c404b0a3da2a72dbfadc6aa9f9ef3",
+    "semantic_hash": "925c404b0a3da2a72dbfadc6aa9f9ef3"
+  },
+  "js/room.js": {
+    "mtime": 1791305277.5643473,
+    "seen": 1791364542.8292365,
+    "ast_hash": "e258b0151cce7c3c556d8b56eee0be19",
+    "semantic_hash": "e258b0151cce7c3c556d8b56eee0be19"
+  },
+  "js/ui/avatar.js": {
+    "mtime": 1791304609.8245678,
+    "seen": 1791364542.8292375,
+    "ast_hash": "91293e11abbc08de20b5c7436adbdede",
+    "semantic_hash": "91293e11abbc08de20b5c7436adbdede"
+  },
+  "js/ui/chat.js": {
+    "mtime": 1791306766.209586,
+    "seen": 1791364542.8292382,
+    "ast_hash": "f9a562cc22b1e754775b284993ae23b7",
+    "semantic_hash": "f9a562cc22b1e754775b284993ae23b7"
+  },
+  "js/ui/dom.js": {
+    "mtime": 1791129983.1699104,
+    "seen": 1791364542.8292391,
+    "ast_hash": "de2363b26a64eb4df8246505c6625508",
+    "semantic_hash": "de2363b26a64eb4df8246505c6625508"
+  },
+  "js/ui/icons.js": {
+    "mtime": 1791304384.3765213,
+    "seen": 1791364542.82924,
+    "ast_hash": "3971d452ab23c802233e1635270918ce",
+    "semantic_hash": "3971d452ab23c802233e1635270918ce"
+  },
+  "js/ui/widgets.js": {
+    "mtime": 1791307895.5659533,
+    "seen": 1791364542.8292413,
+    "ast_hash": "454221288c19739f64c7bfa16e6c3667",
+    "semantic_hash": "454221288c19739f64c7bfa16e6c3667"
+  },
+  "js/ui/wordbank.js": {
+    "mtime": 1791305277.2134037,
+    "seen": 1791364542.8292422,
+    "ast_hash": "8f3da08b4da4b22b426f38d39359971f",
+    "semantic_hash": "8f3da08b4da4b22b426f38d39359971f"
+  },
+  "js/views/home.js": {
+    "mtime": 1791304609.8265731,
+    "seen": 1791364542.829243,
+    "ast_hash": "b5273f59b1d1323d736da6bc7c714d1f",
+    "semantic_hash": "b5273f59b1d1323d736da6bc7c714d1f"
+  },
+  "js/views/lobby.js": {
+    "mtime": 1791307895.5659533,
+    "seen": 1791364542.829244,
+    "ast_hash": "3b81c6b3cd164fc38ea6e35d75474488",
+    "semantic_hash": "3b81c6b3cd164fc38ea6e35d75474488"
+  },
+  "index.html": {
+    "mtime": 1791186760.978954,
+    "seen": 1791364542.8292449,
+    "ast_hash": "ae0aa94e36a4123c63687a783c039a5c",
+    "semantic_hash": "ae0aa94e36a4123c63687a783c039a5c"
+  },
+  "favicon.svg": {
+    "mtime": 1791186761.747652,
+    "seen": 1791364542.8292458,
+    "ast_hash": "493babd67102b0634aa39e2129b7b450",
+    "semantic_hash": "493babd67102b0634aa39e2129b7b450"
+  }
+}

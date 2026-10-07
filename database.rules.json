@@ -391,6 +391,20 @@
         }
       }
     },
+    "uno": {
+      "$code": {
+        ".write": "auth != null && !newData.exists() && !newData.parent().parent().child('rooms/' + $code).exists()",
+        "$g": {
+          ".read": "auth != null && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid",
+          ".write": "auth != null && root.child('rooms/' + $code + '/meta/hostUid').val() === auth.uid",
+          "hands": {
+            "$uid": {
+              ".read": "auth != null && auth.uid === $uid"
+            }
+          }
+        }
+      }
+    },
     "strokes": {
       "$code": {
         ".write": "auth != null && !newData.exists() && !newData.parent().parent().child('rooms/' + $code).exists()",

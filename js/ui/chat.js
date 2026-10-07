@@ -3,8 +3,10 @@
 // l'étiquette de son canal, et c'est la base qui décide qui peut lire lequel.
 import { h, busy } from "./dom.js";
 import { token } from "./widgets.js";
+import { play } from "./sound.js";
 
 const draft = { text: "", channel: null }; // saisie en cours et canal choisi
+let heard = { g: null, key: "" }; // dernier message déjà signalé par un son
 
 // `channels` : [{ id, tag, hint, messages, send, write }]. Sans lui, un seul
 // canal : la discussion de toute la table.
@@ -26,6 +28,10 @@ export function chatBox(ctx, { channels, prefer, note } = {}) {
   // Les clés commencent par l'heure d'envoi : les canaux se mêlent dans l'ordre.
   const lines = list.flatMap((channel) => Object.entries(channel.messages || {}).map(([key, message]) => ({ key, channel, ...message })))
     .sort((a, b) => (a.key < b.key ? -1 : 1)).slice(-60);
+  // Un message d'un autre joueur vient d'arriver : on le signale (pas l'historique d'une partie rejointe).
+  const last = lines.at(-1);
+  if (heard.g === s.g && last && last.key > heard.key && last.uid !== me) play("message");
+  heard = { g: s.g, key: last?.key || heard.key };
   const thread = h("ul", { class: "talk-list", "aria-live": "polite" },
     lines.length ? lines.map((line) => h("li", { class: `from-${line.channel.id}${line.uid === me ? " is-me" : ""}` },
       token(who(line.uid)),

@@ -5,7 +5,7 @@ const CLAIM_DELAY = 4000; // laisse à l'hôte le temps d'un rafraîchissement
 const TOUCH_EVERY = 10 * 60 * 1000;
 const VISITED_KEY = "tables";
 // Tout ce qui est rangé avec une table.
-const TREES = ["rooms", "secrets", "vault", "actions", "sealed", "night", "draw", "tries", "strokes"];
+const TREES = ["rooms", "secrets", "vault", "actions", "sealed", "night", "draw", "tries", "strokes", "uno"];
 
 const roomRef = (code, path = "") => ref(db, `rooms/${code}${path && "/" + path}`);
 

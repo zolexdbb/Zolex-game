@@ -1,6 +1,7 @@
 import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
 import { pawn, countdown } from "../../ui/widgets.js";
+import { play, scratch } from "../../ui/sound.js";
 import { norm, shuffle, drawerOf, skipTurn } from "./logic.js";
 
 const COLORS = ["#1d1a16", "#b5452f", "#d9703c", "#d49a2a", "#2f5d46", "#2c8a8a", "#1f3550", "#7a4a8c", "#8a5a3b", "#ffffff"];
@@ -74,11 +75,12 @@ canvas.addEventListener("pointermove", (event) => {
   const [x, y] = point(event);
   const n = live.pts.length;
   trace({ c: live.c, w: live.w, p: [live.pts[n - 2], live.pts[n - 1], x, y].join(",") });
+  scratch(.3 + Math.hypot(x - live.pts[n - 2], y - live.pts[n - 1]) / 40);
   live.pts.push(x, y);
   if (live.pts.length >= MAX_POINTS) { send(true); begin(event); } else send(false);
 });
 for (const type of ["pointerup", "pointercancel"]) {
-  canvas.addEventListener(type, () => { if (live) { send(true); live = null; } });
+  canvas.addEventListener(type, () => { scratch(0); if (live) { send(true); live = null; } });
 }
 
 // Branche la feuille sur le dessin du tour en cours.
@@ -93,7 +95,11 @@ function plug(ctx) {
   });
   live = null;
   redraw();
-  ui.stop = ctx.listen(ui.path, (value) => { ui.strokes = value || {}; redraw(); });
+  ui.stop = ctx.listen(ui.path, (value) => {
+    ui.strokes = value || {};
+    redraw();
+    if (value && !ui.canDraw) scratch(.6); // les devins entendent le crayon du dessinateur
+  });
 }
 
 // ---- Mot et indices ----
@@ -326,6 +332,14 @@ export function view(ctx) {
   const { state: s, me } = ctx;
   plug(ctx);
   ui.canDraw = s.phase === "draw" && drawerOf(s) === me;
+  const cue = `${ui.key}/${s.phase}`;
+  const found = Object.keys(ctx.room.found?.[s.g]?.[s.turn] || {}).length;
+  if (ui.cue !== cue) {
+    ui.cue = cue;
+    if (s.phase === "recap") play("reveal");
+    if (s.phase === "end") play("win");
+  } else if (found > ui.found) play("found");
+  ui.found = found;
   canvas.classList.toggle("is-mine", ui.canDraw);
   if (!ui.canDraw) live = null;
   return [
