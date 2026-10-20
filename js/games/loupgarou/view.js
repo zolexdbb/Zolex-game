@@ -1,6 +1,6 @@
 import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
-import { pawn, flipCard, countdown, roundTable } from "../../ui/widgets.js";
+import { pawn, flipCard, countdown, roundTable, podium } from "../../ui/widgets.js";
 import { chatBox } from "../../ui/chat.js";
 import { play, ambience } from "../../ui/sound.js";
 import { ROLES, WINNERS, neighbours, openVote, forceClose, skipHunter, announce, fallNight } from "./logic.js";
@@ -447,19 +447,24 @@ function hunterPanel(ctx) {
 }
 
 function endPanel(ctx) {
-  const { state: s, vault, isHost } = ctx;
+  const { state: s, room, vault, me, isHost } = ctx;
   const pair = s.has?.cupidon ? ctx.watch(nightPath(ctx, "cupid/pair"), "end") : null;
   const alive = Object.keys(s.alive || {});
   // Deux amoureux de camps opposés qui restent seuls gagnent à la place des autres.
   const lovers = vault && pair && alive.length === 2 && alive.includes(pair.a) && alive.includes(pair.b)
     && (vault.roles[pair.a] === "loup") !== (vault.roles[pair.b] === "loup");
+  const won = (id) => (lovers ? id === pair.a || id === pair.b : (vault.roles[id] === "loup") === (s.winner === "loups"));
+  const camp = (wins) => s.order.filter((id) => won(id) === wins).map((id) =>
+    ({ name: nameOf(s, id), index: s.names[id].pawn, online: true, avatar: room.players?.[id]?.avatar, isMe: id === me }));
   return [
     h("h2", null, "Fin de la partie"),
     h("p", { class: "verdict" }, WINNERS[lovers ? "amoureux" : s.winner]),
     pair && h("p", null, "Cupidon avait uni ", h("b", null, nameOf(s, pair.a)), " et ", h("b", null, nameOf(s, pair.b)), "."),
-    !vault ? h("p", { class: "rule" }, "On retourne toutes les cartes…")
-      : h("ul", { class: "roles-list" }, s.order.map((id) =>
-        h("li", { class: `role-${vault.roles[id]}` }, h("span", null, nameOf(s, id)), h("b", null, ROLES[vault.roles[id]].name)))),
+    !vault ? h("p", { class: "rule" }, "On retourne toutes les cartes…") : [
+      podium([{ players: camp(true), note: "Vainqueurs" }, { players: camp(false), note: "Battus" }], s.g),
+      h("ul", { class: "roles-list" }, s.order.map((id) =>
+        h("li", { class: `role-${vault.roles[id]}` }, h("span", null, nameOf(s, id)), h("b", null, ROLES[vault.roles[id]].name))))
+    ],
     isHost
       ? action("Rejouer", "play", () => ctx.backToLobby(), "btn-brick btn-big")
       : h("p", { class: "rule" }, "L'hôte peut relancer une partie depuis le salon.")

@@ -85,3 +85,21 @@ export function flipCard({ open, back, front, cls = "", label, onToggle, deal })
     ? h("button", { class: classes, type: "button", "aria-pressed": String(!!open), "aria-label": label, onclick: onToggle }, faces)
     : h("div", { class: classes }, faces);
 }
+
+// Podium de fin de partie. `steps` : jusqu'à trois marches, de la plus haute à la
+// plus basse, chacune { players: [{ name, index, online, avatar, isMe }], note }.
+// `key` désigne la partie : les marches ne montent qu'une fois, même si l'écran est redessiné.
+const risen = { key: null, at: 0 };
+export function podium(steps, key) {
+  if (risen.key !== key) Object.assign(risen, { key, at: performance.now() });
+  const box = h("div", { class: "podium", role: "list" }, steps.slice(0, 3).map((step, i) => {
+    const el = h("div", { class: `podium-step is-${i + 1}`, role: "listitem", "aria-label": `Marche ${i + 1}` },
+      h("div", { class: "podium-who" }, step.players.map((p) => pawn(p, { isMe: p.isMe }))),
+      step.note && h("b", { class: "podium-note" }, step.note),
+      h("div", { class: "podium-block" }, i === 0 ? icon("crown") : String(i + 1)));
+    el.style.flexGrow = Math.min(3, step.players.length || 1);
+    return el;
+  }));
+  box.style.setProperty("--since", `${Math.round(risen.at - performance.now())}ms`);
+  return box;
+}

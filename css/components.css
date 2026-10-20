@@ -540,3 +540,44 @@ div.card { cursor: default; }
 .avatar-preview { --pawn: var(--brick); width: 64px; height: 64px; }
 .avatar-actions, .avatar-builder { display: flex; flex-wrap: wrap; gap: 8px; }
 .avatar-builder { grid-column: 1 / -1; padding: 10px; border: 2px dashed var(--card); border-radius: 4px; }
+
+/* ---- Fin de partie : le podium ---- */
+.finale { width: 100%; max-width: 640px; margin-inline: auto; text-align: center; }
+.finale .roles-list { text-align: left; }
+.podium { display: flex; justify-content: center; align-items: flex-end; gap: 6px; padding-top: 6px; }
+.podium-step { display: grid; gap: 6px; flex: 1 1 0; min-width: 0; max-width: 300px; }
+.podium-step.is-1 { order: 2; }
+.podium-step.is-2 { order: 1; }
+.podium-step.is-3 { order: 3; }
+.podium-who { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 4px; }
+.podium .pawn { width: 76px; color: var(--black); }
+.podium .pawn-disc { width: 48px; height: 48px; font-size: 1.2rem; }
+.podium .is-1 .pawn-disc { outline: 4px solid var(--ochre); outline-offset: 3px; }
+.podium .pawn-name { font-size: .82rem; }
+.podium-note { font-size: .9rem; }
+.podium-block {
+  display: grid;
+  place-items: center;
+  height: 46px;
+  font: 400 1.5rem/1 var(--display);
+  color: var(--black);
+  background: var(--grain), #c98a55;
+  border: 2px solid var(--black);
+  border-radius: 4px 4px 0 0;
+  box-shadow: inset 0 -6px 0 rgb(0 0 0 / .12);
+  transform-origin: bottom;
+}
+.podium .is-2 .podium-block { height: 70px; background: var(--grain), #cfd2d4; }
+.podium .is-1 .podium-block { height: 100px; font-size: 1.9rem; background: var(--grain), var(--ochre); }
+/* Les marches montent l'une après l'autre : la troisième, la deuxième, puis la première. */
+.podium-step { --wait: 100ms; }
+.podium-step.is-2 { --wait: 700ms; }
+.podium-step.is-1 { --wait: 1300ms; }
+.podium-block { animation: podium-rise .5s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: calc(var(--since, 0ms) + var(--wait)); }
+.podium-who, .podium-note { animation: podium-drop .4s ease-out both; animation-delay: calc(var(--since, 0ms) + var(--wait) + 350ms); }
+@keyframes podium-rise { from { transform: scaleY(0); } }
+@keyframes podium-drop { from { opacity: 0; transform: translateY(-18px); } }
+/* Suite du classement, après les trois marches. */
+.ranks { counter-reset: rank 3; }
+.ranks li { counter-increment: rank; }
+.ranks li span::before { content: counter(rank) ". "; font-weight: 700; }

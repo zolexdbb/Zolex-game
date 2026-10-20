@@ -1,6 +1,6 @@
 import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
-import { pawn, token, flipCard } from "../../ui/widgets.js";
+import { pawn, token, flipCard, podium } from "../../ui/widgets.js";
 import { chatBox } from "../../ui/chat.js";
 import { ROLE_NAMES, ROLE_ICONS, WINNERS, norm, skipTurn, goVote, forceClose, skipGuess, proceed } from "./logic.js";
 
@@ -199,13 +199,17 @@ function mrWhitePanel(ctx) {
 }
 
 function endPanel(ctx) {
-  const { state: s, room, vault, isHost } = ctx;
+  const { state: s, room, vault, me, isHost } = ctx;
   const guess = s.winner === "mrwhite" && room.guess?.[s.g]?.[s.last?.uid]?.text;
+  const won = (role) => (s.winner === "civils" ? role === "civil" : s.winner === "mrwhite" ? role === "mrwhite" : role !== "civil");
+  const camp = (wins) => s.base.filter((id) => won(vault.roles[id]) === wins).map((id) =>
+    ({ name: s.names[id].name, index: s.names[id].pawn, online: true, avatar: room.players?.[id]?.avatar, isMe: id === me }));
   return [
     h("h2", null, "Affaire classée"),
     h("p", { class: "verdict" }, WINNERS[s.winner]),
     guess && h("p", null, "Sa réponse : « ", h("b", null, guess), " »."),
     !vault ? h("p", { class: "rule" }, "On ouvre les dossiers…") : [
+      podium([{ players: camp(true), note: "Vainqueurs" }, { players: camp(false), note: "Battus" }], s.g),
       h("p", null, "Mot des Civils : ", h("b", null, vault.words.civil), " · mot des Undercover : ", h("b", null, vault.words.undercover)),
       h("ul", { class: "roles-list" }, s.base.map((id) =>
         h("li", { class: `role-${vault.roles[id]}` },
