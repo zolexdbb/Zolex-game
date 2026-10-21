@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getAuth, setPersistence, browserSessionPersistence, signInAnonymously, onAuthStateChanged
+  getAuth, setPersistence, browserLocalPersistence, signInAnonymously, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -19,11 +19,13 @@ export function isConfigured() {
   );
 }
 
-// Session par onglet : chaque onglet est un joueur différent.
+// Le joueur est gardé sur cet appareil : fermer l'onglet, couper le réseau ou
+// relancer le navigateur rend la même place à la table. Pour jouer à plusieurs
+// sur un même ordinateur, chacun prend une fenêtre privée ou un autre navigateur.
 export async function initFirebase() {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  await setPersistence(auth, browserSessionPersistence);
+  await setPersistence(auth, browserLocalPersistence);
   const user = await new Promise((resolve) => {
     const stop = onAuthStateChanged(auth, (u) => { stop(); resolve(u); });
   });

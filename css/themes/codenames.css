@@ -1,0 +1,75 @@
+/* Nom de code : un dossier d'agents secrets, rouges contre bleus. */
+.theme-codenames { --red: var(--brick); --blue: var(--ink); }
+.theme-codenames .cn-head { text-align: center; color: var(--cream); }
+.theme-codenames .cn-head h1 { font: 400 1.6rem/1.1 var(--display); text-transform: uppercase; text-shadow: 2px 2px 0 var(--felt-dark); }
+.theme-codenames .cn-head h1.team-r { color: #f2b3a6; }
+.theme-codenames .cn-head h1.team-b { color: #a9c7e8; }
+
+/* La grille de 25 cartes. */
+.theme-codenames .cn-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.theme-codenames .cn-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 58px;
+  padding: 6px 4px;
+  font: 700 .82rem/1.1 var(--text);
+  text-align: center;
+  text-transform: uppercase;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  color: var(--black);
+  background: var(--grain), #f3e3c3;
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  box-shadow: 0 3px 0 rgb(0 0 0 / .35);
+}
+button.cn-card { cursor: pointer; transition: transform .1s; }
+button.cn-card:hover { transform: translateY(-3px); }
+/* Ce que voit le maître-espion : la couleur en filigrane. */
+.theme-codenames .cn-card.hint-r { background: var(--grain), #f2c1b6; box-shadow: inset 0 0 0 3px var(--red), 0 3px 0 rgb(0 0 0 / .35); }
+.theme-codenames .cn-card.hint-b { background: var(--grain), #bcd3ec; box-shadow: inset 0 0 0 3px var(--blue), 0 3px 0 rgb(0 0 0 / .35); }
+.theme-codenames .cn-card.hint-a { color: #fff8ea; background: var(--grain), #5a524a; box-shadow: inset 0 0 0 3px var(--black), 0 3px 0 rgb(0 0 0 / .35); }
+/* Les cartes retournées. */
+.theme-codenames .cn-card.is-shown { color: #fff8ea; }
+.theme-codenames .cn-card.is-r { background: var(--grain), var(--red); }
+.theme-codenames .cn-card.is-b { background: var(--grain), var(--blue); }
+.theme-codenames .cn-card.is-n { color: var(--black); background: var(--grain), #d9c9a3; opacity: .75; }
+.theme-codenames .cn-card.is-a { background: var(--grain), var(--black); }
+.theme-codenames .cn-card.is-last { outline: 3px solid var(--ochre); outline-offset: 2px; }
+.theme-codenames .cn-story { text-align: center; color: var(--cream); font-style: italic; }
+
+/* L'indice affiché en grand. */
+.theme-codenames .cn-clue-shown { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px; color: #fff8ea; border-radius: 6px; }
+.theme-codenames .cn-clue-shown.team-r { background: var(--red); }
+.theme-codenames .cn-clue-shown.team-b { background: var(--blue); }
+.theme-codenames .cn-clue-shown span { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+.theme-codenames .cn-clue-shown strong { font: 400 1.5rem var(--display); text-transform: uppercase; }
+.theme-codenames .cn-clue-shown b { display: grid; place-items: center; width: 2rem; aspect-ratio: 1; color: var(--black); background: var(--cream); border-radius: 50%; }
+.theme-codenames .cn-clue .cn-n { flex: 0 0 4.2rem; }
+
+/* Les deux équipes. */
+.theme-codenames .cn-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.theme-codenames .cn-team { padding: 10px 8px; border: 2px solid rgb(243 233 210 / .35); border-radius: 12px; background: rgb(0 0 0 / .12); }
+.theme-codenames .cn-team.is-turn { border-color: var(--ochre); }
+.theme-codenames .cn-team h3 { display: flex; justify-content: space-between; gap: 6px; margin: 0 0 8px; font: 400 1rem var(--display); text-transform: uppercase; }
+.theme-codenames .cn-team h3 b { font: 700 .75rem var(--text); text-transform: none; }
+.theme-codenames .team-r h3 { color: #f2b3a6; }
+.theme-codenames .team-b h3 { color: #a9c7e8; }
+.theme-codenames .cn-members { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px 4px; }
+.theme-codenames .cn-winner { padding: 14px; font: 400 1.5rem var(--display); text-align: center; text-transform: uppercase; color: #fff8ea; border-radius: 6px; }
+.theme-codenames .cn-winner.team-r { background: var(--red); }
+.theme-codenames .cn-winner.team-b { background: var(--blue); }
+@media (max-width: 480px) {
+  /* Téléphone : en minuscules et coupés au besoin, les mots longs tiennent dans leur case. */
+  .theme-codenames .cn-card { min-height: 48px; font-size: .6rem; padding: 4px 1px; letter-spacing: -.01em; text-transform: none; overflow-wrap: anywhere; }
+  .theme-codenames .cn-grid { gap: 4px; }
+}
+
+/* Grand écran : la grille prend la place, les équipes et la discussion tiennent à droite. */
+@media (min-width: 900px) {
+  #app:has(.cn-main) { max-width: 1400px; }
+  .theme-codenames:has(> .cn-main) { grid-template-columns: minmax(0, 1fr) 340px; }
+  .theme-codenames .cn-grid { gap: 8px; }
+  .theme-codenames .cn-card { min-height: 78px; font-size: clamp(.78rem, 1.1vw, 1rem); }
+}

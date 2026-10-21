@@ -1,0 +1,55 @@
+/* Petit Bac : une grille de cahier d'écolier, la lettre tamponnée en gros. */
+.theme-petitbac .bac-head { display: grid; justify-items: center; gap: 6px; text-align: center; color: var(--cream); }
+.theme-petitbac .bac-letter {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  aspect-ratio: 1;
+  font: 400 3.2rem/1 var(--display);
+  color: var(--brick);
+  background: var(--grain), var(--cream);
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  box-shadow: 0 5px 0 var(--felt-dark);
+  transform: rotate(-4deg);
+}
+.theme-petitbac .countdown {
+  display: inline-block;
+  padding: 0 8px;
+  font: 400 1.3rem/1.3 var(--display);
+  color: var(--black);
+  background: var(--ochre);
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+/* La feuille à carreaux. */
+.theme-petitbac .sheet {
+  background:
+    linear-gradient(rgb(31 53 80 / .08) 1px, transparent 1px) 0 0 / 100% 22px,
+    linear-gradient(90deg, rgb(31 53 80 / .08) 1px, transparent 1px) 0 0 / 22px 100%,
+    var(--cream);
+}
+.theme-petitbac .bac-form { display: grid; gap: 8px; }
+.theme-petitbac .bac-row { display: grid; grid-template-columns: minmax(7rem, 38%) minmax(0, 1fr); align-items: center; gap: 10px; font-weight: 700; }
+.theme-petitbac .bac-row.is-off .field { border-color: var(--brick); background: #f7dcd4; }
+.theme-petitbac .bac-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.theme-petitbac .bac-actions .btn { flex: 1 1 140px; }
+.theme-petitbac .bac-stop { padding: 6px 10px; font-weight: 700; color: #fff8ea; background: var(--brick); border-radius: 4px; text-align: center; }
+.theme-petitbac .bac-mine { display: grid; gap: 4px; }
+.theme-petitbac .bac-mine li { display: flex; justify-content: space-between; gap: 10px; padding: 4px 8px; background: #fffaf0; border-radius: 3px; }
+/* Dépouillement et points, catégorie par catégorie. */
+.theme-petitbac .bac-review { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.theme-petitbac .bac-cat { padding: 8px 10px; background: #fffaf0; border: 2px solid var(--black); border-radius: 4px; }
+.theme-petitbac .bac-cat h3 { margin: 0 0 6px; font: 400 .95rem var(--display); text-transform: uppercase; color: var(--ink); }
+.theme-petitbac .bac-cat ul { display: grid; gap: 4px; }
+.theme-petitbac .bac-cat li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: .9rem; }
+.theme-petitbac .bac-cat .who { min-width: 4.5rem; opacity: .75; }
+.theme-petitbac .bac-cat .btn-mini { margin-left: auto; }
+.theme-petitbac .bac-cat .is-off b, .theme-petitbac .bac-cat .is-refused b { text-decoration: line-through; opacity: .6; }
+.theme-petitbac .bac-cat .is-contested { background: #f7dcd4; border-radius: 3px; }
+.theme-petitbac .bac-cat small { color: var(--brick); }
+.theme-petitbac .pts { margin-left: auto; font-style: normal; font-weight: 700; }
+.theme-petitbac .pts-10 { color: var(--felt); }
+.theme-petitbac .pts-5 { color: var(--ochre); }
+.theme-petitbac .pts-0 { opacity: .5; }

@@ -29,7 +29,7 @@ function lobbyView(props) {
 
 export default {
   id: "dessin",
-  name: "What's Drawing ?",
+  name: "Devine le dessin",
   tagline: "Un mot, un crayon, des devins",
   minPlayers: 2,
   defaultSettings: { rounds: 2, drawTime: 80, rerolls: 1, ...WORD_DEFAULTS },

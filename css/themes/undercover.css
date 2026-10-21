@@ -77,3 +77,62 @@
 .roles-list .role-art { font-size: .8rem; }
 .role-chip { display: inline-flex; align-items: center; gap: 5px; }
 .role-chip .role-art { font-size: .7rem; box-shadow: none; }
+
+/* Fin de partie : le camp vainqueur, en tampon sur le dossier. */
+.theme-undercover .camp-banner {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 14px 10px;
+  text-align: center;
+  background: var(--grain), #fffaf0;
+  border: 3px double var(--black);
+  border-radius: 4px;
+}
+.theme-undercover .camp-banner strong { font: 400 1.25rem/1.15 var(--display); text-transform: uppercase; color: var(--brick); }
+.theme-undercover .camp-infiltres { background: var(--grain), var(--ink); }
+.theme-undercover .camp-infiltres strong { color: #f0b7a6; }
+.theme-undercover .camp-infiltres .pawn { color: #fff8ea; }
+.theme-undercover .camp-mrwhite { background: var(--grain), #fff; }
+.theme-undercover .camp-pawns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 6px; }
+.theme-undercover .camp-pawns .pawn { width: 78px; color: var(--black); }
+.theme-undercover .camp-infiltres .camp-pawns .pawn { color: #fff8ea; }
+
+/* Partie sur un seul téléphone. */
+.local-game .local-players { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px 8px; }
+.local-game .local-players li { display: grid; justify-items: center; gap: 4px; }
+.local-game .local-players .pawn, .local-game .local-pass .pawn, .local-game .local-order .pawn { color: var(--black); }
+.local-game .local-order { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; counter-reset: speak; }
+.local-game .local-order li { counter-increment: speak; display: grid; justify-items: center; }
+.local-game .local-order li::before { content: counter(speak); font: 400 1rem var(--display); }
+.local-game .local-pass { display: grid; justify-items: center; gap: 10px; text-align: center; }
+.local-game .vote-list .btn[aria-pressed="true"] { outline: 3px solid var(--brick); outline-offset: 2px; }
+.choice-local { margin-top: 4px; }
+
+/* Fin d'une série : le grand classement, puis une fiche par partie. */
+.theme-undercover .series-final { max-width: 760px; }
+.theme-undercover .series-final .verdict { font-size: 1.6rem; }
+/* Une partie par bandeau, sur toute la largeur : numéro, camp vainqueur, mots, gagnants. */
+.theme-undercover .series-recap { display: grid; gap: 8px; text-align: left; }
+.theme-undercover .series-recap li {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: 4px 14px;
+  padding: 10px 14px;
+  background: var(--grain), #fffaf0;
+  border: 2px solid var(--black);
+  border-left-width: 8px;
+  border-radius: 3px;
+}
+.theme-undercover .series-recap .camp-civils { border-left-color: #9db88f; }
+.theme-undercover .series-recap .camp-infiltres { border-left-color: var(--ink); }
+.theme-undercover .series-recap .camp-mrwhite { border-left-color: #fff; }
+.theme-undercover .series-recap strong { font: 400 .95rem/1.15 var(--display); text-transform: uppercase; color: var(--brick); }
+.theme-undercover .series-recap small { font-size: .82rem; }
+/* Téléphone : le numéro et le camp sur une ligne, les mots et les gagnants dessous. */
+@media (max-width: 720px) {
+  .theme-undercover .series-recap li { grid-template-columns: auto minmax(0, 1fr); }
+  .theme-undercover .series-recap li > :nth-child(n + 3) { grid-column: 1 / -1; }
+}
+.pair-flag { justify-self: start; }

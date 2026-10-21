@@ -1,0 +1,36 @@
+// Pack One Piece : équipages, personnages, fruits du démon et lieux.
+export default {
+  id: "onepiece", name: "One Piece", groups: [
+    ["Luffy", "Zoro", "Nami", "Usopp"],
+    ["Sanji", "Chopper", "Nico Robin", "Franky"],
+    ["Brook", "Jinbe", "Vivi", "Carrot"],
+    ["Ace", "Sabo", "Garp", "Dragon"],
+    ["Barbe Blanche", "Big Mom", "Kaido", "Shanks"],
+    ["Barbe Noire", "Marco", "Joz", "Vista"],
+    ["Akainu", "Aokiji", "Kizaru", "Fujitora"],
+    ["Sengoku", "Coby", "Smoker", "Tashigi"],
+    ["Mihawk", "Crocodile", "Doflamingo", "Hancock"],
+    ["Trafalgar Law", "Eustass Kid", "Killer", "Bepo"],
+    ["Arlong", "Alvida", "Baggy le Clown", "Kuro"],
+    ["Ener", "Rob Lucci", "Moria", "Magellan"],
+    ["Gomu Gomu no Mi", "Mera Mera no Mi", "Hie Hie no Mi", "Ope Ope no Mi"],
+    ["Fruit du démon", "Haki", "Granit marin"],
+    ["Haki de l'observation", "Haki de l'armement", "Haki des rois"],
+    ["Thousand Sunny", "Vogue Merry", "Moby Dick", "Red Force"],
+    ["Grand Line", "East Blue", "Nouveau Monde", "Red Line"],
+    ["Alabasta", "Skypiea", "Water Seven", "Enies Lobby"],
+    ["Thriller Bark", "Sabaody", "Île des hommes-poissons", "Punk Hazard"],
+    ["Dressrosa", "Whole Cake", "Wano", "Egghead"],
+    ["Impel Down", "Marineford", "Mary Geoise"],
+    ["One Piece", "Poneglyphe", "Road Poneglyphe", "Laugh Tale"],
+    ["Prime", "Avis de recherche", "Berry", "Escargophone"],
+    ["Chapeau de paille", "Équipage", "Pirate", "Capitaine"],
+    ["Marine", "Gouvernement mondial", "Cipher Pol", "Dragons célestes"],
+    ["Révolutionnaire", "Armée révolutionnaire", "Ivankov", "Koala"],
+    ["Gear Second", "Gear Third", "Gear Fourth", "Gear Fifth"],
+    ["Santoryu", "Diable Jambe", "Clima-Tact", "Rumble Ball"],
+    ["Hommes-poissons", "Minks", "Géants", "Lunariens"],
+    ["Gol D. Roger", "Rayleigh", "Oden", "Joy Boy"],
+    ["Eiichiro Oda", "Shonen Jump", "Toei Animation"]
+  ]
+};

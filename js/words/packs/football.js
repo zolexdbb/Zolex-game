@@ -1,0 +1,37 @@
+// Pack Football : clubs, joueurs, compétitions et vocabulaire du terrain.
+export default {
+  id: "football", name: "Football", groups: [
+    ["PSG", "Olympique de Marseille", "Olympique lyonnais", "AS Monaco"],
+    ["LOSC", "Stade rennais", "RC Lens", "OGC Nice"],
+    ["Real Madrid", "FC Barcelone", "Atlético de Madrid", "FC Séville"],
+    ["Manchester United", "Manchester City", "Liverpool", "Chelsea", "Arsenal"],
+    ["Juventus", "AC Milan", "Inter Milan", "AS Rome", "Naples"],
+    ["Bayern Munich", "Borussia Dortmund", "Bayer Leverkusen"],
+    ["Ajax", "Benfica", "FC Porto", "Celtic Glasgow"],
+    ["Zidane", "Platini", "Henry", "Papin"],
+    ["Mbappé", "Griezmann", "Benzema", "Giroud"],
+    ["Messi", "Ronaldo", "Neymar", "Haaland"],
+    ["Pelé", "Maradona", "Cruyff", "Beckenbauer"],
+    ["Ronaldinho", "Kaka", "Ronaldo Nazario", "Rivaldo"],
+    ["Lloris", "Barthez", "Buffon", "Neuer"],
+    ["Coupe du monde", "Euro", "Copa América", "Coupe d'Afrique des nations"],
+    ["Ligue des champions", "Ligue Europa", "Ligue Europa Conférence"],
+    ["Ligue 1", "Premier League", "Liga", "Serie A", "Bundesliga"],
+    ["Coupe de France", "Trophée des champions", "Coupe de la Ligue"],
+    ["Ballon d'or", "Soulier d'or", "Golden Boy"],
+    ["Gardien", "Défenseur", "Milieu", "Attaquant"],
+    ["Latéral", "Libéro", "Meneur de jeu", "Avant-centre"],
+    ["Penalty", "Coup franc", "Corner", "Touche"],
+    ["Carton jaune", "Carton rouge", "Faute", "Hors-jeu"],
+    ["Arbitre", "Juge de touche", "VAR", "Sifflet"],
+    ["But", "Lucarne", "Poteau", "Transversale"],
+    ["Retourné", "Tête", "Lob", "Panenka"],
+    ["Dribble", "Petit pont", "Grand pont", "Roulette"],
+    ["Parc des Princes", "Stade Vélodrome", "Stade de France", "Camp Nou"],
+    ["Santiago Bernabéu", "Old Trafford", "Anfield", "San Siro"],
+    ["Mercato", "Transfert", "Prêt", "Clause libératoire"],
+    ["Supporter", "Ultra", "Tifo", "Kop"],
+    ["Prolongation", "Tirs au but", "Mi-temps", "Temps additionnel"],
+    ["Didier Deschamps", "Aimé Jacquet", "Pep Guardiola", "Carlo Ancelotti"]
+  ]
+};

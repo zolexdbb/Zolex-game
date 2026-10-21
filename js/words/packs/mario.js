@@ -1,0 +1,35 @@
+// Pack Mario : personnages, ennemis, objets, jeux et lieux du Royaume Champignon.
+export default {
+  id: "mario", name: "Mario", groups: [
+    ["Mario", "Luigi", "Wario", "Waluigi"],
+    ["Peach", "Daisy", "Harmonie", "Pauline"],
+    ["Toad", "Toadette", "Capitaine Toad"],
+    ["Yoshi", "Bébé Mario", "Bébé Luigi", "Bébé Peach"],
+    ["Bowser", "Bowser Jr", "Kamek", "Les Koopalings"],
+    ["Donkey Kong", "Diddy Kong", "Cranky Kong", "Funky Kong"],
+    ["Goomba", "Koopa Troopa", "Paratroopa", "Bloups"],
+    ["Boo", "Maskass", "Bob-omb", "Lakitu"],
+    ["Plante Piranha", "Chomp", "Thwomp", "Bill Ball"],
+    ["Frère Marto", "Skelerex", "Cheep-Cheep", "Pokey"],
+    ["Super champignon", "Fleur de feu", "Super étoile", "Champignon 1-Up"],
+    ["Plume", "Super cloche", "Feuille", "Méga champignon"],
+    ["Carapace verte", "Carapace rouge", "Carapace bleue", "Peau de banane"],
+    ["Pièce", "Pièce étoile", "Soleil", "Lune"],
+    ["Tuyau", "Bloc ?", "Bloc de briques", "Drapeau"],
+    ["Royaume Champignon", "Château de Peach", "Château de Bowser", "Île Delfino"],
+    ["Circuit Mario", "Route Arc-en-ciel", "Plage Koopa", "Manoir Trempe-Os"],
+    ["Super Mario Bros", "Super Mario 64", "Super Mario Galaxy", "Super Mario Odyssey"],
+    ["Mario Kart", "Mario Party", "Mario Tennis", "Super Smash Bros"],
+    ["Paper Mario", "Mario et Luigi", "Super Mario RPG"],
+    ["Luigi's Mansion", "Super Mario Sunshine", "Super Mario Wonder"],
+    ["Cappy", "Rosalina", "Lumas", "Pianta"],
+    ["Kart", "Moto", "Quad", "Deltaplane"],
+    ["Wiggler", "Roi Boo", "Petey Piranha", "Bowser Skelet"],
+    ["Fludd", "Poltergust", "Marteau", "Glouton"],
+    ["Nintendo", "Shigeru Miyamoto", "NES", "Game Boy"],
+    ["Wahoo", "Mamma mia", "Let's-a go", "Here we go"],
+    ["Odyssée", "Galaxie", "Comète", "Planète"],
+    ["Chat Mario", "Mario Tanuki", "Mario Grenouille", "Mario Abeille"],
+    ["Ligne d'arrivée", "Point de contrôle", "Niveau secret", "Monde 1-1"]
+  ]
+};

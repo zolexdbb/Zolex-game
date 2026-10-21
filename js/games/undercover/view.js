@@ -1,8 +1,8 @@
 import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
-import { pawn, token, flipCard, podium } from "../../ui/widgets.js";
+import { pawn, token, flipCard, ranking, countdown } from "../../ui/widgets.js";
 import { chatBox } from "../../ui/chat.js";
-import { ROLE_NAMES, ROLE_ICONS, WINNERS, norm, skipTurn, goVote, forceClose, skipGuess, proceed } from "./logic.js";
+import { pairKey, avoidPairs, ROLE_NAMES, ROLE_ICONS, WINNERS, POINTS, wins, norm, skipTurn, goVote, forceClose, skipGuess, proceed, nextGame } from "./logic.js";
 
 // État d'affichage propre à cet appareil (carte retournée, brouillons).
 const ui = { g: null, open: false, clue: "", guess: "", shown: null };
@@ -198,27 +198,97 @@ function mrWhitePanel(ctx) {
   return [title, h("p", null, h("b", null, "Dernière chance."), " Quel était le mot des Civils ? Une seule proposition."), form];
 }
 
+// « Paire trop éloignée » : la paire ne sortira plus aux tables de cet hôte.
+export function pairFlag(done, send) {
+  if (done) return h("p", { class: "rule pair-flag" }, "Merci : cette paire ne sortira plus.");
+  const button = h("button", { class: "btn btn-mini pair-flag", type: "button" }, "Paire trop éloignée ?");
+  button.addEventListener("click", busy(button, send));
+  return button;
+}
+
+// Le camp qui l'emporte, dit en clair : quels rôles gagnent ensemble cette partie.
+const CAMPS = { civils: "Victoire des Civils", mrwhite: "Victoire de Mr White" };
+export const campLabel = (winner, mixed) => CAMPS[winner] || (mixed ? "Victoire des infiltrés : Undercover et Mr White" : "Victoire des Undercover");
+function campTitle(s, vault) {
+  const roles = new Set(s.base.map((id) => vault?.roles[id]));
+  return campLabel(s.winner, roles.has("mrwhite") && roles.has("undercover"));
+}
+
+// Fin d'une série de parties : le classement en grand, puis le résumé de chaque partie.
+// Partagé avec la partie locale. `person(id)` : pion d'un joueur ;
+// `history` : [{ no, winner, mixed, civil, undercover, winners: [noms] }] ;
+// `unit` : le nom de chaque partie jouée (« partie » en ligne, « round » en local).
+export function seriesBoard({ ids, score, person, history, key, count = history.length, what = "la série", unit = "partie" }) {
+  const Unit = unit[0].toUpperCase() + unit.slice(1);
+  const best = Math.max(...ids.map(score));
+  const leaders = ids.filter((id) => score(id) === best);
+  return [
+    h("h2", null, `Classement final · ${count} ${unit}${count > 1 ? "s" : ""}`),
+    h("p", { class: "verdict" }, leaders.length > 1
+      ? `Ex aequo : ${leaders.map((id) => person(id).name).join(", ").replace(/, ([^,]*)$/, " et $1")}`
+      : `${person(leaders[0]).name} remporte ${what}`),
+    ranking({ ids, score, person, label: (id) => `${score(id)} pts`, key, big: true }),
+    history.length > 0 && [
+      h("h2", null, `Résumé des ${unit}s`),
+      h("ol", { class: "series-recap" }, history.map((game) => h("li", { class: `camp-${game.winner}` },
+        h("span", { class: "eyebrow" }, `${Unit} ${game.no}`),
+        h("strong", null, campLabel(game.winner, game.mixed)),
+        h("span", null, h("b", null, game.civil), " contre ", h("b", null, game.undercover)),
+        h("small", null, "Gagnants : ", game.winners.join(", ")))))
+    ]
+  ];
+}
+
+function finalPanel(ctx) {
+  const { state: s, room, me, isHost } = ctx;
+  const series = s.series;
+  return [
+    seriesBoard({
+      ids: Object.keys(s.names), score: (id) => series.scores?.[id] || 0, history: series.history || [],
+      count: series.of, key: `${s.g}/final`,
+      person: (id) => ({ name: s.names[id].name, index: s.names[id].pawn, online: true, avatar: room.players?.[id]?.avatar, isMe: id === me })
+    }),
+    isHost
+      ? action("Rejouer", "play", () => ctx.backToLobby(), "btn-brick btn-big")
+      : h("p", { class: "rule" }, "L'hôte peut relancer une partie depuis le salon.")
+  ];
+}
+
 function endPanel(ctx) {
   const { state: s, room, vault, me, isHost } = ctx;
   const guess = s.winner === "mrwhite" && room.guess?.[s.g]?.[s.last?.uid]?.text;
-  const won = (role) => (s.winner === "civils" ? role === "civil" : s.winner === "mrwhite" ? role === "mrwhite" : role !== "civil");
-  const camp = (wins) => s.base.filter((id) => won(vault.roles[id]) === wins).map((id) =>
-    ({ name: s.names[id].name, index: s.names[id].pawn, online: true, avatar: room.players?.[id]?.avatar, isMe: id === me }));
+  const series = s.series || { no: 1, of: 1, scores: {} };
+  const person = (id) => ({ name: s.names[id].name, index: s.names[id].pawn, online: true, avatar: room.players?.[id]?.avatar, isMe: id === me });
+  const winners = vault ? s.base.filter((id) => wins(s.winner, vault.roles[id])) : [];
+  const score = (id) => series.scores?.[id] || 0;
+  const ranked = Object.keys(s.names).sort((a, b) => score(b) - score(a));
   return [
-    h("h2", null, "Affaire classée"),
+    h("h2", null, series.of > 1 ? `Partie ${series.no} sur ${series.of} · affaire classée` : "Affaire classée"),
     h("p", { class: "verdict" }, WINNERS[s.winner]),
     guess && h("p", null, "Sa réponse : « ", h("b", null, guess), " »."),
     !vault ? h("p", { class: "rule" }, "On ouvre les dossiers…") : [
-      podium([{ players: camp(true), note: "Vainqueurs" }, { players: camp(false), note: "Battus" }], s.g),
+      h("div", { class: `camp-banner camp-${s.winner}` },
+        h("strong", null, campTitle(s, vault)),
+        h("div", { class: "camp-pawns" }, winners.map((id) => pawn(person(id), {
+          isMe: id === me, note: series.of > 1 ? `+${POINTS[vault.roles[id]]} pts` : ROLE_NAMES[vault.roles[id]]
+        })))),
       h("p", null, "Mot des Civils : ", h("b", null, vault.words.civil), " · mot des Undercover : ", h("b", null, vault.words.undercover)),
+      pairFlag(!!room.flags?.[pairKey(vault.words.civil, vault.words.undercover)],
+        () => ctx.tryWrite(`flags/${pairKey(vault.words.civil, vault.words.undercover)}`, true)),
       h("ul", { class: "roles-list" }, s.base.map((id) =>
         h("li", { class: `role-${vault.roles[id]}` },
           h("span", null, s.names[id].name),
           h("b", null, roleArt(vault.roles[id]), ROLE_NAMES[vault.roles[id]]))))
     ],
-    isHost
+    // Série de parties : le score cumulé (le classement final a son propre écran).
+    series.of > 1 && s.scored && [
+      h("h2", null, `Score de la série · après ${series.no} partie${series.no > 1 ? "s" : ""} sur ${series.of}`),
+      h("ol", { class: "roles-list" }, ranked.map((id) => h("li", null, h("span", null, s.names[id].name), h("b", null, `${score(id)} pts`)))),
+      s.until && h("p", null, "Partie suivante dans ", countdown(s.until, ctx.now), " : nouveaux rôles, nouveaux mots."),
+      isHost && action("Distribuer tout de suite", "play", () => nextGame(ctx), "btn-brick")],
+    series.of === 1 && (isHost
       ? action("Rejouer", "play", () => ctx.backToLobby(), "btn-brick btn-big")
-      : h("p", { class: "rule" }, "L'hôte peut relancer une partie depuis le salon.")
+      : h("p", { class: "rule" }, "L'hôte peut relancer une partie depuis le salon."))
   ];
 }
 
@@ -228,11 +298,22 @@ export function view(ctx) {
   const { state: s, me, secret } = ctx;
   if (ui.g !== s.g) Object.assign(ui, { g: s.g, open: false, clue: "", guess: "", shown: null });
   const seated = !!s.names[me];
+  // L'hôte distribue les mots : il retient les paires signalées par la table.
+  if (ctx.isHost && ctx.room.flags) avoidPairs(Object.keys(ctx.room.flags));
+  // Dernière partie d'une série, comptes faits : le classement prend toute la place.
+  if (s.phase === "end" && s.series?.of > 1 && s.series.no >= s.series.of && s.scored) {
+    return [
+      h("header", { class: "case-head" }, h("p", { class: "eyebrow" }, "Dossier Undercover"), h("h1", null, "Fin de la série")),
+      h("section", { class: "sheet finale series-final" }, finalPanel(ctx)),
+      h("div", { class: "finale" }, chatBox(ctx))
+    ];
+  }
   return [
     h("div", { class: "col" }, h("header", { class: "case-head" },
-      h("p", { class: "eyebrow" }, "Dossier Undercover"),
+      h("p", { class: "eyebrow" }, s.series?.of > 1 ? `Dossier Undercover · partie ${s.series.no} sur ${s.series.of}` : "Dossier Undercover"),
       h("h1", null, s.phase === "end" ? "Fin de l'enquête" : `Manche ${s.round}`)),
-    seated && secret ? secretCard(ctx)
+    // La partie finie, tout est révélé : la carte secrète n'a plus rien à cacher.
+    s.phase === "end" ? null : seated && secret ? secretCard(ctx)
       : !seated && h("p", { class: "rule" }, "La partie a commencé sans toi : observe, tu joueras la prochaine."),
     table(ctx)),
     h("div", { class: "col" },

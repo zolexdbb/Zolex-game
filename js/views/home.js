@@ -2,53 +2,8 @@ import { h, busy } from "../ui/dom.js";
 import { cleanName } from "../room.js";
 import { soundControl } from "../ui/sound.js";
 import { games, upcoming } from "../registry.js";
-import { PARTS, parseAvatar, makeAvatar, randomAvatar, avatarNode, imageAvatar } from "../ui/avatar.js";
-
-// Choix du pion : un avatar composé pièce par pièce, une image, ou la simple initiale.
-function avatarEditor(fail) {
-  let code = localStorage.getItem("avatar") || "";
-  const preview = h("div", { class: "pawn-disc avatar-preview" });
-  const builder = h("div", { class: "avatar-builder", hidden: !parseAvatar(code) });
-  const paint = () => {
-    const face = avatarNode(code);
-    preview.classList.toggle("has-avatar", !!face);
-    preview.replaceChildren(face || h("span", null, "?"));
-  };
-  const save = (next) => {
-    code = next;
-    if (next) localStorage.setItem("avatar", next); else localStorage.removeItem("avatar");
-    paint();
-  };
-  PARTS.forEach(([label, size], i) => builder.append(h("button", {
-    class: "btn btn-mini", type: "button",
-    onclick: () => {
-      const values = parseAvatar(code) || PARTS.map(() => 0);
-      values[i] = (values[i] + 1) % size;
-      save(makeAvatar(values));
-    }
-  }, label)));
-  builder.append(h("button", { class: "btn btn-mini", type: "button", onclick: () => save(randomAvatar()) }, "Au hasard"));
-
-  const file = h("input", { type: "file", accept: "image/*", hidden: true });
-  file.addEventListener("change", async () => {
-    const chosen = file.files[0];
-    file.value = "";
-    if (!chosen) return;
-    try { save(await imageAvatar(chosen)); builder.hidden = true; } catch (e) { fail(e); }
-  });
-  paint();
-
-  return h("div", { class: "avatar-edit" },
-    preview,
-    h("div", { class: "avatar-actions" },
-      h("button", {
-        class: "btn btn-mini", type: "button",
-        onclick: () => { builder.hidden = false; if (!parseAvatar(code)) save(randomAvatar()); }
-      }, "Composer un avatar"),
-      h("button", { class: "btn btn-mini", type: "button", onclick: () => file.click() }, "Choisir une image"),
-      h("button", { class: "btn btn-mini", type: "button", onclick: () => { save(""); builder.hidden = true; } }, "Sans avatar")),
-    builder, file);
-}
+import { avatarEditor, validName, NAME_RULE } from "../ui/profile.js";
+import { icon } from "../ui/icons.js";
 
 export function lid() {
   return h("header", { class: "lid" },
@@ -57,7 +12,7 @@ export function lid() {
   );
 }
 
-export function homeView({ name, code, message, onCreate, onJoin }) {
+export function homeView({ name, code, message, onCreate, onJoin, onLocal }) {
   const error = h("p", { class: "notice", role: "alert", hidden: !message }, message || "");
   const fail = (e) => { error.textContent = e.message; error.hidden = false; };
 
@@ -74,6 +29,7 @@ export function homeView({ name, code, message, onCreate, onJoin }) {
   const player = () => {
     const value = cleanName(nameInput.value);
     if (!value) { nameInput.focus(); throw new Error("Choisis d'abord ton pseudo."); }
+    if (!validName(value)) { nameInput.focus(); throw new Error(NAME_RULE); }
     return value;
   };
 
@@ -96,7 +52,11 @@ export function homeView({ name, code, message, onCreate, onJoin }) {
       h("label", { class: "field-label", for: "name" }, "Ton pseudo"),
       nameInput,
       h("span", { class: "field-label" }, "Ton pion"),
-      avatarEditor(fail),
+      avatarEditor({
+        code: localStorage.getItem("avatar"),
+        save: (next) => (next ? localStorage.setItem("avatar", next) : localStorage.removeItem("avatar")),
+        fail
+      }),
       h("div", { class: "choices" },
         h("div", { class: "choice" },
           h("h2", null, "Créer une table"),
@@ -107,7 +67,11 @@ export function homeView({ name, code, message, onCreate, onJoin }) {
           h("label", { class: "rule", for: "code" }, "Entre le code à 4 lettres qu'on t'a donné."),
           joinForm)
       ),
-      error
+      error,
+      h("div", { class: "choice choice-local" },
+        h("h2", null, "Jouer en local"),
+        h("p", { class: "rule" }, "Undercover sans connexion : le téléphone passe de main en main."),
+        h("button", { class: "btn btn-cream", type: "button", onclick: onLocal }, icon("person"), "Partie locale"))
     ),
     h("section", { class: "sheet" },
       h("h2", null, "Les jeux"),

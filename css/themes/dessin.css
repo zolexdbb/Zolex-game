@@ -1,4 +1,4 @@
-/* What's Drawing ? : un carnet de croquis à spirale et une boîte de crayons. */
+/* Devine le dessin : un carnet de croquis à spirale et une boîte de crayons. */
 @import url("https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap");
 
 .theme-dessin { --hand: "Gochi Hand", "Comic Sans MS", cursive; }
@@ -48,10 +48,20 @@
 }
 .theme-dessin .pad.is-mine { cursor: crosshair; touch-action: none; }
 
-.theme-dessin .the-word { font: 400 1.5rem var(--hand); text-transform: none; color: var(--brick); }
-.theme-dessin .hint { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; font: 400 1.7rem/1 var(--hand); }
-.theme-dessin .hint span { min-width: .7em; text-align: center; }
-.theme-dessin .hint .gap { min-width: 1em; }
+/* Le mot et les lettres dévoilées : en capitales d'imprimerie, lisibles sans ambiguïté. */
+.theme-dessin .the-word { font: 700 1.35rem var(--text); text-transform: uppercase; letter-spacing: .04em; color: var(--brick); }
+.theme-dessin .hint { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 5px; font: 700 1.35rem/1 var(--text); text-transform: uppercase; }
+.theme-dessin .hint .slot {
+  display: grid;
+  place-items: end center;
+  min-width: 1.15em;
+  height: 1.45em;
+  padding-bottom: 3px;
+  border-bottom: 3px solid var(--black);
+}
+.theme-dessin .hint .slot:not(.is-hidden) { color: var(--brick); }
+.theme-dessin .hint .mark { padding-bottom: 3px; }
+.theme-dessin .hint .gap { min-width: .8em; }
 
 /* Boîte de crayons, posée sous la feuille. */
 .theme-dessin .tools {
@@ -66,7 +76,7 @@
   border-radius: 4px;
   box-shadow: 0 4px 0 var(--felt-dark);
 }
-.theme-dessin .swatches { display: grid; grid-template-columns: repeat(10, minmax(0, 28px)); gap: 5px; }
+.theme-dessin .swatches { display: grid; grid-template-columns: repeat(10, minmax(0, 28px)) minmax(0, 28px); gap: 5px; }
 .theme-dessin .swatch {
   aspect-ratio: 1;
   min-width: 0;
@@ -97,7 +107,9 @@
 .theme-dessin .word-cards { display: grid; gap: 10px; }
 .theme-dessin .word-card {
   padding: 14px 10px;
-  font: 400 1.5rem var(--hand);
+  font: 700 1.25rem var(--text);
+  text-transform: uppercase;
+  letter-spacing: .03em;
   color: var(--black);
   background: #fffdf6;
   border: 2px solid var(--black);
@@ -134,7 +146,192 @@
 @media (min-width: 900px) {
   #app:has(.sketch-main) { max-width: 1560px; }
   .theme-dessin:has(> .sketch-main) { grid-template-columns: minmax(0, 1fr) 340px; }
-  .theme-dessin .sketch-main { --pad: min(100%, max(440px, calc((100dvh - 270px) * 4 / 3))); justify-items: center; }
-  .theme-dessin .sketch-main > * { width: var(--pad); }
-  .theme-dessin .sketch-side .chatter { max-height: max(190px, calc(100dvh - 620px)); }
+  /* --tools : largeur de la colonne d'outils du dessinateur, posée à gauche de la feuille. */
+  .theme-dessin .sketch-main { --tools: 0px; --pad: min(100% - var(--tools), max(440px, calc((100dvh - 230px) * 4 / 3))); justify-items: center; }
+  .theme-dessin .sketch-main:has(.has-tools) { --tools: 162px; }
+  .theme-dessin .sketch-main > * { width: calc(var(--pad) + var(--tools)); }
+  .theme-dessin .pad-row.has-tools { grid-template-columns: 148px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .theme-dessin .pad-row.has-tools .tools { order: -1; flex-direction: column; flex-wrap: nowrap; padding: 8px; gap: 10px; }
+  .theme-dessin .pad-row.has-tools .swatches { grid-template-columns: repeat(4, 26px); }
+  .theme-dessin .pad-row.has-tools .tool-row { gap: 6px; }
+  .theme-dessin .pad-row.has-tools .tool-row .btn-mini { width: 100%; justify-content: center; }
+  .theme-dessin .pad-row.has-tools .tool-gap, .theme-dessin .pad-row.has-tools .tool-keys { display: none; }
+  .theme-dessin .sketch-side .chatter { max-height: max(190px, calc(100dvh - 560px)); }
+}
+
+/* Le mot (ou les tirets à deviner), juste au-dessus de la feuille. */
+.theme-dessin .word-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 6px 12px;
+  color: var(--black);
+  background: var(--grain), var(--cream);
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  font-weight: 700;
+}
+.theme-dessin .word-bar .hint { font-size: 1.4rem; }
+
+/* Les joueurs : ordre de passage et points, en une seule liste. */
+.theme-dessin .draw-players ol { display: grid; gap: 4px; }
+.theme-dessin .draw-players li {
+  display: grid;
+  grid-template-columns: 1.6em auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 6px;
+  color: var(--cream);
+  background: rgb(0 0 0 / .14);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font-size: .9rem;
+}
+.theme-dessin .draw-players li.is-now { color: var(--black); background: var(--ochre); border-color: var(--black); }
+.theme-dessin .draw-players li.is-gone { opacity: .45; }
+.theme-dessin .draw-players li.is-gone .who { text-decoration: line-through; }
+.theme-dessin .draw-players .rank { text-align: right; opacity: .8; }
+.theme-dessin .draw-players .token { width: 26px; height: 26px; font-size: .75rem; }
+.theme-dessin .draw-players .who { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.theme-dessin .draw-players .who em { font-weight: 400; }
+.theme-dessin .draw-players .who .icon { width: .95em; height: .95em; margin-left: 4px; vertical-align: -2px; }
+.theme-dessin .draw-players .pts { font-variant-numeric: tabular-nums; }
+.theme-dessin .draw-players .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 7px;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--black);
+  background: var(--cream);
+  border-radius: 999px;
+}
+.theme-dessin .draw-players .tag .icon { width: 1em; height: 1em; }
+.theme-dessin .draw-players .tag.is-found { background: #cfe3c4; }
+.theme-dessin .draw-players li:not(:has(.tag)) { grid-template-columns: 1.6em auto minmax(0, 1fr) auto; }
+
+/* La feuille et sa boîte de crayons. */
+.theme-dessin .pad-row { display: grid; gap: 18px; }
+
+/* Le choix du mot, posé sur la feuille. */
+.theme-dessin .pad-over {
+  position: absolute;
+  inset: 16px 6px 6px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 16px;
+  text-align: center;
+  background: rgb(255 253 246 / .93);
+  border-radius: 2px;
+}
+.theme-dessin .pad-over h2 { font: 400 1.3rem/1.1 var(--display); text-transform: uppercase; color: var(--ink); }
+.theme-dessin .pad-over .word-cards { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); width: min(100%, 560px); }
+
+/* Agrandir la feuille : elle prend tout l'écran, les outils dessous. */
+.theme-dessin .pad-grow { position: absolute; right: 12px; bottom: 12px; opacity: .85; }
+.theme-dessin .sketch-main.is-big {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+  padding: 6px max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
+  overflow: auto;
+  background: var(--fibres), var(--grain), var(--felt);
+}
+.theme-dessin .sketch-main.is-big > * { width: min(100%, calc((100dvh - 230px) * 4 / 3)); min-width: min(100%, 300px); }
+.theme-dessin .sketch-main.is-big .tools { padding: 6px; gap: 6px 10px; }
+.theme-dessin .sketch-main.is-big .tool-keys { display: none; }
+/* Téléphone en hauteur : la feuille garde toute la largeur ; la tourner en paysage l'agrandit encore. */
+.theme-dessin .sketch-main.is-big .pad-frame::after {
+  content: "Astuce : tourne le téléphone pour une feuille plus grande";
+  position: absolute; left: 0; right: 0; bottom: -22px;
+  font-size: .72rem; text-align: center; color: var(--cream);
+}
+@media (orientation: landscape) { .theme-dessin .sketch-main.is-big .pad-frame::after { content: none; } }
+.theme-dessin .sketch-main.is-big .pad-frame { margin-bottom: 18px; }
+.theme-dessin .tool-keys { width: 100%; font-size: .72rem; font-style: italic; text-align: center; opacity: .75; }
+@media (hover: none) { .theme-dessin .tool-keys { display: none; } }
+
+/* Messages entre ceux qui ont trouvé. */
+.theme-dessin .chatter .is-inner { background: #dcd2ef; }
+
+/* Côté dessinateur : les lettres déjà dévoilées aux devins. */
+.theme-dessin .the-word .is-shown { color: var(--felt); text-decoration: underline 3px; text-underline-offset: 4px; }
+
+/* Petit écran d'ordinateur : la colonne de droite se serre pour laisser la place à la feuille. */
+@media (min-width: 900px) and (max-width: 1199px) {
+  .theme-dessin:has(> .sketch-main) { grid-template-columns: minmax(0, 1fr) 280px; column-gap: 18px; }
+}
+
+/* Téléphone : la case de réponse (et l'historique) juste sous la feuille, la liste des joueurs après,
+   pour voir le dessin en tapant. Les colonnes n'existant pas ici, on joue sur l'ordre d'affichage. */
+@media (max-width: 899px) {
+  .theme-dessin .draw-players, .theme-dessin .sketch-side > .talk { order: 1; }
+  .theme-dessin.mat > :not(.col) { order: 2; }
+}
+
+/* Feuille agrandie, téléphone en paysage : le titre et le mot sur une ligne, les outils
+   en colonne compacte à gauche, la feuille aussi haute que l'écran le permet. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .theme-dessin .sketch-main.is-big {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-content: center;
+    justify-content: center;
+    gap: 6px 12px;
+    padding: 6px max(8px, env(safe-area-inset-right)) 6px max(8px, env(safe-area-inset-left));
+  }
+  .theme-dessin .sketch-main.is-big > * { width: auto; min-width: 0; }
+  .theme-dessin .sketch-main.is-big .sketch-head h1 { font-size: 1rem; }
+  .theme-dessin .sketch-main.is-big .word-bar { padding: 3px 10px; }
+  .theme-dessin .sketch-main.is-big > .pad-row {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, calc((100dvh - 74px) * 4 / 3 + 212px));
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+  .theme-dessin .sketch-main.is-big .pad-frame { margin-bottom: 0; padding: 12px 4px 4px; }
+  .theme-dessin .sketch-main.is-big .tools { order: -1; flex-direction: column; flex-wrap: nowrap; padding: 6px; gap: 6px; }
+  .theme-dessin .sketch-main.is-big .swatches { grid-template-columns: repeat(5, 28px); gap: 4px; }
+  .theme-dessin .sketch-main.is-big .tool-row { gap: 4px; }
+  .theme-dessin .sketch-main.is-big .nib { width: 32px; height: 32px; }
+  .theme-dessin .sketch-main.is-big .tool-row .btn-mini { flex: 1 1 45%; justify-content: center; padding-inline: 4px; }
+  .theme-dessin .sketch-main.is-big .tool-gap { display: none; }
+}
+
+/* Couleur libre : le 21ᵉ crayon ouvre le nuancier du système. */
+.theme-dessin .swatch-custom {
+  position: relative;
+  display: grid;
+  place-items: center;
+  grid-column: 11;
+  grid-row: 1 / span 2;
+  aspect-ratio: auto;
+  font: 700 1.1rem/1 var(--text);
+  color: var(--black);
+  background: conic-gradient(#e8554d, #f2d541, #7fbf4d, #6fc3e8, #3a6fd8, #e58fb5, #e8554d);
+  border-radius: 14px;
+}
+.theme-dessin .swatch-custom input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.theme-dessin .swatch-custom span { padding: 0 4px; background: rgb(255 255 255 / .8); border-radius: 50%; pointer-events: none; }
+.theme-dessin .swatch-custom[aria-pressed="true"] { outline: 3px solid var(--brick); outline-offset: 2px; }
+.theme-dessin .pad.is-picker { cursor: copy; }
+/* Une réponse à une lettre près. */
+.theme-dessin .chatter .is-close { background: #fbe3c4; }
+.theme-dessin .close-tag { margin-left: 6px; font-style: italic; font-weight: 700; color: #b5651d; }
+@media (min-width: 900px) {
+  .theme-dessin .pad-row.has-tools .swatch-custom { grid-column: span 4; grid-row: auto; height: 26px; }
+}
+@media (orientation: landscape) and (max-height: 600px) {
+  .theme-dessin .sketch-main.is-big .swatch-custom { grid-column: span 5; grid-row: auto; height: 24px; }
 }

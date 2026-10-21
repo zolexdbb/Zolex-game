@@ -1,0 +1,35 @@
+// Pack Naruto : ninjas, villages, clans et techniques.
+export default {
+  id: "naruto", name: "Naruto", groups: [
+    ["Naruto", "Sasuke", "Sakura", "Kakashi"],
+    ["Shikamaru", "Ino", "Choji", "Asuma"],
+    ["Hinata", "Kiba", "Shino", "Kurenai"],
+    ["Neji", "Rock Lee", "Tenten", "Gaï"],
+    ["Gaara", "Temari", "Kankuro"],
+    ["Hashirama", "Tobirama", "Hiruzen", "Minato"],
+    ["Tsunade", "Jiraiya", "Orochimaru"],
+    ["Itachi", "Kisame", "Deidara", "Sasori"],
+    ["Pain", "Konan", "Hidan", "Kakuzu"],
+    ["Obito", "Madara", "Zetsu"],
+    ["Kabuto", "Sai", "Yamato", "Danzo"],
+    ["Boruto", "Himawari", "Sarada", "Mitsuki"],
+    ["Konoha", "Suna", "Kiri", "Kumo", "Iwa"],
+    ["Hokage", "Kazekage", "Mizukage", "Raikage", "Tsuchikage"],
+    ["Akatsuki", "Anbu", "Racine", "Équipe 7"],
+    ["Uchiwa", "Hyuga", "Uzumaki", "Senju", "Nara"],
+    ["Rasengan", "Chidori", "Kirin", "Rasenshuriken"],
+    ["Multiclonage", "Métamorphose", "Permutation", "Invocation"],
+    ["Sharingan", "Byakugan", "Rinnegan", "Mangekyo Sharingan"],
+    ["Susano", "Amaterasu", "Tsukuyomi", "Izanagi"],
+    ["Kyubi", "Shukaku", "Hachibi", "Bijû"],
+    ["Mode Sannin", "Mode Kyubi", "Huit Portes", "Sceau maudit"],
+    ["Kunai", "Shuriken", "Parchemin explosif", "Bandeau frontal"],
+    ["Chakra", "Mudra", "Ninjutsu", "Genjutsu", "Taijutsu"],
+    ["Genin", "Chunin", "Jonin", "Kage"],
+    ["Examen chunin", "Mission de rang S", "Grande guerre ninja"],
+    ["Ichiraku Ramen", "Falaise des Hokage", "Forêt de la mort", "Vallée de la Fin"],
+    ["Gamabunta", "Katsuyu", "Manda", "Pakkun"],
+    ["Zabuza", "Haku", "Kimimaro", "Tayuya"],
+    ["Naruto Shippuden", "Road to Ninja", "Masashi Kishimoto"]
+  ]
+};

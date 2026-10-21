@@ -12,10 +12,13 @@ let clockOffset = 0;
 let clockWatched = false;
 const serverNow = () => Date.now() + clockOffset;
 
-export async function startGame(code, room) {
+// `carry` : ce qui passe d'une donne à la suivante (le score d'une série de parties).
+// Renvoie false, sans rien écrire, si la table ne permet plus de jouer.
+export async function startGame(code, room, carry = null) {
   const game = getGame(room.meta.gameId);
   const players = sortedPlayers(room).filter((p) => p.online);
   const settings = { ...game.defaultSettings, ...room.meta.settings };
+  if (carry && (players.length < game.minPlayers || game.checkSettings?.(settings, players.length))) return false;
   // La donne n'existe que le temps de cette fonction : elle part dans des
   // enveloppes que l'hôte ne peut plus relire.
   const deal = game.start({ players, settings, now: serverNow() });
@@ -23,10 +26,11 @@ export async function startGame(code, room) {
   await update(ref(db), {
     [`secrets/${code}/${g}`]: deal.secrets,
     [`vault/${code}/${g}`]: deal.vault,
-    [`rooms/${code}/state`]: { ...deal.state, g, step: "0" },
+    [`rooms/${code}/state`]: { ...deal.state, ...carry, g, step: "0" },
     [`rooms/${code}/meta/status`]: "playing",
     [`rooms/${code}/meta/touchedAt`]: serverTimestamp()
   });
+  return true;
 }
 
 export function createPlay(code, show, { onLeave }) {
@@ -100,6 +104,8 @@ export function createPlay(code, show, { onLeave }) {
       claim: (path, value) => runTransaction(ref(db, `rooms/${code}/${path}`), () => value, { applyLocally: false })
         .then((result) => result.committed, () => false),
       listen, session, refresh,
+      // Nouvelle donne dans la même partie, en gardant `carry` dans l'état.
+      redeal: (carry) => startGame(code, room, carry),
       backToLobby: () => update(ref(db, `rooms/${code}/meta`), { status: "lobby", touchedAt: serverTimestamp() })
     };
   }

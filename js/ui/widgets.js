@@ -5,8 +5,8 @@ import { tick } from "./sound.js";
 
 const PAWN_COLORS = 8;
 
-// Compteur à deux boutons, façon roue de score.
-export function stepper({ label, value, min, max, disabled, onChange, by = 1 }) {
+// Compteur à deux boutons, façon roue de score. `format` : affichage de la valeur.
+export function stepper({ label, value, min, max, disabled, onChange, by = 1, format = String }) {
   const step = (delta, name, text) =>
     h("button", {
       class: "btn btn-round", type: "button", "aria-label": `${text} : ${label}`,
@@ -16,7 +16,7 @@ export function stepper({ label, value, min, max, disabled, onChange, by = 1 }) 
   return h("div", { class: "stepper" },
     h("span", { class: "stepper-label" }, label),
     step(-by, "minus", "Moins"),
-    h("output", { class: "stepper-value" }, String(value)),
+    h("output", { class: "stepper-value" }, format(value)),
     step(by, "plus", "Plus")
   );
 }
@@ -90,16 +90,43 @@ export function flipCard({ open, back, front, cls = "", label, onToggle, deal })
 // plus basse, chacune { players: [{ name, index, online, avatar, isMe }], note }.
 // `key` désigne la partie : les marches ne montent qu'une fois, même si l'écran est redessiné.
 const risen = { key: null, at: 0 };
-export function podium(steps, key) {
+// `rank` (facultatif) : la place affichée sur la marche, quand des ex æquo décalent le compte.
+export function podium(steps, key, big = false) {
   if (risen.key !== key) Object.assign(risen, { key, at: performance.now() });
-  const box = h("div", { class: "podium", role: "list" }, steps.slice(0, 3).map((step, i) => {
-    const el = h("div", { class: `podium-step is-${i + 1}`, role: "listitem", "aria-label": `Marche ${i + 1}` },
+  const box = h("div", { class: `podium${big ? " is-big" : ""}`, role: "list" }, steps.slice(0, 3).map((step, i) => {
+    const rank = step.rank ?? i + 1;
+    const el = h("div", { class: `podium-step is-${i + 1}`, role: "listitem", "aria-label": `${rank}${rank === 1 ? "re" : "e"} place` },
       h("div", { class: "podium-who" }, step.players.map((p) => pawn(p, { isMe: p.isMe }))),
       step.note && h("b", { class: "podium-note" }, step.note),
-      h("div", { class: "podium-block" }, i === 0 ? icon("crown") : String(i + 1)));
+      h("div", { class: "podium-block" }, rank === 1 ? icon("crown") : String(rank)));
     el.style.flexGrow = Math.min(3, step.players.length || 1);
     return el;
   }));
   box.style.setProperty("--since", `${Math.round(risen.at - performance.now())}ms`);
   return box;
+}
+
+// Classement avec ex æquo : les joueurs à égalité partagent la même place
+// (1, 2, 2, 4…) et la même marche du podium. `low` : le plus petit score gagne.
+export function standings(ids, score, low = false) {
+  const sorted = [...ids].sort((a, b) => (low ? score(a) - score(b) : score(b) - score(a)));
+  const groups = [];
+  sorted.forEach((id, i) => {
+    const last = groups.at(-1);
+    if (last && score(last.ids[0]) === score(id)) last.ids.push(id);
+    else groups.push({ rank: i + 1, ids: [id] });
+  });
+  return groups;
+}
+
+// Le classement complet : podium pour les trois premières places, liste pour la suite.
+// `person(id)` donne le pion d'un joueur, `label(id)` son score affiché.
+export function ranking({ ids, score, person, label, low = false, key, big = false }) {
+  const groups = standings(ids, score, low);
+  const top = groups.slice(0, 3), rest = groups.slice(3);
+  return [
+    podium(top.map((group) => ({ rank: group.rank, players: group.ids.map(person), note: label(group.ids[0]) })), key, big),
+    rest.length > 0 && h("ol", { class: "roles-list ranks" }, rest.flatMap((group) => group.ids.map((id) =>
+      h("li", null, h("span", null, h("b", null, `${group.rank}. `), person(id).name), h("b", null, label(id))))))
+  ];
 }

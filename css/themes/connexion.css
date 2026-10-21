@@ -1,0 +1,129 @@
+/* Connexion : un tableau de liège, des mots punaisés et un fil rouge qui les relie. */
+.theme-connexion .cx-head { text-align: center; color: var(--cream); }
+.theme-connexion .cx-head h1 {
+  font: 400 1.7rem/1.1 var(--display);
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0 var(--felt-dark);
+}
+.theme-connexion .countdown {
+  display: inline-block;
+  padding: 0 8px;
+  color: var(--black);
+  background: var(--ochre);
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  text-shadow: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Le tableau de liège. */
+.theme-connexion .cx-board {
+  display: grid;
+  gap: 10px;
+  padding: 16px 14px 20px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 20% 30%, rgb(0 0 0 / .12) 0 1px, transparent 1.5px) 0 0 / 9px 11px,
+    radial-gradient(circle at 70% 60%, rgb(255 255 255 / .12) 0 1px, transparent 1.5px) 0 0 / 13px 7px,
+    #b98a5a;
+  border: 6px solid var(--wood-dark);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / .2), 0 4px 0 var(--felt-dark);
+}
+.theme-connexion .cx-board .eyebrow { color: var(--black); }
+.theme-connexion .cx-notes {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px 28px;
+}
+/* Le fil rouge tendu derrière les notes. */
+.theme-connexion .cx-notes::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 22px;
+  border-top: 3px solid var(--brick);
+  filter: drop-shadow(0 2px 0 rgb(0 0 0 / .25));
+}
+.theme-connexion .cx-note {
+  position: relative;
+  min-width: 120px;
+  padding: 18px 16px 12px;
+  font: 700 1.25rem/1.15 var(--text);
+  text-transform: uppercase;
+  color: var(--black);
+  background: var(--grain), #fff6c9;
+  border: 2px solid var(--black);
+  box-shadow: 0 4px 0 rgb(0 0 0 / .25);
+  transform: rotate(var(--tilt, 0deg));
+}
+.theme-connexion .cx-pin {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  width: 14px;
+  height: 14px;
+  translate: -50% 0;
+  background: radial-gradient(circle at 35% 35%, #f0a08f 0 2px, var(--brick) 3px);
+  border: 2px solid var(--black);
+  border-radius: 50%;
+}
+
+/* Révélation : les mots identiques ensemble. */
+.theme-connexion .cx-groups { display: grid; gap: 6px; }
+.theme-connexion .cx-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 8px 12px;
+  background: #fffaf0;
+  border: 2px solid var(--black);
+  border-radius: 4px;
+}
+.theme-connexion .cx-group strong { font: 700 1.1rem var(--text); text-transform: uppercase; }
+.theme-connexion .cx-group.is-match { background: #cfe3c4; }
+.theme-connexion .cx-group.is-empty { opacity: .6; }
+.theme-connexion .cx-group small { margin-left: auto; font-weight: 700; }
+.theme-connexion .cx-who { display: flex; gap: 3px; }
+.theme-connexion .cx-who .token { width: 24px; height: 24px; font-size: .7rem; }
+
+/* La frise et les mots déjà dits. */
+.theme-connexion .cx-timeline, .theme-connexion .cx-used {
+  padding: 12px 14px;
+  background: var(--grain), var(--cream);
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  box-shadow: 0 4px 0 var(--felt-dark);
+}
+.theme-connexion summary { font: 400 1rem var(--display); text-transform: uppercase; color: var(--ink); cursor: pointer; }
+.theme-connexion .cx-timeline ol { display: grid; gap: 4px; margin-top: 8px; font-size: .9rem; }
+.theme-connexion .cx-timeline li { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: 8px; padding-top: 4px; border-top: 2px dashed var(--card); }
+.theme-connexion .cx-timeline li span { display: flex; flex-wrap: wrap; gap: 4px; }
+.theme-connexion .cx-timeline em { padding: 0 6px; font-style: normal; background: #fffaf0; border-radius: 3px; }
+.theme-connexion .cx-timeline em.is-match { background: #cfe3c4; font-weight: 700; }
+.theme-connexion .cx-timeline em.is-empty { opacity: .5; }
+.theme-connexion .cx-used p { margin-top: 6px; font-size: .9rem; }
+
+/* Fin de partie : une ligne par manche. */
+.theme-connexion .cx-recap { display: grid; gap: 8px; text-align: left; }
+.theme-connexion .cx-recap li {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 10px 14px;
+  background: var(--grain), #fffaf0;
+  border: 2px solid var(--black);
+  border-left-width: 8px;
+  border-radius: 3px;
+}
+.theme-connexion .cx-recap .is-won { border-left-color: #7fbf4d; }
+.theme-connexion .cx-recap .is-lost { border-left-color: var(--brick); }
+.theme-connexion .cx-recap strong { font: 400 .95rem var(--display); text-transform: uppercase; color: var(--brick); }
+@media (max-width: 600px) {
+  .theme-connexion .cx-recap li { grid-template-columns: auto minmax(0, 1fr); }
+}

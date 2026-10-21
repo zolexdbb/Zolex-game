@@ -1,0 +1,36 @@
+// Pack Marvel : héros, méchants, équipes et objets des films et des comics.
+export default {
+  id: "marvel", name: "Marvel", groups: [
+    ["Iron Man", "Captain America", "Thor", "Hulk"],
+    ["Black Widow", "Hawkeye", "Ant-Man", "La Guêpe"],
+    ["Spider-Man", "Miles Morales", "Spider-Gwen"],
+    ["Docteur Strange", "Wong", "Scarlet Witch", "Vision"],
+    ["Black Panther", "Shuri", "Okoye", "Wakanda"],
+    ["Captain Marvel", "Ms. Marvel", "Monica Rambeau"],
+    ["Star-Lord", "Gamora", "Drax", "Rocket", "Groot"],
+    ["Thanos", "Ultron", "Loki", "Hela"],
+    ["Bouffon Vert", "Docteur Octopus", "Vautour", "Électro", "Venom"],
+    ["Magnéto", "Mystique", "Dents-de-Sabre", "Apocalypse"],
+    ["Wolverine", "Cyclope", "Tornade", "Jean Grey", "Malicia"],
+    ["Professeur Xavier", "Le Fauve", "Diablo", "Colossus"],
+    ["Deadpool", "Cable", "Domino"],
+    ["Daredevil", "Punisher", "Elektra"],
+    ["Luke Cage", "Iron Fist", "Jessica Jones"],
+    ["Mister Fantastique", "La Femme Invisible", "La Torche Humaine", "La Chose"],
+    ["Docteur Fatalis", "Galactus", "Silver Surfer"],
+    ["Avengers", "X-Men", "Les Quatre Fantastiques", "Gardiens de la Galaxie"],
+    ["Mjolnir", "Stormbreaker", "Bouclier de Captain America"],
+    ["Gant de l'Infini", "Pierre de l'Esprit", "Pierre du Temps", "Tesseract"],
+    ["Vibranium", "Adamantium", "Arc réacteur"],
+    ["Asgard", "Sakaar", "Xandar", "Knowhere"],
+    ["Bifrost", "Valhalla", "Jotunheim"],
+    ["SHIELD", "Hydra", "Nick Fury", "Maria Hill"],
+    ["Tony Stark", "Pepper Potts", "Happy Hogan", "War Machine"],
+    ["Steve Rogers", "Bucky Barnes", "Falcon", "Peggy Carter"],
+    ["Peter Parker", "Tante May", "Mary Jane", "Gwen Stacy"],
+    ["Bruce Banner", "She-Hulk", "Abomination"],
+    ["Odin", "Frigga", "Heimdall", "Valkyrie"],
+    ["Kang", "Le Mandarin", "Crâne Rouge", "Zemo"],
+    ["Stan Lee", "Jack Kirby", "Kevin Feige"]
+  ]
+};

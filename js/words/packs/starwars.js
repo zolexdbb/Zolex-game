@@ -1,0 +1,36 @@
+// Pack Star Wars : personnages, planètes, vaisseaux et objets de la saga.
+export default {
+  id: "starwars", name: "Star Wars", groups: [
+    ["Luke Skywalker", "Leia Organa", "Han Solo"],
+    ["Dark Vador", "Empereur Palpatine", "Dark Maul", "Comte Dooku"],
+    ["Obi-Wan Kenobi", "Qui-Gon Jinn", "Mace Windu", "Yoda"],
+    ["Anakin Skywalker", "Padmé Amidala", "Ahsoka Tano"],
+    ["Rey", "Finn", "Poe Dameron", "Kylo Ren"],
+    ["R2-D2", "C-3PO", "BB-8", "K-2SO"],
+    ["Chewbacca", "Lando Calrissian", "Wedge Antilles"],
+    ["Jabba le Hutt", "Boba Fett", "Jango Fett", "Greedo"],
+    ["Le Mandalorien", "Grogu", "Bo-Katan", "Cara Dune"],
+    ["Général Grievous", "Snoke", "Grand Moff Tarkin", "Général Hux"],
+    ["Stormtrooper", "Clone", "Droïde de combat", "Scout trooper"],
+    ["Jedi", "Sith", "Padawan", "Maître Jedi"],
+    ["Tatooine", "Naboo", "Coruscant", "Alderaan"],
+    ["Hoth", "Endor", "Dagobah", "Bespin"],
+    ["Mustafar", "Kamino", "Jakku", "Scarif"],
+    ["Faucon Millenium", "X-Wing", "Chasseur TIE", "Y-Wing"],
+    ["Étoile de la Mort", "Destroyer stellaire", "Base Starkiller"],
+    ["AT-AT", "AT-ST", "Speeder", "Module de course"],
+    ["Sabre laser", "Blaster", "Arbalète de Chewbacca", "Détonateur thermique"],
+    ["La Force", "Le Côté obscur", "Holocron", "Cristal kyber"],
+    ["Empire galactique", "Alliance rebelle", "Premier Ordre", "République"],
+    ["Ewok", "Wookiee", "Jawa", "Tusken"],
+    ["Gungan", "Jar Jar Binks", "Watto", "Sebulba"],
+    ["Hutt", "Rodien", "Twi'lek", "Togruta"],
+    ["Rancor", "Sarlacc", "Wampa", "Tauntaun"],
+    ["Ordre 66", "Bataille de Yavin", "Bataille de Hoth"],
+    ["Cantina", "Temple Jedi", "Sénat galactique", "Cité des Nuages"],
+    ["Un nouvel espoir", "L'Empire contre-attaque", "Le Retour du Jedi"],
+    ["La Menace fantôme", "L'Attaque des clones", "La Revanche des Sith"],
+    ["Rogue One", "Solo", "Andor", "The Mandalorian"],
+    ["Chancelier", "Sénateur", "Gouverneur", "Amiral"]
+  ]
+};

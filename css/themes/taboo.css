@@ -1,0 +1,70 @@
+/* Taboo : la carte rouge et blanche, les mots interdits barrés. */
+.theme-taboo .tb-head { text-align: center; color: var(--cream); }
+.theme-taboo .tb-head h1 { font: 400 1.6rem/1.1 var(--display); text-transform: uppercase; text-shadow: 2px 2px 0 var(--felt-dark); }
+.theme-taboo .tb-head h1.team-r { color: #f2b3a6; }
+.theme-taboo .tb-head h1.team-b { color: #a9c7e8; }
+.theme-taboo .countdown {
+  display: inline-block;
+  padding: 0 8px;
+  color: var(--black);
+  background: var(--ochre);
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  text-shadow: none;
+  font-variant-numeric: tabular-nums;
+}
+.theme-taboo .tb-card {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: min(100%, 300px);
+  margin-inline: auto;
+  padding: 14px 14px 16px;
+  background: var(--grain), #fffaf0;
+  border: 3px solid var(--black);
+  border-radius: 12px;
+  box-shadow: 0 5px 0 var(--brick-dark);
+}
+.theme-taboo .tb-card strong {
+  width: 100%;
+  padding: 8px;
+  font: 400 1.6rem/1.1 var(--display);
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff8ea;
+  background: var(--brick);
+  border-radius: 6px;
+}
+.theme-taboo .tb-card ul { display: grid; gap: 4px; width: 100%; }
+.theme-taboo .tb-card li {
+  padding: 3px 8px;
+  font: 700 1.05rem var(--text);
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 2px dashed var(--card);
+}
+.theme-taboo .tb-card li::before { content: "✕ "; color: var(--brick); }
+.theme-taboo .tb-actions { display: flex; gap: 10px; }
+.theme-taboo .tb-actions .btn { flex: 1; }
+.theme-taboo .tb-big { font-size: 1.15rem; text-align: center; }
+.theme-taboo .tb-tally { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font-weight: 700; }
+.theme-taboo .tb-tally .is-found { color: var(--felt); }
+.theme-taboo .tb-tally .is-taboo { color: var(--brick); }
+.theme-taboo .tb-log { display: grid; gap: 4px; }
+.theme-taboo .tb-log li { display: flex; justify-content: space-between; gap: 10px; padding: 4px 10px; background: #fffaf0; border: 2px solid var(--black); border-radius: 3px; }
+.theme-taboo .tb-log .is-found { background: #cfe3c4; }
+.theme-taboo .tb-log .is-taboo { background: #f7dcd4; }
+.theme-taboo .tb-log .is-pass span { opacity: .6; }
+.theme-taboo .tb-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.theme-taboo .tb-team { padding: 10px 8px; border: 2px solid rgb(243 233 210 / .35); border-radius: 12px; background: rgb(0 0 0 / .12); }
+.theme-taboo .tb-team.is-turn { border-color: var(--ochre); }
+.theme-taboo .tb-team h3 { display: flex; justify-content: space-between; margin: 0 0 8px; font: 400 1rem var(--display); text-transform: uppercase; }
+.theme-taboo .tb-team.team-r h3 { color: #f2b3a6; }
+.theme-taboo .tb-team.team-b h3 { color: #a9c7e8; }
+.theme-taboo .tb-members { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px 4px; }
+.theme-taboo .tb-winner { padding: 14px; font: 400 1.5rem var(--display); text-align: center; text-transform: uppercase; color: #fff8ea; background: var(--black); border-radius: 6px; }
+.theme-taboo .tb-winner.team-r { background: var(--brick); }
+.theme-taboo .tb-winner.team-b { background: var(--ink); }
+.theme-taboo .tb-history { display: grid; gap: 10px; text-align: left; }
+.theme-taboo .tb-history > li { display: grid; gap: 6px; padding: 8px 10px; border-left: 6px solid var(--brick); background: rgb(255 255 255 / .35); border-radius: 3px; }
+.theme-taboo .tb-history > li.team-b { border-left-color: var(--ink); }

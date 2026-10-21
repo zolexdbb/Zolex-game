@@ -1,7 +1,7 @@
 import { h, loadStyle } from "../../ui/dom.js";
 import { stepper } from "../../ui/widgets.js";
 import { WORD_DEFAULTS, wordSetup } from "../../ui/wordbank.js";
-import { checkSettings, start, hostTick } from "./logic.js";
+import { checkSettings, start, hostTick, toursFor } from "./logic.js";
 import { view, roleArt } from "./view.js";
 
 loadStyle("css/themes/undercover.css");
@@ -20,6 +20,19 @@ function lobbyView(props) {
       label: "Mr White", value: settings.mrWhite, min: 0, max: 1, disabled: !isHost,
       onChange: (mrWhite) => setSettings({ ...settings, mrWhite })
     }),
+    stepper({
+      label: "Tours d'indices par manche", value: settings.clueTours ?? 0, min: 0, max: 5, disabled: !isHost,
+      format: (n) => (n ? String(n) : "Auto"),
+      onChange: (clueTours) => setSettings({ ...settings, clueTours })
+    }),
+    !settings.clueTours && h("p", { class: "rule" },
+      `Auto : environ 6 indices entendus avant chaque vote, quel que soit le nombre de joueurs (${toursFor(0, Math.max(playerCount, 3))} tour${toursFor(0, Math.max(playerCount, 3)) > 1 ? "s" : ""} à ${Math.max(playerCount, 3)} joueurs).`),
+    stepper({
+      label: "Parties (le score se cumule)", value: settings.games || 1, min: 1, max: 5, disabled: !isHost,
+      onChange: (games) => setSettings({ ...settings, games })
+    }),
+    (settings.games || 1) > 1 && h("p", { class: "rule" },
+      "Nouveaux rôles et nouveaux mots à chaque partie. Points du camp vainqueur : Civil +2, Undercover +10, Mr White +6."),
     h("ul", { class: "role-chips", "aria-label": "Composition de la partie" },
       role(civils, "Civils", "is-civil", "civil"),
       role(settings.undercover, "Undercover", "is-undercover", "undercover"),
@@ -34,7 +47,7 @@ export default {
   name: "Undercover",
   tagline: "Un mot de trop et tu es démasqué",
   minPlayers: 3,
-  defaultSettings: { undercover: 1, mrWhite: 0, clueTours: 3, ...WORD_DEFAULTS },
+  defaultSettings: { undercover: 1, mrWhite: 0, clueTours: 0, games: 1, ...WORD_DEFAULTS },
   checkSettings,
   lobbyView,
   start,

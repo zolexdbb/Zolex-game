@@ -1,0 +1,36 @@
+// Pack Minecraft : blocs, créatures, objets, biomes et dimensions.
+export default {
+  id: "minecraft", name: "Minecraft", groups: [
+    ["Creeper", "Zombie", "Squelette", "Araignée"],
+    ["Enderman", "Endermite", "Shulker"],
+    ["Ender Dragon", "Wither", "Warden", "Gardien ancien"],
+    ["Ghast", "Blaze", "Piglin", "Hoglin"],
+    ["Villageois", "Pillard", "Évocateur", "Vindicateur"],
+    ["Golem de fer", "Golem de neige", "Allay", "Renard"],
+    ["Vache", "Cochon", "Mouton", "Poule"],
+    ["Loup", "Chat", "Perroquet", "Axolotl"],
+    ["Cheval", "Âne", "Mule", "Lama"],
+    ["Steve", "Alex", "Herobrine", "Notch"],
+    ["Diamant", "Émeraude", "Netherite", "Lapis-lazuli"],
+    ["Minerai de fer", "Minerai d'or", "Minerai de cuivre", "Minerai de charbon"],
+    ["Pierre", "Pierre taillée", "Andésite", "Granite", "Diorite"],
+    ["Terre", "Sable", "Gravier", "Argile"],
+    ["Bois de chêne", "Bois de bouleau", "Bois d'acajou", "Bois de cerisier"],
+    ["Obsidienne", "Roche-mère", "Pierre de l'End", "Netherrack"],
+    ["Redstone", "Piston", "Répéteur", "Comparateur"],
+    ["TNT", "Bloc de slime", "Distributeur", "Entonnoir"],
+    ["Établi", "Four", "Coffre", "Enclume"],
+    ["Table d'enchantement", "Alambic", "Balise", "Conduit"],
+    ["Épée", "Pioche", "Hache", "Pelle", "Houe"],
+    ["Arc", "Arbalète", "Trident", "Bouclier"],
+    ["Elytres", "Totem d'immortalité", "Perle de l'Ender", "Œil de l'Ender"],
+    ["Pomme dorée", "Steak", "Pain", "Tarte à la citrouille"],
+    ["Overworld", "Nether", "L'End"],
+    ["Plaine", "Forêt", "Jungle", "Taïga", "Savane"],
+    ["Désert", "Badlands", "Toundra", "Champignonnière"],
+    ["Village", "Temple du désert", "Manoir des bois", "Forteresse du Nether"],
+    ["Ville ancienne", "Monument océanique", "Bastion", "Cité de l'End"],
+    ["Survie", "Créatif", "Hardcore", "Aventure", "Spectateur"],
+    ["Mojang", "Bedrock", "Java", "Realms"]
+  ]
+};

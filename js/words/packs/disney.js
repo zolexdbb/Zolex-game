@@ -1,0 +1,37 @@
+// Pack Disney et Pixar : personnages, films et lieux (titres français).
+export default {
+  id: "disney", name: "Disney et Pixar", groups: [
+    ["Blanche-Neige", "Cendrillon", "Aurore", "Ariel"],
+    ["Belle", "Jasmine", "Pocahontas", "Mulan"],
+    ["Raiponce", "Elsa", "Anna", "Vaiana"],
+    ["Tiana", "Mérida", "Mirabel", "Asha"],
+    ["Mickey", "Minnie", "Donald", "Daisy"],
+    ["Dingo", "Pluto", "Pat Hibulaire"],
+    ["Simba", "Nala", "Mufasa", "Scar"],
+    ["Timon", "Pumbaa", "Rafiki", "Zazu"],
+    ["Aladdin", "Le Génie", "Abu", "Tapis"],
+    ["Jafar", "Ursula", "Maléfique", "Hadès"],
+    ["Cruella", "La Reine de cœur", "Gaston", "Mère Gothel"],
+    ["Peter Pan", "Clochette", "Capitaine Crochet", "Wendy"],
+    ["Pinocchio", "Jiminy Cricket", "Geppetto"],
+    ["Dumbo", "Bambi", "Panpan", "Fleur"],
+    ["Winnie l'ourson", "Porcinet", "Tigrou", "Bourriquet"],
+    ["Stitch", "Lilo", "Baymax", "Olaf"],
+    ["Woody", "Buzz l'Éclair", "Jessie", "Zigzag"],
+    ["Monsieur Patate", "Rex", "Bayonne", "Pile-Poil"],
+    ["Nemo", "Dory", "Marin", "Crush"],
+    ["Flash McQueen", "Martin", "Sally", "Doc Hudson"],
+    ["Sulli", "Bob Razowski", "Bouh", "Léon"],
+    ["Wall-E", "Eve", "Rémy", "Linguini"],
+    ["Joie", "Tristesse", "Colère", "Peur", "Dégoût"],
+    ["Monsieur Indestructible", "Elastigirl", "Violette", "Flèche", "Frozone"],
+    ["Carl Fredricksen", "Russell", "Doug"],
+    ["Le Roi lion", "La Reine des neiges", "La Petite Sirène", "La Belle et la Bête"],
+    ["Toy Story", "Le Monde de Nemo", "Les Indestructibles", "Monstres et Cie"],
+    ["Coco", "Encanto", "Vice-versa", "Soul"],
+    ["Ratatouille", "Là-haut", "Cars", "Zootopie"],
+    ["Château de la Belle au bois dormant", "Arendelle", "Agrabah", "Atlantica"],
+    ["Pomme empoisonnée", "Pantoufle de verre", "Rose enchantée", "Lampe magique"],
+    ["Hakuna Matata", "Libérée, délivrée", "Ce rêve bleu", "Sous l'océan"]
+  ]
+};

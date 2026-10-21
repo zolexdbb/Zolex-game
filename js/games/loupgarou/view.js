@@ -1,7 +1,7 @@
 import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
 import { pawn, flipCard, countdown, roundTable, podium } from "../../ui/widgets.js";
-import { chatBox } from "../../ui/chat.js";
+import { chatBox, tableChannel } from "../../ui/chat.js";
 import { play, ambience } from "../../ui/sound.js";
 import { ROLES, WINNERS, neighbours, openVote, forceClose, skipHunter, announce, fallNight } from "./logic.js";
 
@@ -492,10 +492,7 @@ function talk(ctx) {
     // Le droit de lire l'au-delà n'arrive qu'à la mort : l'écoute est relancée à ce moment.
     return { id, messages: ctx.watch(path, alive ? "alive" : "dead"), send: (key, message) => ctx.write(`${path}/${key}`, message), ...extra };
   };
-  const channels = [{
-    id: "table", messages: room.talk?.[s.g], write: alive && !night,
-    send: (key, message) => ctx.tryWrite(`talk/${s.g}/${key}`, message)
-  }];
+  const channels = [tableChannel(ctx, alive && !night)];
   if (seated && secret?.role === "loup") {
     channels.push(channel("pack", { tag: "Meute", hint: "Écrire à la meute (les loups seuls te lisent)", write: alive }));
   }

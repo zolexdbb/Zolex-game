@@ -4,8 +4,12 @@ import undercover from "./games/undercover/index.js";
 import loupgarou from "./games/loupgarou/index.js";
 import dessin from "./games/dessin/index.js";
 import uno from "./games/uno/index.js";
+import connexion from "./games/connexion/index.js";
+import petitbac from "./games/petitbac/index.js";
+import codenames from "./games/codenames/index.js";
+import taboo from "./games/taboo/index.js";
 
-export const games = [undercover, loupgarou, dessin, uno];
+export const games = [undercover, loupgarou, dessin, uno, connexion, petitbac, codenames, taboo];
 
 // Jeux pas encore disponibles, affichés avec la mention « Bientôt ».
 export const upcoming = [];

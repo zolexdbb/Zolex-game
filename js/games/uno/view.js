@@ -1,6 +1,6 @@
 import { h } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
-import { pawn, countdown, roundTable, podium } from "../../ui/widgets.js";
+import { pawn, countdown, roundTable, ranking } from "../../ui/widgets.js";
 import { chatBox } from "../../ui/chat.js";
 import { play } from "../../ui/sound.js";
 import { playable, isWild, isNumber, drawOf, face, colorsOf, nextRound } from "./logic.js";
@@ -291,9 +291,7 @@ function endPanel(ctx) {
   return h("section", { class: "sheet finale" },
     h("h2", null, many ? "Classement final" : "Fin de la manche"),
     h("p", { class: "verdict" }, many ? `${nameOf(s, ranked[0])} remporte la partie` : verdict(s)),
-    podium(ranked.slice(0, 3).map((id) => ({ players: [person(ctx, id)], note: `${score(id)} pts` })), s.g),
-    ranked.length > 3 && h("ol", { class: "roles-list ranks" }, ranked.slice(3).map((id) =>
-      h("li", null, h("span", null, nameOf(s, id)), h("b", null, `${score(id)} pts`)))),
+    ranking({ ids: s.order, score, low: true, person: (id) => person(ctx, id), label: (id) => `${score(id)} pts`, key: s.g }),
     h("p", { class: "rule" }, many ? `Points restés en main, cumulés sur ${s.rules.rounds} manches : le moins possible, c'est le mieux.`
       : "Points restés en main : le moins possible, c'est le mieux."),
     isHost ? again : h("p", { class: "rule" }, "L'hôte peut relancer une partie depuis le salon."));

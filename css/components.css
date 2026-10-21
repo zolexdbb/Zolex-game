@@ -233,6 +233,10 @@
 .box-loupgarou { --box: #3d2f52; }
 .box-uno { --box: var(--brick); }
 .box-dessin { --box: #8a5a12; }
+.box-connexion { --box: #2c8a8a; }
+.box-petitbac { --box: #7a4a8c; }
+.box-codenames { --box: #3b3630; }
+.box-taboo { --box: #b5452f; }
 .stamp {
   position: absolute;
   right: -4px;
@@ -578,6 +582,55 @@ div.card { cursor: default; }
 @keyframes podium-rise { from { transform: scaleY(0); } }
 @keyframes podium-drop { from { opacity: 0; transform: translateY(-18px); } }
 /* Suite du classement, après les trois marches. */
-.ranks { counter-reset: rank 3; }
-.ranks li { counter-increment: rank; }
-.ranks li span::before { content: counter(rank) ". "; font-weight: 700; }
+/* Grand podium : la fin d'une série, en vedette. */
+.podium.is-big { gap: 10px; padding-top: 14px; }
+.podium.is-big .pawn { width: 104px; }
+.podium.is-big .pawn-disc { width: 72px; height: 72px; font-size: 1.8rem; }
+.podium.is-big .pawn-name { font-size: 1rem; }
+.podium.is-big .podium-note { font-size: 1.15rem; }
+.podium.is-big .podium-block { height: 70px; font-size: 2rem; }
+.podium.is-big .is-2 .podium-block { height: 110px; }
+.podium.is-big .is-1 .podium-block { height: 160px; font-size: 2.6rem; }
+
+/* ---- Éditeur d'avatar : une grille de vignettes par pièce ---- */
+.avatar-builder { display: grid; gap: 10px; }
+.avatar-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 6px; }
+.avatar-choice {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  background: #fffaf0;
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.avatar-choice .avatar { width: 100%; height: 100%; }
+.avatar-choice[aria-pressed="true"] { outline: 3px solid var(--brick); outline-offset: 2px; }
+.avatar-swatch { width: 100%; height: 100%; }
+.avatar-swatch.is-native { background: repeating-linear-gradient(45deg, var(--cream) 0 5px, var(--card) 5px 10px); }
+.avatar-builder > .btn { justify-self: start; }
+.profile-sheet { align-content: start; }
+
+/* ---- Packs à thème ---- */
+.pack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.pack-tile {
+  display: grid;
+  gap: 2px;
+  padding: 10px 8px;
+  text-align: center;
+  color: var(--black);
+  background: var(--grain), #fffaf0;
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  box-shadow: 0 3px 0 var(--card);
+  cursor: pointer;
+}
+.pack-tile strong { font: 400 .95rem/1.1 var(--display); text-transform: uppercase; }
+.pack-tile small { font-size: .75rem; opacity: .75; }
+.pack-tile[aria-pressed="true"] { color: #fff8ea; background: var(--grain), var(--ink); box-shadow: 0 3px 0 var(--ochre); }
+.pack-tile:disabled { cursor: default; }
+.pack-tile:disabled:not([aria-pressed="true"]) { opacity: .6; }

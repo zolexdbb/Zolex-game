@@ -1,18 +1,22 @@
-// Choix des mots d'une partie, commun aux jeux de mots : thèmes de la banque du
-// site, ou mots saisis par l'hôte dans le salon.
+// Choix des mots d'une partie, commun aux jeux de mots : thèmes larges de la banque
+// du site, un pack à thème (Pokémon, Harry Potter…), ou mots saisis par l'hôte.
 import { h } from "./dom.js";
-import { CATEGORIES } from "../games/undercover/words.js";
+import { CATEGORIES, PACKS } from "../words/index.js";
 
 export const WORD_DEFAULTS = {
   source: "site",
   cats: Object.fromEntries(CATEGORIES.map((category) => [category.id, 1])),
+  pack: PACKS[0].id,
   customText: ""
 };
 
+export const packOf = (settings) => PACKS.find((pack) => pack.id === settings.pack) || null;
+
 const MAX_WORD = 30;
 
-// Familles de mots des thèmes cochés.
+// Familles de mots des thèmes cochés, ou du pack à thème choisi.
 export function siteGroups(settings) {
+  if (settings.source === "pack") return packOf(settings)?.groups || [];
   return CATEGORIES.filter((category) => settings.cats?.[category.id]).flatMap((category) => category.groups);
 }
 
@@ -24,7 +28,7 @@ function splitWords(text) {
   return long ? { error: `« ${long.slice(0, 20)}… » est trop long (${MAX_WORD} caractères au plus par mot).` } : { words };
 }
 
-// Liste simple : mot;mot;mot (What's Drawing ?).
+// Liste simple : mot;mot;mot (Devine le dessin).
 export function parseWords(text) {
   const { words, error } = splitWords(String(text || ""));
   if (error) return { error };
@@ -75,6 +79,7 @@ const parse = (text, grouped) => (grouped ? parseGroups(text) : parseWords(text)
 
 // Renvoie la raison pour laquelle les mots ne permettent pas de jouer, ou null.
 export function checkWords(settings, grouped) {
+  if (settings.source === "pack") return packOf(settings) ? null : "Choisis un pack à thème.";
   if (settings.source !== "perso") return siteGroups(settings).length ? null : "Choisis au moins un thème de mots.";
   if (!clean(settings.customText || "")) return "L'hôte doit d'abord écrire les mots de la partie.";
   return parse(settings.customText, grouped).error || null;
@@ -85,16 +90,29 @@ const drafts = {}; // saisie en cours de l'hôte, gardée d'un affichage du salo
 // Bloc de réglage à placer dans le salon d'un jeu. `grouped` : le jeu a besoin
 // de groupes de mots proches (Undercover) plutôt que d'une simple liste.
 export function wordSetup({ gameId, grouped, settings, isHost, setSettings }) {
-  const perso = settings.source === "perso";
-  const tab = (source, label) => h("button", {
-    class: "filter-chip", type: "button", "aria-pressed": String((source === "perso") === perso), disabled: !isHost,
-    onclick: () => setSettings({ ...settings, source })
+  const source = ["pack", "perso"].includes(settings.source) ? settings.source : "site";
+  const perso = source === "perso";
+  const tab = (id, label) => h("button", {
+    class: "filter-chip", type: "button", "aria-pressed": String(id === source), disabled: !isHost,
+    onclick: () => setSettings({ ...settings, source: id, pack: settings.pack || PACKS[0].id })
   }, label);
   const head = [
     h("h3", { class: "setup-title" }, "Les mots"),
     h("div", { class: "filters", role: "group", "aria-label": "Origine des mots" },
-      tab("site", "Mots du site"), tab("perso", "Mots perso"))
+      tab("site", "Thèmes du site"), tab("pack", "Pack à thème"), tab("perso", "Mots perso"))
   ];
+
+  // Un seul univers pour toute la partie : tous les mots sortent du pack choisi.
+  if (source === "pack") {
+    const chosen = packOf(settings) || PACKS[0];
+    return h("div", { class: "word-setup" }, head,
+      h("p", { class: "rule" }, "Partie à thème : seuls les mots de ce pack sortiront."),
+      h("div", { class: "pack-grid", role: "group", "aria-label": "Packs à thème" },
+        PACKS.map((pack) => h("button", {
+          class: "pack-tile", type: "button", disabled: !isHost, "aria-pressed": String(pack.id === chosen.id),
+          onclick: () => setSettings({ ...settings, source: "pack", pack: pack.id })
+        }, h("strong", null, pack.name), h("small", null, `${pack.groups.flat().length} mots`)))));
+  }
 
   if (!perso) {
     return h("div", { class: "word-setup" }, head,

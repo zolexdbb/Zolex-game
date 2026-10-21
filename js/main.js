@@ -1,12 +1,13 @@
 import { h } from "./ui/dom.js";
 import { isConfigured, initFirebase, uid } from "./firebase.js";
 import {
-  createRoom, joinRoom, watchRoom, leaveRoom, closeRoom, removePlayer, updateMeta, sweepOldRooms
+  createRoom, joinRoom, watchRoom, leaveRoom, closeRoom, removePlayer, updateMeta, updateProfile, writeRoom, sweepOldRooms
 } from "./room.js";
 import { games } from "./registry.js";
 import { homeView, noticeView } from "./views/home.js";
 import { lobbyView } from "./views/lobby.js";
 import { createPlay, startGame } from "./play.js";
+import { startLocal } from "./local/undercover.js";
 
 const app = document.getElementById("app");
 let stopWatching = null;
@@ -45,6 +46,7 @@ function goHome(message, code = "") {
   play?.stop();
   play = null;
   sessionStorage.removeItem("room");
+  localStorage.removeItem("room");
   history.replaceState(null, "", location.pathname);
   show(homeView({
     name: localStorage.getItem("name"), code, message,
@@ -55,15 +57,18 @@ function goHome(message, code = "") {
     },
     onJoin: async (roomCode, name) => {
       try { await enter(roomCode, name); } catch (e) { throw new Error(explain(e)); }
-    }
+    },
+    onLocal: () => startLocal({ show, onExit: () => goHome("") })
   }));
 }
 
 async function enter(code, name, alreadySeated = false) {
   if (!alreadySeated) await joinRoom(code, name);
   localStorage.setItem("name", name);
-  sessionStorage.setItem("name", name); // par onglet : sert au retour après rafraîchissement
+  sessionStorage.setItem("name", name); // sert au retour après rafraîchissement
   sessionStorage.setItem("room", code);
+  // Gardé aussi au-delà de l'onglet : rouvrir le site après une déconnexion ramène à la table.
+  localStorage.setItem("room", code);
   history.replaceState(null, "", `?room=${code}`);
 
   stopWatching = watchRoom(code, (room) => {
@@ -90,6 +95,9 @@ function render(code, room) {
     onLeave: () => guard(leaveRoom(code, room)),
     onClose: () => confirm("Ranger la table ? Tous les joueurs seront renvoyés à l'accueil.") && guard(closeRoom(code)),
     onRemove: (playerId) => guard(removePlayer(code, playerId)),
+    onProfile: (patch) => updateProfile(code, patch),
+    onTalk: (path, value) => writeRoom(code, path, value),
+    onRedraw: () => render(code, room),
     onPickGame: (game) => guard(updateMeta(code, { gameId: game.id, settings: game.defaultSettings })),
     onSettings: (settings) => guard(updateMeta(code, { settings })),
     onStart: () => guard(startGame(code, room))
@@ -110,8 +118,8 @@ async function boot() {
   }
 
   const wanted = (new URLSearchParams(location.search).get("room") || "").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4);
-  const seated = sessionStorage.getItem("room");
-  const name = sessionStorage.getItem("name");
+  const seated = sessionStorage.getItem("room") || localStorage.getItem("room");
+  const name = sessionStorage.getItem("name") || localStorage.getItem("name");
   sweepOldRooms(seated || wanted);
 
   // Après un rafraîchissement, on se rassoit à la même table.

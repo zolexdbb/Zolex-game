@@ -7,6 +7,9 @@ export const WINNERS = {
   infiltres: "Les infiltrés ont pris le contrôle",
   mrwhite: "Mr White a deviné le mot"
 };
+// Points gagnés par chaque joueur du camp vainqueur, partie après partie.
+export const POINTS = { civil: 2, undercover: 10, mrwhite: 6 };
+const NEXT_TIME = 15000;
 
 const rand = (n) => crypto.getRandomValues(new Uint32Array(1))[0] % n;
 
@@ -23,7 +26,12 @@ function shuffle(list) {
 export const norm = (text) =>
   String(text).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-const civils = (s, n) => n - s.undercover - s.mrWhite;
+export const civils = (s, n) => n - s.undercover - s.mrWhite;
+
+// Tours d'indices d'une manche. Réglage 0 = auto : environ 6 indices entendus avant
+// chaque vote, quel que soit le nombre de joueurs (sinon Mr White en entend 2n à n joueurs).
+export const toursFor = (setting, alive) =>
+  setting > 0 ? setting : Math.min(4, Math.max(1, Math.ceil(6 / Math.max(1, alive - 1))));
 
 // Renvoie la raison pour laquelle la partie ne peut pas commencer, ou null.
 export function checkSettings(s, n) {
@@ -32,8 +40,35 @@ export function checkSettings(s, n) {
   return checkWords(s, true);
 }
 
-export function start({ players, settings }) {
-  const ids = shuffle(players.map((p) => p.id));
+// Paires signalées « trop éloignées » par les joueurs : gardées sur l'appareil qui
+// distribue (l'hôte, ou le téléphone de la partie locale), elles ne sortent plus.
+const AVOID_KEY = "undercover-avoid";
+export const pairKey = (a, b) => [norm(a), norm(b)].sort().join("~").slice(0, 80);
+export function avoidedPairs() {
+  try { return new Set(JSON.parse(localStorage.getItem(AVOID_KEY)) || []); } catch { return new Set(); }
+}
+export function avoidPairs(keys) {
+  const set = avoidedPairs();
+  const before = set.size;
+  for (const key of keys) set.add(key);
+  if (set.size === before) return;
+  try { localStorage.setItem(AVOID_KEY, JSON.stringify([...set].slice(-500))); } catch { /* stockage plein ou bloqué */ }
+}
+
+// Deux mots proches tirés dans une même famille, en évitant les paires signalées.
+export function drawPair(pool, avoid = avoidedPairs()) {
+  let pair = null;
+  for (let tries = 0; tries < 50; tries++) {
+    pair = shuffle(pool[rand(pool.length)]);
+    if (!avoid.has(pairKey(pair[0], pair[1]))) break;
+  }
+  return pair;
+}
+
+// La donne, sans réseau : rôles, mots et ordre de parole (Mr White jamais premier).
+// Sert à la partie en ligne comme à la partie sur un seul téléphone.
+export function dealRoles(playerIds, settings) {
+  const ids = shuffle(playerIds);
   const roles = {};
   ids.forEach((id, i) => {
     roles[id] = i < settings.undercover ? "undercover"
@@ -43,7 +78,19 @@ export function start({ players, settings }) {
   const pool = settings.source === "perso"
     ? parseGroups(settings.customText).groups.map((group) => group.words)
     : siteGroups(settings);
-  const [civilWord, undercoverWord] = shuffle(pool[rand(pool.length)]);
+  const [civilWord, undercoverWord] = drawPair(pool);
+  return { ids, roles, civilWord, undercoverWord, base: firstNotWhite(shuffle(ids), roles) };
+}
+
+// Fait tourner l'ordre jusqu'à ce que Mr White ne soit pas en tête.
+export function firstNotWhite(order, roles) {
+  const out = [...order];
+  for (let i = 0; i < out.length && roles[out[0]] === "mrwhite"; i++) out.push(out.shift());
+  return out;
+}
+
+export function start({ players, settings }) {
+  const { ids, roles, civilWord, undercoverWord, base } = dealRoles(players.map((p) => p.id), settings);
 
   const secrets = {};
   for (const id of ids) {
@@ -51,15 +98,12 @@ export function start({ players, settings }) {
       : { word: roles[id] === "civil" ? civilWord : undercoverWord };
   }
 
-  // Mr White ne donne jamais le premier indice.
-  const base = shuffle(ids);
-  while (roles[base[0]] === "mrwhite") base.push(base.shift());
-
   return {
     state: {
       phase: "clues", round: 1, base, order: base, turn: 0,
+      series: { no: 1, of: settings.games || 1, scores: {} },
       // tour : tour d'indices dans la manche ; lap : compteur de tours depuis le début.
-      tour: 1, lap: 1, tours: settings.clueTours,
+      tour: 1, lap: 1, tours: toursFor(settings.clueTours, ids.length), clueTours: settings.clueTours || 0,
       alive: Object.fromEntries(ids.map((id) => [id, true])),
       names: Object.fromEntries(players.map((p) => [p.id, { name: p.name, pawn: p.index }])),
       totals: { civil: civils(settings, ids.length), undercover: settings.undercover, mrwhite: settings.mrWhite }
@@ -76,7 +120,7 @@ function remaining(s, room, extra) {
   return left;
 }
 
-function winnerOf(left) {
+export function winnerOf(left) {
   if (left.undercover + left.mrwhite === 0) return "civils";
   if (left.civil <= 1) return "infiltres";
   return null;
@@ -108,11 +152,26 @@ function eliminate({ state: s, patch, nextStep }, who, last, votes) {
   });
 }
 
-function nextRound({ state: s, patch, nextStep }) {
-  const base = [...s.base.slice(1), s.base[0]];
+// Le camp vainqueur, rôle par rôle.
+export const wins = (winner, role) => (winner === "civils" ? role === "civil" : winner === "mrwhite" ? role === "mrwhite" : role !== "civil");
+
+// Ordre de parole d'une nouvelle manche : tiré au hasard, et la base de données
+// refuse que Mr White parle en premier (l'hôte ne connaît pas les rôles).
+async function speakingOrder(ctx, round) {
+  const { state: s } = ctx;
+  const order = shuffle(s.base.filter((id) => s.alive?.[id]));
+  for (let i = 0; i < order.length; i++) {
+    if (await ctx.tryWrite(`starter/${s.g}/r${round}`, order[i])) return [...order.slice(i), ...order.slice(0, i)];
+  }
+  return order;
+}
+
+async function nextRound(ctx) {
+  const { state: s, patch, nextStep } = ctx;
+  const order = await speakingOrder(ctx, s.round + 1);
   return patch({
-    "state/phase": "clues", "state/round": s.round + 1, "state/base": base,
-    "state/order": base.filter((id) => s.alive?.[id]), "state/turn": 0,
+    "state/phase": "clues", "state/round": s.round + 1,
+    "state/order": order, "state/turn": 0, "state/tours": toursFor(s.clueTours ?? s.tours, order.length),
     "state/tour": 1, "state/lap": s.lap + 1,
     "state/last": null, "state/votes": null, "state/resolved": null,
     "state/pending": null, "state/forceClose": null, "state/skipGuess": null,
@@ -134,7 +193,34 @@ function resolve({ state: s, patch }, left, extra = {}) {
   });
 }
 
+// Fin d'une partie : le camp vainqueur marque, puis la partie suivante est distribuée.
+async function afterEnd(ctx) {
+  const { state: s, vault } = ctx;
+  const series = s.series || { no: 1, of: 1, scores: {} };
+  if (!s.scored) {
+    if (!vault) return;
+    const scores = { ...series.scores };
+    const winners = s.base.filter((id) => wins(s.winner, vault.roles[id]));
+    for (const id of winners) scores[id] = (scores[id] || 0) + POINTS[vault.roles[id]];
+    // Résumé de la partie, montré à la fin de la série.
+    const roles = Object.values(vault.roles);
+    const recap = {
+      no: series.no, winner: s.winner, civil: vault.words.civil, undercover: vault.words.undercover,
+      winners: winners.map((id) => s.names[id].name), mixed: roles.includes("mrwhite") && roles.includes("undercover")
+    };
+    return ctx.patch({
+      "state/scored": true, "state/series": { ...series, scores, history: [...(series.history || []), recap] },
+      "state/until": series.no < series.of ? ctx.now() + NEXT_TIME : null
+    });
+  }
+  if (series.no >= series.of || !s.until || ctx.now() < s.until) return;
+  const next = { series: { ...series, no: series.no + 1 } };
+  // Plus assez de joueurs pour continuer : la série s'arrête là.
+  if (!(await ctx.redeal(next))) return ctx.patch({ "state/series/of": series.no, "state/until": null });
+}
+
 // Commandes de l'hôte.
+export const nextGame = (ctx) => ctx.patch({ "state/until": ctx.now() });
 export const skipTurn = (ctx) => giveClue(ctx, ctx.state.order[ctx.state.turn], "");
 export const goVote = (ctx) => ctx.patch({ "state/phase": "vote", "state/turn": 0, "state/step": ctx.nextStep() });
 export const forceClose = (ctx) => ctx.patch({ "state/forceClose": true });
@@ -143,7 +229,8 @@ export const proceed = (ctx) => (ctx.state.pending ? finish(ctx, ctx.state.pendi
 
 export async function hostTick(ctx) {
   const { room, state: s, actions } = ctx;
-  if (!s || s.phase === "end") return;
+  if (!s) return;
+  if (s.phase === "end") return afterEnd(ctx);
   const alive = Object.keys(s.alive || {});
 
   if (s.phase === "clues" || s.phase === "vote") {

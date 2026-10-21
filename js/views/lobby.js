@@ -1,11 +1,16 @@
 import { h, busy } from "../ui/dom.js";
 import { icon } from "../ui/icons.js";
 import { pawn } from "../ui/widgets.js";
+import { profileSheet } from "../ui/profile.js";
+import { chatBox } from "../ui/chat.js";
 import { soundControl } from "../ui/sound.js";
 import { sortedPlayers } from "../room.js";
 import { games, upcoming, getGame } from "../registry.js";
 
-export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove, onPickGame, onSettings, onStart }) {
+// Feuille « Mon profil » ouverte : gardée d'un affichage du salon à l'autre.
+const ui = { profile: false };
+
+export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove, onProfile, onRedraw, onPickGame, onSettings, onStart, onTalk }) {
   const { meta } = room;
   const players = sortedPlayers(room);
   const isHost = meta.hostUid === me;
@@ -42,12 +47,23 @@ export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove,
       h("div", { class: "seats" },
         players.map((p) => h("div", { class: "seat" },
           pawn(p, { isHost: p.id === meta.hostUid, isMe: p.id === me }),
+          p.id === me && h("button", {
+            class: "btn btn-mini", type: "button", "aria-expanded": String(ui.profile),
+            onclick: () => { ui.profile = !ui.profile; onRedraw(); }
+          }, "Mon profil"),
           isHost && !p.online && h("button", {
             class: "btn btn-mini", type: "button", onclick: () => onRemove(p.id)
           }, "Retirer")
         ))
       )
-    )),
+    ),
+    ui.profile && players.some((p) => p.id === me) && profileSheet({
+      player: players.find((p) => p.id === me),
+      onSave: onProfile,
+      onClose: () => { ui.profile = false; onRedraw(); }
+    }),
+    // La même discussion qu'en partie : elle suit la table d'un jeu à l'autre.
+    chatBox({ code, room, me, tryWrite: onTalk })),
 
     h("div", { class: "col" }, h("section", { class: "sheet" },
       h("h2", null, "Le jeu du soir"),

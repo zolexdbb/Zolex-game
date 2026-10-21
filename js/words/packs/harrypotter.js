@@ -1,0 +1,38 @@
+// Pack Harry Potter : noms de la traduction française.
+export default {
+  id: "harrypotter", name: "Harry Potter", groups: [
+    ["Harry Potter", "Ron Weasley", "Hermione Granger"],
+    ["Gryffondor", "Serpentard", "Poufsouffle", "Serdaigle"],
+    ["Dumbledore", "McGonagall", "Flitwick", "Chourave"],
+    ["Rogue", "Lockhart", "Quirrell", "Ombrage", "Maugrey"],
+    ["Voldemort", "Bellatrix Lestrange", "Lucius Malefoy", "Fenrir Greyback"],
+    ["Drago Malefoy", "Crabbe", "Goyle"],
+    ["Fred Weasley", "George Weasley", "Ginny Weasley", "Percy Weasley"],
+    ["Lunard", "Queudver", "Patmol", "Cornedrue"],
+    ["Luna Lovegood", "Neville Londubat", "Seamus Finnigan", "Dean Thomas"],
+    ["Cédric Diggory", "Viktor Krum", "Fleur Delacour"],
+    ["Hagrid", "Graup", "Crockdur", "Buck"],
+    ["Dobby", "Kreattur", "Winky"],
+    ["Hedwige", "Croûtard", "Pattenrond", "Coquecigrue"],
+    ["Baguette de sureau", "Pierre de résurrection", "Cape d'invisibilité"],
+    ["Horcruxe", "Retourneur de temps", "Miroir du Riséd", "Pensine"],
+    ["Choixpeau", "Carte du Maraudeur", "Beuglante", "Rapeltout"],
+    ["Vif d'or", "Souafle", "Cognard"],
+    ["Attrapeur", "Poursuiveur", "Batteur", "Gardien"],
+    ["Nimbus 2000", "Éclair de feu", "Balai volant"],
+    ["Poudlard", "Pré-au-Lard", "Chemin de Traverse", "Allée des Embrumes"],
+    ["Ministère de la Magie", "Gringotts", "Azkaban", "Sainte-Mangouste"],
+    ["Poudre de Cheminette", "Transplanage", "Magicobus", "Portoloin"],
+    ["Patronus", "Détraqueur", "Épouvantard", "Inferius"],
+    ["Hippogriffe", "Sombral", "Magyar à pointes", "Basilic"],
+    ["Expelliarmus", "Stupéfix", "Wingardium Leviosa", "Lumos"],
+    ["Avada Kedavra", "Endoloris", "Impérium"],
+    ["Polynectar", "Felix Felicis", "Veritaserum", "Amortentia"],
+    ["Bièraubeurre", "Dragée surprise", "Chocogrenouille", "Patacitrouille"],
+    ["Moldu", "Cracmol", "Sorcier", "Né-Moldu"],
+    ["Quidditch", "Tournoi des Trois Sorciers", "Coupe des Quatre Maisons"],
+    ["Poudlard Express", "Voie 9 3/4", "King's Cross"],
+    ["Mangemort", "Ordre du Phénix", "Armée de Dumbledore"],
+    ["Fumseck", "Aragog", "Touffu", "Nagini"]
+  ]
+};
