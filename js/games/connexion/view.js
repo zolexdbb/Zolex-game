@@ -4,7 +4,7 @@ import { pawn, token, countdown, ranking } from "../../ui/widgets.js";
 import { chatBox, tableChannel } from "../../ui/chat.js";
 import { play } from "../../ui/sound.js";
 import { norm } from "../dessin/logic.js";
-import { needed, bonus, skipWait } from "./logic.js";
+import { needed, bonus, skipWait, sameWord, cluster } from "./logic.js";
 
 // État d'affichage propre à cet appareil.
 const ui = { draft: "", cue: null, error: "" };
@@ -50,8 +50,9 @@ function writePanel(ctx) {
     const word = input.value.replace(/\s+/g, " ").trim();
     if (!word || !norm(word)) return input.focus();
     // Mot déjà dit : refusé tout de suite, plutôt que de perdre son tour.
-    if (s.used?.[norm(word)]) {
-      ui.error = `« ${s.used[norm(word)]} » a déjà été dit dans cette manche.`;
+    const already = Object.values(s.used || {}).find((w) => sameWord(w, word));
+    if (already) {
+      ui.error = `« ${already} » (ou presque) a déjà été dit dans cette manche.`;
       error.textContent = ui.error;
       error.hidden = false;
       return input.focus();
@@ -67,18 +68,13 @@ function writePanel(ctx) {
     form, error];
 }
 
-// Les mots du tour, regroupés : les mots identiques côte à côte.
+// Les mots du tour, regroupés : les mots identiques (ou à une faute près) côte à côte.
 function revealPanel(ctx) {
   const { state: s, isHost } = ctx;
   const words = s.rounds?.[`r${s.tour}`] || {};
-  const groups = new Map();
-  for (const id of s.order) {
-    const word = words[id];
-    const key = word ? norm(word) : "";
-    if (!groups.has(key)) groups.set(key, { word, ids: [] });
-    groups.get(key).ids.push(id);
-  }
-  const sorted = [...groups.values()].sort((a, b) => (!a.word) - (!b.word) || b.ids.length - a.ids.length);
+  const near = cluster(words, s.order).map((g) => ({ word: g.words[0], spellings: [...new Set(g.words)], ids: g.ids }));
+  const empty = s.order.filter((id) => !words[id]);
+  const sorted = [...near.sort((a, b) => b.ids.length - a.ids.length), ...(empty.length ? [{ word: null, ids: empty }] : [])];
   const last = s.last || {};
   const verdict = last.agreed
     ? h("p", { class: "verdict" }, `Connexion ! En ${s.tour} tour${s.tour > 1 ? "s" : ""} (+${bonus(s.tour)} pour tous)`)
@@ -90,6 +86,7 @@ function revealPanel(ctx) {
     verdict,
     h("ul", { class: "cx-groups" }, sorted.map((group) => h("li", { class: `cx-group${group.word ? "" : " is-empty"}${group.ids.length >= 2 && group.word ? " is-match" : ""}` },
       h("strong", null, group.word || "(rien)"),
+      group.spellings?.length > 1 && h("em", { class: "cx-spell" }, `aussi : ${group.spellings.slice(1).join(", ")}`),
       h("span", { class: "cx-who" }, group.ids.map((id) => token(person(ctx, id)))),
       group.ids.length >= 2 && group.word && h("small", null, `×${group.ids.length}`)))),
     refused.length > 0 && h("p", { class: "rule" }, "Déjà dit, donc refusé : ", refused.map(([id, word]) => `${nameOf(s, id)} (« ${word} »)`).join(", "), "."),
@@ -108,10 +105,10 @@ function timeline({ state: s }) {
       h("li", { class: "is-start" }, h("b", null, "Départ"), h("span", null, (s.start || []).join(" · "))),
       tours.map((tour) => {
         const words = s.rounds[tour] || {};
-        const count = {};
-        for (const word of Object.values(words)) if (word) count[norm(word)] = (count[norm(word)] || 0) + 1;
+        // Surligne ceux qui se sont rejoints, même avec une faute d'écart.
+        const matched = new Set(cluster(words, s.order).filter((g) => g.ids.length >= 2).flatMap((g) => g.ids));
         return h("li", null, h("b", null, `Tour ${tour.slice(1)}`),
-          h("span", null, s.order.map((id) => h("em", { class: words[id] && count[norm(words[id])] >= 2 ? "is-match" : words[id] ? "" : "is-empty", title: nameOf(s, id) },
+          h("span", null, s.order.map((id) => h("em", { class: matched.has(id) ? "is-match" : words[id] ? "" : "is-empty", title: nameOf(s, id) },
             words[id] || "—"))));
       })));
 }

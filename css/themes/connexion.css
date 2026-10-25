@@ -127,3 +127,4 @@
 @media (max-width: 600px) {
   .theme-connexion .cx-recap li { grid-template-columns: auto minmax(0, 1fr); }
 }
+.theme-connexion .cx-spell { font-size: .8rem; opacity: .75; }

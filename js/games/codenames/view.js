@@ -1,6 +1,6 @@
 import { h, busy } from "../../ui/dom.js";
 import { icon } from "../../ui/icons.js";
-import { pawn } from "../../ui/widgets.js";
+import { pawn, token } from "../../ui/widgets.js";
 import { chatBox } from "../../ui/chat.js";
 import { play } from "../../ui/sound.js";
 import { TEAMS, other, total, teamOf, revealedCount, checkClue } from "./logic.js";
@@ -25,15 +25,29 @@ function grid(ctx) {
   const key = s.phase === "end" ? vault?.key : secret?.key;
   const team = teamOf(s, me);
   const canTouch = s.phase === "guess" && team === s.turn && me !== s.spy[team] && !myAction;
+  // Pastilles de réflexion de l'indice en cours : { c3: { uid: true } }.
+  const pinKey = `k${s.clueNo || 0}`;
+  const pins = s.phase === "guess" ? ctx.room.pins?.[s.g]?.[pinKey] || {} : {};
   return h("div", { class: "cn-grid", role: "grid" }, s.grid.map((word, i) => {
     const cell = `c${i}`;
     const shown = s.revealed?.[cell];
     const hint = !shown && key?.[cell];
     const cls = `cn-card${shown ? ` is-shown is-${shown}` : ""}${hint ? ` hint-${hint}` : ""}${s.last?.cell === cell ? " is-last" : ""}`;
     const label = shown ? `${word} : ${COLOR_NAMES[shown]}` : word;
-    return canTouch && !shown
-      ? h("button", { class: cls, type: "button", "aria-label": `Toucher ${word}`, onclick: () => ctx.act({ cell: i }).catch(() => ctx.refresh()) }, h("span", null, word))
-      : h("div", { class: cls, role: "gridcell", "aria-label": label }, h("span", null, word));
+    const mine = !!pins[cell]?.[me];
+    const dots = !shown && Object.keys(pins[cell] || {}).length > 0 && h("span", { class: "cn-dots", "aria-label": "Pastilles" },
+      Object.keys(pins[cell]).map((id) => token({ name: nameOf(s, id), index: s.names[id]?.pawn ?? 0, avatar: ctx.room.players?.[id]?.avatar })));
+    // Toucher une carte n'y pose que sa pastille ; « Retourner » joue vraiment la carte.
+    if (canTouch && !shown) {
+      return h("div", { class: `${cls}${mine ? " is-pinned" : ""}` },
+        h("button", {
+          class: "cn-pin", type: "button", "aria-pressed": String(mine), "aria-label": `${mine ? "Retirer ma pastille de" : "Poser ma pastille sur"} ${word}`,
+          onclick: () => ctx.tryWrite(`pins/${s.g}/${pinKey}/${cell}/${me}`, mine ? null : true)
+        }, h("span", null, word)),
+        dots,
+        mine && h("button", { class: "btn btn-mini cn-flip", type: "button", onclick: () => ctx.act({ cell: i }).catch(() => ctx.refresh()) }, "Retourner"));
+    }
+    return h("div", { class: cls, role: "gridcell", "aria-label": label }, h("span", null, word), dots);
   }));
 }
 
@@ -75,7 +89,7 @@ function guessPanel(ctx) {
   return [
     h("p", { class: `cn-clue-shown team-${s.turn}` }, h("span", null, `Indice des ${TEAMS[s.turn]}`), h("strong", null, s.clue?.word), h("b", null, String(s.clue?.n))),
     h("p", { class: "rule" }, `Encore ${s.left} essai${s.left > 1 ? "s" : ""} au plus.`,
-      mine ? " Touche une case de la grille, ou passe la main." : ` Les ${TEAMS[s.turn]} cherchent…`),
+      mine ? " Touche une carte pour y poser ta pastille, puis « Retourner » pour la jouer. Ou passe la main." : ` Les ${TEAMS[s.turn]} cherchent…`),
     mine && !myAction && action("Passer la main", "skip", () => ctx.act({ pass: true }))
   ];
 }
@@ -123,7 +137,7 @@ export function view(ctx) {
   return [
     h("div", { class: "col cn-main" },
       h("header", { class: "cn-head" },
-        h("p", { class: "eyebrow" }, `Nom de code · ${role}`),
+        h("p", { class: "eyebrow" }, `Code Name · ${role}`),
         h("h1", { class: s.phase === "end" ? `team-${s.winner}` : `team-${s.turn}` },
           s.phase === "end" ? "Fin de la mission" : `Au tour des ${TEAMS[s.turn]}`)),
       grid(ctx),

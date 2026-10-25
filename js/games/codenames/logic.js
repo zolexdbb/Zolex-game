@@ -24,12 +24,29 @@ export function makeKey(first) {
   return shuffle([...Array(9).fill(first), ...Array(8).fill(other(first)), ...Array(7).fill("n"), "a"]);
 }
 
-// Répartit les joueurs en deux équipes et désigne un maître-espion dans chacune.
-export function makeTeams(ids) {
-  const mixed = shuffle(ids);
+// Répartit les joueurs : selon la composition de l'hôte si elle existe. Un joueur arrivé
+// après va dans l'équipe la moins nombreuse ; un maître-espion absent est remplacé par
+// le premier de son équipe. La partie démarre ainsi toujours avec deux équipes jouables.
+export function makeTeams(ids, wanted = {}, spies = {}) {
   const teams = { r: [], b: [] };
-  mixed.forEach((id, i) => teams[i % 2 ? "b" : "r"].push(id));
-  return { teams, spy: { r: teams.r[0], b: teams.b[0] } };
+  for (const id of shuffle(ids).sort((a, b) => !wanted[a] - !wanted[b])) {
+    const team = wanted[id] === "r" || wanted[id] === "b" ? wanted[id] : teams.r.length <= teams.b.length ? "r" : "b";
+    teams[team].push(id);
+  }
+  const spy = {
+    r: teams.r.includes(spies?.r) ? spies.r : teams.r[0],
+    b: teams.b.includes(spies?.b) ? spies.b : teams.b[0]
+  };
+  return { teams, spy };
+}
+
+// Il faut au moins 2 joueurs par équipe (un maître-espion et quelqu'un pour deviner).
+export function teamsCheck(settings, n) {
+  if (!settings.teams) return null;
+  const sides = Object.values(settings.teams);
+  if (sides.length < n) return null; // des joueurs pas encore placés : ils seront répartis au lancement
+  const count = (t) => sides.filter((x) => x === t).length;
+  return count("r") < 2 || count("b") < 2 ? "Il faut au moins 2 joueurs dans chaque équipe." : null;
 }
 
 export const teamOf = (s, id) => (s.teams.r.includes(id) ? "r" : s.teams.b.includes(id) ? "b" : null);
@@ -61,13 +78,13 @@ export function afterReveal(s, team, color, revealed) {
 
 export function start({ players, settings }) {
   const ids = players.map((p) => p.id);
-  const { teams, spy } = makeTeams(ids);
+  const { teams, spy } = makeTeams(ids, settings.teams, settings.spies);
   const first = shuffle(["r", "b"])[0];
   const grid = shuffle(pool(settings)).slice(0, SIZE);
   const key = Object.fromEntries(makeKey(first).map((color, i) => [`c${i}`, color]));
   return {
     state: {
-      phase: "clue", turn: first, first, grid, teams, spy, revealed: {}, clue: null, left: 0,
+      phase: "clue", turn: first, first, grid, teams, spy, revealed: {}, clue: null, left: 0, clueNo: 0,
       names: Object.fromEntries(players.map((p) => [p.id, { name: p.name, pawn: p.index }]))
     },
     // Seuls les deux maîtres-espions reçoivent la carte-clé.
@@ -90,7 +107,11 @@ export async function hostTick(ctx) {
     const n = Math.min(9, Math.max(1, Math.floor(Number(sent.n) || 1)));
     // Un indice refusé libère seulement le maître-espion, qui peut en proposer un autre.
     if (checkClue(s, word)) return ctx.patch({ "state/step": ctx.nextStep() });
-    return ctx.patch({ "state/phase": "guess", "state/clue": { word, n, team: s.turn }, "state/left": n + 1, "state/step": ctx.nextStep() });
+    // Nouveau numéro d'indice : les pastilles de l'indice précédent ne s'affichent plus.
+    return ctx.patch({
+      "state/phase": "guess", "state/clue": { word, n, team: s.turn }, "state/left": n + 1,
+      "state/clueNo": (s.clueNo || 0) + 1, "state/step": ctx.nextStep()
+    });
   }
 
   if (s.phase === "guess") {

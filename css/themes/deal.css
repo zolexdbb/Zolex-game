@@ -1,0 +1,401 @@
+/* Capy Deal : les cartes, dans l'esprit du Uno (marge crème, cartouche cousu).
+   Toutes les tailles sont des fractions de --w (la largeur de la carte, 140 px de référence),
+   toutes les couleurs sont fixées : une carte se lit pareil en thème clair ou sombre. */
+.dcard {
+  --w: 140px;
+  --suit: #fffaf0;
+  --on: #1d1a16;
+  --ray: transparent;
+  position: relative;
+  flex: none;
+  width: var(--w);
+  aspect-ratio: 5 / 7.4;
+  font-family: var(--text);
+  color: #1d1a16;
+  background: var(--grain), #fffaf0;
+  border: 2px solid #1d1a16;
+  border-radius: calc(var(--w) * .065);
+  box-shadow: 0 3px 0 rgb(0 0 0 / .35);
+  overflow: hidden;
+}
+.d-face {
+  position: absolute;
+  inset: calc(var(--w) * .03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(var(--w) * .057) calc(var(--w) * .043) calc(var(--w) * .043);
+  text-align: center;
+  color: var(--on);
+  background: var(--suit);
+  border-radius: calc(var(--w) * .036);
+  outline: 1.5px dashed color-mix(in srgb, var(--on) 55%, transparent);
+  outline-offset: calc(var(--w) * -.03);
+  overflow: hidden;
+}
+.d-blue { --suit: #1f3550; --on: #fffaf0; --ray: rgb(255 255 255 / .09); }
+.d-cream { --suit: #f3e9d2; --on: #1d1a16; --ray: rgb(29 26 22 / .07); }
+.d-dark { --suit: #1d1a16; --on: #f3c1b6; --ray: rgb(232 85 77 / .22); --plaque: #2a1414; --plaque-ink: #f3c1b6; --plaque-edge: #e8554d; }
+.d-dark .d-title { color: #fffaf0; }
+.d-money { --on: #fffaf0; }
+
+.d-man { flex: none; width: 1em; height: 1em; vertical-align: -.15em; }
+.d-title { position: relative; z-index: 2; margin-top: calc(var(--w) * .1); font: 400 calc(var(--w) * .093) / 1.05 var(--display); text-transform: uppercase; }
+.d-note { font-size: calc(var(--w) * .079); line-height: 1.2; }
+.d-big { display: flex; align-items: center; gap: .08em; margin: auto 0; font: 400 calc(var(--w) * .29) / 1 var(--display); }
+.d-big .d-man { width: .8em; height: .8em; }
+.d-money .d-title { margin-top: calc(var(--w) * .13); }
+
+/* Valeur (haut gauche) et nombre d'exemplaires (haut droite, galerie). */
+.d-val {
+  position: absolute;
+  z-index: 3;
+  left: calc(var(--w) * .03);
+  top: calc(var(--w) * .03);
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: calc(var(--w) * .157);
+  padding: 0 calc(var(--w) * .03) 0 calc(var(--w) * .036);
+  font: 400 calc(var(--w) * .079) / 1 var(--display);
+  color: #1d1a16;
+  background: #fffaf0;
+  border: 1.5px solid #1d1a16;
+  border-radius: 999px;
+}
+.d-count {
+  position: absolute;
+  z-index: 3;
+  right: calc(var(--w) * .03);
+  top: calc(var(--w) * .036);
+  padding: 0 calc(var(--w) * .036);
+  font: 700 calc(var(--w) * .079) / 1.4 var(--text);
+  color: #1d1a16;
+  background: #fffaf0;
+  border: 1px solid #1d1a16;
+  border-radius: calc(var(--w) * .043);
+}
+
+/* Propriétés : bandeau du nom à hauteur fixe (2 lignes), puis les loyers. */
+.d-band {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: calc(var(--w) * .23);
+  margin-top: calc(var(--w) * .13);
+  padding: 0 calc(var(--w) * .02);
+  font: 400 calc(var(--w) * .079) / 1.05 var(--display);
+  text-transform: uppercase;
+  color: var(--band-ink);
+  background: var(--band);
+  border-radius: calc(var(--w) * .02);
+  box-sizing: border-box;
+}
+.d-band.is-small { height: calc(var(--w) * .143); margin-top: 0; font-size: calc(var(--w) * .075); }
+.d-rents { display: grid; gap: 1px; width: 100%; margin: calc(var(--w) * .014) 0 0; padding: 0; list-style: none; font-size: calc(var(--w) * .079); }
+.d-rents li { display: flex; justify-content: space-between; align-items: center; gap: 4px; padding: 0 calc(var(--w) * .014); line-height: 1.15; border-bottom: 1px dotted #c9a877; }
+.d-rents .is-full { font-weight: 700; }
+.d-property .d-note { margin-top: calc(var(--w) * .02); }
+
+/* Jokers à deux couleurs : deux moitiés tête-bêche, séparées d'un pointillé « Joker ». */
+.d-half { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.d-half:first-child { margin-top: calc(var(--w) * .128); }
+.d-half.is-flipped { margin-top: auto; transform: rotate(180deg); }
+.d-split { display: flex; align-items: center; gap: 4px; width: 100%; margin: calc(var(--w) * .02) 0; font: 400 calc(var(--w) * .068) / 1 var(--display); letter-spacing: .08em; text-transform: uppercase; }
+.d-split::before, .d-split::after { content: ""; flex: 1; border-top: 2px dashed #1d1a16; }
+.d-wild .d-title { margin-top: calc(var(--w) * .13); }
+.d-wild > .d-face > .d-disc { margin: auto; }
+
+/* Actions et loyers : titre, illustration sur des rayons rétro, plaque à hauteur fixe. */
+.d-art {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: flex-end;
+  width: calc(100% + var(--w) * .086);
+  min-height: 0;
+  margin: calc(var(--w) * .014) calc(var(--w) * -.043) 0;
+  background: repeating-conic-gradient(from 0deg at 50% 100%, var(--ray) 0 9deg, transparent 9deg 18deg);
+}
+.d-art .d-capy { display: block; width: calc(var(--w) * .6); height: calc(var(--w) * .6); margin-bottom: calc(var(--w) * -.057); }
+.d-art.is-disc { align-items: center; }
+.d-disc {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: calc(var(--w) * .42);
+  aspect-ratio: 1;
+  font: 400 calc(var(--w) * .13) / 1 var(--display);
+  color: #fffaf0;
+  text-shadow: 0 0 3px #1d1a16, 0 0 3px #1d1a16;
+  border: calc(var(--w) * .02) solid #fffaf0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #1d1a16, 0 3px 0 2px rgb(0 0 0 / .3);
+}
+.d-plaque {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: calc(var(--w) * .54);
+  padding: 2px calc(var(--w) * .03);
+  font-size: calc(var(--w) * .079);
+  line-height: 1.15;
+  color: var(--plaque-ink, #1d1a16);
+  background: var(--plaque, #fffaf0);
+  border: 2px solid var(--plaque-edge, #1d1a16);
+  border-radius: calc(var(--w) * .02);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Dos : motif du dos Uno, capybara en grand. */
+.d-back .d-face {
+  --on: #f3e9d2;
+  --ray: rgb(243 233 210 / .1);
+  justify-content: center;
+  background:
+    repeating-linear-gradient(45deg, rgb(255 255 255 / .09) 0 6px, transparent 6px 12px),
+    repeating-linear-gradient(-45deg, rgb(255 255 255 / .09) 0 6px, transparent 6px 12px),
+    #1f3550;
+}
+.d-back .d-art { flex: none; height: calc(var(--w) * .66); }
+.d-back .d-art .d-capy { width: calc(var(--w) * .7); height: calc(var(--w) * .7); }
+.d-back .d-title { margin-top: calc(var(--w) * .05); font-size: calc(var(--w) * .11); }
+
+/* En main : la carte est petite, on ne garde que l'essentiel en gros. */
+.dcard.is-mini .d-plaque, .dcard.is-mini .d-note, .dcard.is-mini .d-rents, .dcard.is-mini .d-count, .dcard.is-mini .d-split { display: none; }
+.dcard.is-mini .d-title { margin-top: calc(var(--w) * .26); font-size: calc(var(--w) * .15); }
+.dcard.is-mini .d-band { height: calc(var(--w) * .62); margin-top: calc(var(--w) * .26); font-size: calc(var(--w) * .11); overflow-wrap: anywhere; hyphens: auto; }
+.dcard.is-mini .d-half.is-flipped { margin-top: calc(var(--w) * .05); }
+.dcard.is-mini .d-half .d-band { height: calc(var(--w) * .45); }
+.dcard.is-mini .d-val { height: calc(var(--w) * .24); font-size: calc(var(--w) * .15); }
+.dcard.is-mini .d-art .d-capy { width: calc(var(--w) * .9); height: calc(var(--w) * .9); }
+
+/* Le jeton Dette. */
+.d-token {
+  --t: 84px;
+  display: grid;
+  place-items: center;
+  width: var(--t);
+  aspect-ratio: 1;
+  font: 400 calc(var(--t) * .13) / 1 var(--display);
+  text-transform: uppercase;
+  color: #1d1a16;
+  background: var(--grain), #f3e9d2;
+  border: 3px solid #1d1a16;
+  border-radius: 50%;
+  outline: 2px dashed rgb(29 26 22 / .45);
+  outline-offset: -8px;
+  box-shadow: 0 3px 0 rgb(0 0 0 / .35);
+}
+.d-token .d-capy { width: 62%; height: 62%; margin-bottom: -18%; }
+
+/* L'aide-mémoire : une grande carte crème, couleurs fixes. */
+.d-rules { width: min(340px, 100%); font-family: var(--text); color: #1d1a16; background: #fffaf0; border: 2px solid #1d1a16; border-radius: 12px; box-shadow: 0 4px 0 rgb(0 0 0 / .35); }
+.d-rules-in { margin: 5px; padding: 14px 16px; background: var(--grain), #f3e9d2; border-radius: 7px; outline: 1.5px dashed rgb(29 26 22 / .45); outline-offset: -5px; }
+.d-rules-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.d-rules-head .d-capy { flex: none; width: 54px; height: 54px; }
+.d-rules-title { font: 400 1.25rem / 1 var(--display); text-transform: uppercase; color: #1d1a16; }
+.d-rules-sub { margin-top: 3px; font-size: .75rem; color: #5a4a3a; }
+.d-rules ol { display: grid; margin: 0; padding: 0; list-style: none; counter-reset: rule; }
+.d-rules li { display: grid; grid-template-columns: 22px 1fr; column-gap: 8px; padding: 7px 0; font-size: .75rem; line-height: 1.35; border-top: 1.5px dotted #c9a877; counter-increment: rule; }
+.d-rules li::before { content: counter(rule); grid-row: span 2; display: grid; place-items: center; width: 22px; height: 22px; font: 400 .8rem / 1 var(--display); color: #fffaf0; background: #1f3550; border-radius: 50%; }
+.d-rules li b { font: 400 .78rem / 1.2 var(--display); text-transform: uppercase; letter-spacing: .02em; color: #1f3550; }
+
+/* ---- L'écran de jeu ---- */
+.deal-board { display: grid; gap: 10px; }
+.d-head { text-align: center; color: var(--cream); }
+.d-head .eyebrow { margin: 0; }
+.d-head h1 { margin: 0; font: 400 1.4rem / 1.1 var(--display); text-transform: uppercase; text-shadow: 2px 2px 0 var(--felt-dark); }
+.d-pill { display: inline-block; padding: 1px 10px; font: 700 .8rem var(--text); text-transform: none; text-shadow: none; color: #1d1a16; background: var(--ochre); border: 2px solid #1d1a16; border-radius: 999px; vertical-align: 4px; }
+
+/* La table : un ovale, la pioche et la dernière carte au centre, chacun devant ses cartes posées. */
+.d-round { position: relative; width: 100%; aspect-ratio: 2.35 / 1; min-height: 430px; }
+.d-wood {
+  position: absolute;
+  inset: 78px 104px 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--grain), repeating-radial-gradient(circle at 50% 50%, rgb(0 0 0 / .1) 0 2px, transparent 2px 13px), var(--wood);
+  border: 4px solid var(--wood-dark);
+  border-radius: 170px;
+  box-shadow: 0 6px 0 rgb(0 0 0 / .3);
+}
+.d-wood .dcard { --w: 48px; }
+/* À 2, personne sur les côtés : la pioche se pose sur le bord gauche de la table. */
+.d-round.is-2 .d-wood { justify-content: flex-start; padding-inline: 5%; }
+/* Les cartes posées sont sur la table : une ombre plutôt qu'un cadre. */
+.d-round .d-front { background: rgb(0 0 0 / .16); border-color: rgb(243 233 210 / .18); }
+.d-seat { position: absolute; z-index: 1; display: flex; align-items: center; gap: 10px; }
+.d-seat.is-bottom { left: 50%; bottom: 0; translate: -50% 0; flex-direction: column-reverse; }
+.d-seat.is-top { left: 50%; top: 0; translate: -50% 0; flex-direction: column; }
+.d-seat.is-top-left { left: 22%; top: 0; translate: -50% 0; flex-direction: column; }
+.d-seat.is-top-right { left: 78%; top: 0; translate: -50% 0; flex-direction: column; }
+.d-seat.is-left { left: 0; top: 50%; translate: 0 -50%; }
+.d-seat.is-right { right: 0; top: 50%; translate: 0 -50%; flex-direction: row-reverse; }
+/* À 5 : une table plus haute, les voisins de gauche et de droite plus bas que ceux du haut. */
+.d-round.is-5 { aspect-ratio: 2.1 / 1; }
+.d-round.is-5 .d-seat.is-left, .d-round.is-5 .d-seat.is-right { top: 63%; }
+.d-round.is-5 .d-seat.is-top-left { left: 28%; }
+.d-round.is-5 .d-seat.is-top-right { left: 72%; }
+.d-who { display: flex; align-items: center; gap: 8px; }
+.d-seat.is-left .d-who, .d-seat.is-right .d-who { flex-direction: column; }
+.d-round .pawn-disc { width: 44px; height: 44px; font-size: 1.1rem; }
+.d-round .pawn-name { font-size: .78rem; }
+.d-round .pawn-away { font-size: .62rem; white-space: nowrap; }
+
+.d-front { all: unset; box-sizing: border-box; display: grid; justify-items: center; gap: 8px; padding: 8px 10px; cursor: zoom-in; background: rgb(0 0 0 / .13); border: 1.5px dashed rgb(243 233 210 / .25); border-radius: 10px; }
+.d-front:hover, .d-front:focus-visible { background: rgb(0 0 0 / .22); border-color: rgb(243 233 210 / .6); }
+.d-seat.is-top .d-front, .d-seat.is-bottom .d-front, .d-seat.is-top-left .d-front, .d-seat.is-top-right .d-front { display: flex; align-items: flex-end; gap: 18px; }
+.d-props { display: flex; align-items: flex-end; gap: 12px; }
+.d-empty { font: 600 .7rem var(--text); color: rgb(243 233 210 / .7); }
+.d-stack { position: relative; display: flex; flex-direction: column; }
+.d-stack .dcard { --w: 40px; }
+.d-stack .dcard + .dcard { margin-top: calc(var(--w) * -1.22); }
+/* Le compteur d'un groupe, aux couleurs du groupe ; l'étoile et le liseré ocre quand il est complet. */
+.d-chip { position: absolute; z-index: 4; top: -9px; right: -12px; display: inline-flex; align-items: center; gap: 2px; min-width: 24px; height: 18px; padding: 0 5px; font: 400 10px / 1 var(--display); white-space: nowrap; color: var(--chip-ink); background: var(--chip); border: 1.5px solid #1d1a16; border-radius: 999px; }
+.d-chip.is-full { outline: 2px solid var(--ochre); outline-offset: 1px; }
+.d-goods { display: flex; align-items: flex-end; gap: 14px; }
+.d-pile { position: relative; display: grid; justify-items: center; gap: 2px; }
+.d-pile .dcard { --w: 34px; box-shadow: 2px 2px 0 #c9a877, 4px 4px 0 #1d1a16; }
+.d-pile.is-deck .dcard { --w: 48px; }
+.d-hole { display: block; width: 34px; aspect-ratio: 5 / 7.4; border: 2px dashed rgb(243 233 210 / .35); border-radius: 4px; }
+.d-hole.is-round { width: 28px; aspect-ratio: 1; border-radius: 50%; }
+.d-hole.is-big { width: 62px; }
+.d-badge { position: absolute; top: -7px; right: -9px; z-index: 4; display: grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; font: 400 10px / 1 var(--display); color: #1d1a16; background: var(--ochre); border: 1.5px solid #1d1a16; border-radius: 999px; }
+.d-sum { display: flex; align-items: center; gap: 2px; font: 400 11px var(--display); color: var(--cream); }
+.d-sum .d-man { width: 12px; height: 12px; }
+.d-tiny { font: 600 9.5px var(--text); letter-spacing: .04em; text-transform: uppercase; color: var(--cream); opacity: .85; }
+
+/* Un jeton Dette : la pastille du joueur qui l'a donné, cerclée de blanc. */
+.d-debt { --pawn: var(--brick); display: inline-grid; place-items: center; width: 28px; height: 28px; font: 400 12px / 1 var(--display); color: #fffaf0; background: var(--pawn); border: 2px solid #1d1a16; border-radius: 50%; box-shadow: inset 0 0 0 3px rgb(255 255 255 / .85), inset 0 0 0 4.5px #1d1a16; }
+.d-debt.pawn-1 { --pawn: var(--ink); }
+.d-debt.pawn-2 { --pawn: var(--ochre); color: #1d1a16; }
+.d-debt.pawn-3 { --pawn: #7a4a8c; }
+.d-debt.pawn-4 { --pawn: #2c8a8a; }
+.d-debt.pawn-5 { --pawn: var(--cream); color: #1d1a16; }
+.d-debt.pawn-6 { --pawn: #d9703c; }
+.d-debt.pawn-7 { --pawn: #3b3630; }
+.d-debt.is-small { width: 22px; height: 22px; font-size: 10px; box-shadow: inset 0 0 0 2px rgb(255 255 255 / .85); }
+.d-dstack { display: grid; }
+.d-dstack .d-debt { grid-area: 1 / 1; }
+.d-dstack .d-debt:nth-child(2) { translate: 3px -3px; }
+.d-dstack .d-debt:nth-child(3) { translate: 6px -6px; }
+.d-held { display: flex; gap: 2px; }
+.d-backs { display: flex; }
+.d-backs .dcard { --w: 22px; margin-inline: -7px; border-width: 1.5px; box-shadow: 0 1px 0 rgb(0 0 0 / .4); transform-origin: 50% 120%; }
+.d-backs .d-art, .d-backs .d-title, .d-backs .d-note { display: none; }
+
+/* Ce qu'on attend, et la carte choisie en grand. */
+.d-status { margin: 0; text-align: center; font-weight: 700; color: var(--cream); }
+.d-status.is-me { color: #ffd28a; }
+.d-ask, .d-preview { display: grid; gap: 8px; justify-items: center; width: min(760px, 100%); margin: 0 auto; padding: 12px 14px; color: #1d1a16; background: var(--grain), #f3e9d2; border: 2px solid #1d1a16; border-radius: 10px; }
+.d-ask h3, .d-preview h3 { margin: 0; font: 400 1rem / 1.15 var(--display); text-transform: uppercase; text-align: center; }
+.d-preview { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 14px; }
+.d-ask .d-preview { padding: 0; background: none; border: 0; }
+.d-preview .dcard.is-big { --w: 160px; }
+.d-preview-side { display: grid; gap: 8px; justify-items: start; flex: 1 1 240px; }
+.d-explain { display: grid; gap: 4px; margin: 0; padding-left: 18px; font-size: .9rem; line-height: 1.35; }
+.d-note-line { margin: 0; font-size: .88rem; line-height: 1.35; text-align: center; }
+.d-preview-side .d-note-line { text-align: left; }
+.d-hint { margin: 0; text-align: center; font-size: .85rem; color: rgb(243 233 210 / .8); }
+.d-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+.d-row.is-bar { margin-top: 2px; }
+.d-row.is-head { justify-content: space-between; }
+.d-build { display: grid; gap: 6px; justify-items: start; width: 100%; }
+.deal-board .filter-chip { box-shadow: inset 6px 0 0 var(--chip, transparent); }
+.d-picks { display: grid; gap: 4px; width: 100%; }
+.d-pick-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.d-pick { all: unset; cursor: pointer; border-radius: 6px; outline: 3px solid transparent; outline-offset: 2px; }
+.d-pick .dcard { --w: 48px; }
+.d-pick.is-on { outline-color: var(--brick); }
+.d-pick:focus-visible { outline-color: var(--ink); }
+.d-split { display: grid; gap: 6px; width: 100%; }
+.d-split-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.d-split-row .dcard { --w: 40px; }
+.d-split-row.is-kept { background: rgb(212 154 42 / .2); border-radius: 6px; }
+
+/* La main : un éventail simple ; la carte choisie se lève. */
+.d-hand { display: flex; justify-content: center; padding: 18px 0 4px; }
+.d-hand-card { all: unset; cursor: pointer; margin-inline: -8px; }
+.d-hand .dcard { --w: 100px; transform: translateY(var(--lift, 0)) rotate(var(--fan, 0deg)); transform-origin: 50% 140%; transition: translate .18s; }
+.d-hand-card:hover .dcard, .d-hand-card:focus-visible .dcard { translate: 0 -10px; }
+.d-hand .dcard.is-chosen { translate: 0 -18px; outline: 3px solid var(--cream); outline-offset: 2px; }
+.d-hand .dcard.is-dropped { translate: 0 -18px; outline: 3px solid var(--brick); outline-offset: 2px; filter: brightness(.8); }
+
+/* Une zone (ou l'aide-mémoire) ouverte en grand, par-dessus la table. */
+.d-zoom { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; overflow-y: auto; background: rgb(20 14 10 / .6); }
+.d-zoom-in { width: min(820px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; }
+.d-zoom-in h2, .d-zoom-in h3 { margin: 0; }
+.d-zoom-in h3 { display: flex; align-items: center; gap: 4px; margin-top: 4px; font: 400 .95rem var(--display); text-transform: uppercase; }
+.d-zoom-group { display: grid; gap: 6px; padding: 8px 0; border-top: 1.5px dotted #c9a877; }
+.d-zoom-label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-weight: 700; }
+.d-zoom-label .d-chip { position: static; height: 22px; font-size: 11px; }
+.d-zoom-label .d-man { width: 14px; height: 14px; }
+.d-zoom-cards { display: flex; flex-wrap: wrap; gap: 10px; }
+.d-zoom-cards .dcard { --w: 110px; }
+.d-zoom-card { display: grid; gap: 4px; justify-items: center; }
+.d-rules-box { display: grid; gap: 10px; justify-items: center; }
+
+/* Téléphone : la table se resserre, les voisins de gauche et de droite posent leurs cartes sous leur pion. */
+@media (max-width: 700px) {
+  .d-head h1 { font-size: 1.05rem; }
+  .d-round { aspect-ratio: auto; min-height: 0; height: 500px; }
+  .d-wood { inset: 64px 44px 70px; flex-direction: column; gap: 4px; border-width: 3px; border-radius: 60px; }
+  .d-round.is-2 .d-wood { justify-content: center; padding-inline: 0; }
+  .d-wood .dcard, .d-pile.is-deck .dcard { --w: 36px; }
+  .d-seat { gap: 4px; }
+  /* Les voisins de côté : le pion dehors, au bord, et leurs cartes à côté, sur la table. */
+  .d-seat.is-left, .d-seat.is-right { top: 44%; translate: 0 -50%; flex-direction: row; gap: 3px; }
+  .d-seat.is-right { flex-direction: row-reverse; }
+  .d-seat.is-left .d-who, .d-seat.is-right .d-who { width: 42px; gap: 2px; }
+  .d-seat.is-left .pawn-name, .d-seat.is-right .pawn-name { font-size: .56rem; overflow-wrap: anywhere; text-align: center; }
+  .d-seat.is-left .pawn-away, .d-seat.is-right .pawn-away { white-space: normal; font-size: .5rem; line-height: 1.15; text-align: center; }
+  .d-seat.is-left .d-backs .dcard, .d-seat.is-right .d-backs .dcard { --w: 12px; margin-inline: -4px; }
+  .d-seat.is-top-left { left: 25%; }
+  .d-seat.is-top-right { left: 75%; }
+  .d-who { gap: 4px; }
+  .d-round .pawn-disc { width: 32px; height: 32px; font-size: .85rem; }
+  .d-round .pawn-name { font-size: .66rem; }
+  .d-round .pawn-away { font-size: .55rem; }
+  .d-front { gap: 5px; padding: 5px 6px; border-radius: 8px; }
+  .d-seat.is-top .d-front, .d-seat.is-bottom .d-front, .d-seat.is-top-left .d-front, .d-seat.is-top-right .d-front { gap: 10px; }
+  .d-props { gap: 7px; }
+  .d-empty { max-width: 56px; font-size: .58rem; text-align: center; }
+  .d-seat.is-left .d-props, .d-seat.is-right .d-props { flex-wrap: wrap; justify-content: center; max-width: 80px; row-gap: 10px; }
+  .d-stack .dcard { --w: 24px; border-width: 1.5px; }
+  .d-stack .dcard + .dcard { margin-top: calc(var(--w) * -1.25); }
+  .d-round .dcard.is-mini .d-val { display: none; }
+  .d-chip { top: -8px; right: -9px; min-width: 20px; height: 15px; padding: 0 3px; font-size: 8.5px; }
+  .d-goods { gap: 8px; }
+  .d-pile .dcard { --w: 22px; border-width: 1.5px; box-shadow: 1.5px 1.5px 0 #c9a877, 3px 3px 0 #1d1a16; }
+  .d-hole { width: 22px; }
+  .d-hole.is-round { width: 20px; }
+  .d-hole.is-big { width: 36px; }
+  .d-badge { top: -6px; right: -8px; min-width: 15px; height: 15px; font-size: 8.5px; }
+  .d-sum { font-size: 9px; }
+  .d-sum .d-man { width: 10px; height: 10px; }
+  .d-tiny { display: none; }
+  .d-debt { width: 20px; height: 20px; font-size: 9px; box-shadow: inset 0 0 0 2px rgb(255 255 255 / .85), inset 0 0 0 3px #1d1a16; }
+  .d-debt.is-small { width: 17px; height: 17px; font-size: 8px; }
+  .d-dstack .d-debt:nth-child(2) { translate: 2px -2px; }
+  .d-dstack .d-debt:nth-child(3) { translate: 4px -4px; }
+  .d-backs .dcard { --w: 15px; margin-inline: -5px; border-width: 1px; box-shadow: none; }
+  .d-hand { padding-top: 10px; }
+  .d-hand-card { margin-inline: -6px; }
+  .d-hand .dcard { --w: 52px; }
+  .d-preview .dcard.is-big { --w: 130px; }
+  /* À 5 : les deux joueurs du haut rangent leurs cartes en colonne, et ceux des côtés descendent. */
+  .d-round.is-5 { aspect-ratio: auto; height: 540px; }
+  .d-round.is-5 .d-seat.is-top-left .d-front, .d-round.is-5 .d-seat.is-top-right .d-front { display: grid; justify-items: center; }
+  .d-round.is-5 .d-seat.is-top-left { left: 30%; }
+  .d-round.is-5 .d-seat.is-top-right { left: 71%; }
+  .d-round.is-5 .d-seat.is-left, .d-round.is-5 .d-seat.is-right { top: 58%; }
+  .d-zoom-cards .dcard { --w: 84px; }
+}

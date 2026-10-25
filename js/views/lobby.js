@@ -34,7 +34,7 @@ export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove,
     icon("play"), "Distribuer les cartes");
   startBtn.addEventListener("click", busy(startBtn, onStart));
 
-  return h("main", { class: `mat theme-${game.id}` },
+  return h("main", { class: `mat is-lobby theme-${game.id}` },
     h("div", { class: "col" }, h("header", { class: "table-head" },
       h("p", { class: "eyebrow" }, "Code de la table"),
       h("div", { class: "tiles", "aria-label": `Code ${code}` },
@@ -76,7 +76,7 @@ export function lobbyView({ code, room, me, onShare, onLeave, onClose, onRemove,
           h("div", { class: `gamebox box-${u.id} is-sealed` },
             h("strong", null, u.name), h("small", null, u.tagline), h("span", { class: "stamp" }, "Bientôt")))
       ),
-      game.lobbyView?.({ settings, playerCount: present, isHost, setSettings: onSettings }),
+      game.lobbyView?.({ settings, playerCount: present, players: players.filter((p) => p.online), isHost, setSettings: onSettings }),
       isHost
         ? [startBtn, blocker && h("p", { class: "rule" }, blocker)]
         : h("p", { class: "rule" }, `${host?.name || "L'hôte"} tient la boîte : la partie commence dès la distribution des cartes.`)

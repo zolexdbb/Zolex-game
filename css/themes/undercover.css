@@ -10,13 +10,13 @@
   text-shadow: 2px 2px 0 var(--felt-dark);
 }
 
-/* La chemise cartonnée, avec son onglet. */
-.theme-undercover .sheet {
+/* La chemise cartonnée, avec son onglet (pas dans le salon : toutes les boîtes y ont le même papier). */
+.theme-undercover:not(.is-lobby) .sheet {
   position: relative;
   margin-top: 14px;
   background: var(--grain), var(--card);
 }
-.theme-undercover .sheet::before {
+.theme-undercover:not(.is-lobby) .sheet::before {
   content: "";
   position: absolute;
   left: 14px;
@@ -28,7 +28,7 @@
   border-bottom: 0;
   border-radius: 6px 6px 0 0;
 }
-.theme-undercover .sheet h2 { border-bottom-color: var(--black); }
+.theme-undercover:not(.is-lobby) .sheet h2 { border-bottom-color: var(--black); }
 
 .theme-undercover .stamp-big {
   padding: 4px 10px;

@@ -23,8 +23,8 @@
   border-radius: 4px;
   font-variant-numeric: tabular-nums;
 }
-/* La feuille à carreaux. */
-.theme-petitbac .sheet {
+/* La feuille à carreaux (pas dans le salon : toutes les boîtes y ont le même papier). */
+.theme-petitbac:not(.is-lobby) .sheet {
   background:
     linear-gradient(rgb(31 53 80 / .08) 1px, transparent 1px) 0 0 / 100% 22px,
     linear-gradient(90deg, rgb(31 53 80 / .08) 1px, transparent 1px) 0 0 / 22px 100%,

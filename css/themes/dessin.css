@@ -275,7 +275,7 @@
 /* Téléphone : la case de réponse (et l'historique) juste sous la feuille, la liste des joueurs après,
    pour voir le dessin en tapant. Les colonnes n'existant pas ici, on joue sur l'ordre d'affichage. */
 @media (max-width: 899px) {
-  .theme-dessin .draw-players, .theme-dessin .sketch-side > .talk { order: 1; }
+  .theme-dessin .draw-players { order: 1; }
   .theme-dessin.mat > :not(.col) { order: 2; }
 }
 
@@ -334,4 +334,8 @@
 }
 @media (orientation: landscape) and (max-height: 600px) {
   .theme-dessin .sketch-main.is-big .swatch-custom { grid-column: span 5; grid-row: auto; height: 24px; }
+}
+/* La discussion ouverte dans la marge de droite (voir .chat-dock) : le tapis s'arrête avant elle. */
+@media (min-width: 1560px) {
+  #app:has(.sketch-main):has(.chat-dock) { max-width: min(1560px, max(1120px, calc(100vw - 744px))); }
 }

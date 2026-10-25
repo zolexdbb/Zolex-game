@@ -4,10 +4,10 @@ import { pawn, countdown } from "../../ui/widgets.js";
 import { chatBox, tableChannel } from "../../ui/chat.js";
 import { play } from "../../ui/sound.js";
 import { CARDS } from "./cards.js";
-import { TEAMS, cardPath, pickCard, skipWait } from "./logic.js";
+import { TEAMS, cardPath, pickCard, skipWait, forbiddenIn, guessMatches, feedKey } from "./logic.js";
 
 // État d'affichage propre à cet appareil : la carte déjà tirée par l'orateur.
-const ui = { drawnFor: null, cue: null };
+const ui = { drawnFor: null, cue: null, judged: new Set(), foundFor: null, clue: "", guess: "", error: "" };
 const RESULTS = { found: "Trouvé", taboo: "Tabou !", pass: "Passé" };
 
 const nameOf = (s, id) => s.names[id]?.name || "?";
@@ -39,6 +39,99 @@ function cardNode(card) {
     h("ul", null, card.banned.map((word) => h("li", null, word))));
 }
 
+// ---- Par écrit ----
+
+// Le fil de la carte en cours : indices de l'orateur et propositions de son équipe, dans l'ordre.
+function feed(ctx) {
+  const { state: s, room } = ctx;
+  const key = feedKey(s);
+  const lines = [
+    ...Object.entries(room.tclue?.[s.g]?.[key] || {}).map(([id, m]) => ({ id, ...m, clue: true })),
+    ...Object.entries(room.tguess?.[s.g]?.[key] || {}).map(([id, m]) => ({ id, ...m }))
+  ].sort((a, b) => (a.id < b.id ? -1 : 1));
+  if (!lines.length) return h("p", { class: "rule" }, "Les indices et les réponses s'afficheront ici.");
+  const list = h("ul", { class: "tb-feed", "aria-live": "polite" }, lines.map((line) => h("li", { class: line.clue ? "is-clue" : "is-guess" },
+    h("b", null, line.clue ? "Indice" : nameOf(s, line.uid)), " : ", line.text)));
+  requestAnimationFrame(() => { list.scrollTop = list.scrollHeight; });
+  return list;
+}
+
+// Petit formulaire d'une ligne, qui garde sa saisie quand l'écran est redessiné.
+function lineForm({ id, draft, placeholder, max, label, onSend }) {
+  const error = h("p", { class: "notice", role: "alert", hidden: !ui.error }, ui.error);
+  const input = h("input", {
+    id, class: "field", type: "text", maxlength: String(max), autocomplete: "off", autocapitalize: "off",
+    placeholder, value: ui[draft], oninput: () => { ui[draft] = input.value; }
+  });
+  const send = h("button", { class: "btn btn-brick", type: "submit" }, label);
+  const form = h("form", { class: "join" }, input, send);
+  form.addEventListener("submit", busy(send, async () => {
+    const text = input.value.replace(/\s+/g, " ").trim();
+    if (!text) return input.focus();
+    const problem = await onSend(text);
+    ui.error = problem || "";
+    error.textContent = ui.error;
+    error.hidden = !ui.error;
+    if (!problem) { ui[draft] = ""; input.value = ""; }
+    input.focus();
+  }));
+  return [form, error];
+}
+
+// L'appareil de l'orateur (le seul de son équipe à voir la carte) reconnaît la bonne réponse.
+function judgeGuesses(ctx, card) {
+  const { state: s, room } = ctx;
+  const key = `${s.g}/${feedKey(s)}`;
+  if (!card || ui.foundFor === key) return;
+  for (const [id, g] of Object.entries(room.tguess?.[s.g]?.[feedKey(s)] || {})) {
+    if (ui.judged.has(`${key}/${id}`)) continue;
+    ui.judged.add(`${key}/${id}`);
+    if (guessMatches(g.text, card.word, s.rules.tolerance)) {
+      ui.foundFor = key;
+      ctx.act({ result: "found", n: s.card, i: card.i, word: card.word }).catch(() => { ui.foundFor = null; });
+      return;
+    }
+  }
+}
+
+function writtenPanel(ctx, role, card, send, tally) {
+  const { state: s, me, myAction } = ctx;
+  const stamp = () => `${Date.now().toString(36)}${me.slice(0, 4)}`;
+  if (role === "speaker") {
+    judgeGuesses(ctx, card);
+    return [h("h2", null, "Fais deviner, par écrit !"),
+      card ? cardNode(card) : h("p", { class: "rule" }, "On tire une carte…"),
+      card && lineForm({
+        id: "tb-clue", draft: "clue", placeholder: "Ton indice", max: 80, label: "Envoyer",
+        onSend: async (text) => {
+          const hit = forbiddenIn(text, card, s.rules.tolerance);
+          if (hit) return `Mot interdit : « ${hit} ». Reformule !`;
+          return (await ctx.tryWrite(`tclue/${s.g}/${feedKey(s)}/${stamp()}`, { uid: me, text })) ? null : "Indice non envoyé, réessaie.";
+        }
+      }),
+      feed(ctx),
+      h("div", { class: "tb-actions" }, !myAction && action("Passer cette carte", "skip", send("pass"))),
+      tally];
+  }
+  if (role === "mate") {
+    return [h("h2", null, "Devine !"),
+      h("p", { class: "rule" }, `Lis les indices de ${nameOf(s, s.speaker)} et tape tes réponses : la bonne est reconnue toute seule.`),
+      feed(ctx),
+      lineForm({
+        id: "tb-guess", draft: "guess", placeholder: "Ta réponse", max: 40, label: "Proposer",
+        onSend: async (text) => ((await ctx.tryWrite(`tguess/${s.g}/${feedKey(s)}/${stamp()}`, { uid: me, text })) ? null : "Réponse non envoyée, réessaie.")
+      }),
+      tally];
+  }
+  if (role === "watch") {
+    return [h("h2", null, `${nameOf(s, s.speaker)} écrit ses indices`),
+      card ? cardNode(card) : h("p", { class: "rule" }, "L'orateur tire une carte…"),
+      h("p", { class: "rule" }, "Le site refuse lui-même les indices interdits : regarde-les chercher !"),
+      feed(ctx), tally];
+  }
+  return [h("h2", null, `Les ${TEAMS[s.turn]} jouent`), feed(ctx), tally];
+}
+
 function playPanel(ctx) {
   const { state: s, me, myAction } = ctx;
   const role = me === s.speaker ? "speaker" : s.team?.[me] === s.turn ? "mate" : s.team?.[me] ? "watch" : "guest";
@@ -49,6 +142,7 @@ function playPanel(ctx) {
     h("span", { class: "is-found" }, `${count("found")} trouvé${count("found") > 1 ? "s" : ""}`),
     h("span", { class: "is-taboo" }, `${count("taboo")} tabou`),
     h("span", null, `${count("pass")} passé${count("pass") > 1 ? "s" : ""}`));
+  if (s.rules.mode === "written") return writtenPanel(ctx, role, card, send, tally);
   if (role === "speaker") {
     return [h("h2", null, "Fais deviner à ton équipe !"),
       card ? cardNode(card) : h("p", { class: "rule" }, "On tire une carte…"),
@@ -76,11 +170,13 @@ function readyPanel(ctx) {
   const { state: s, me, myAction } = ctx;
   if (me === s.speaker) {
     return [h("h2", null, `À toi de parler pour les ${TEAMS[s.turn]}`),
-      h("p", null, `Tu as ${s.rules.time} secondes pour faire deviner le plus de mots possible. Ne dis jamais les mots interdits !`),
+      h("p", null, `Tu as ${s.rules.time} secondes pour faire deviner le plus de mots possible. `,
+        s.rules.mode === "written" ? "Tape tes indices : ceux qui contiennent un mot interdit sont refusés." : "Ne dis jamais les mots interdits !"),
       !myAction && action("C'est parti !", "play", () => ctx.act({ go: true }), "btn-brick btn-big")];
   }
   return [h("h2", null, `${nameOf(s, s.speaker)} va parler pour les ${TEAMS[s.turn]}`),
-    h("p", { class: "rule" }, s.team?.[me] === s.turn ? "Prépare-toi à deviner !" : "Prépare-toi à surveiller les mots interdits.")];
+    h("p", { class: "rule" }, s.team?.[me] === s.turn ? "Prépare-toi à deviner !"
+      : s.rules.mode === "written" ? "Tu verras la carte et les indices de l'autre équipe." : "Prépare-toi à surveiller les mots interdits.")];
 }
 
 function logList(log) {
@@ -135,7 +231,7 @@ export function view(ctx) {
   }
   const panel = { ready: readyPanel, play: playPanel, recap: recapPanel, end: endPanel }[s.phase];
   // Pendant un tour, on ne tape pas les réponses : tout se dit à voix haute.
-  const talk = chatBox(ctx, { channels: [tableChannel(ctx, s.phase !== "play")], note: "Pendant un tour, tout se dit à voix haute : la discussion reprend après." });
+  const talk = chatBox(ctx, { channels: [tableChannel(ctx, s.phase !== "play")], note: s.rules.mode === "written" ? "Pendant un tour, la discussion se tait : on ne souffle pas. Elle reprend après." : "Pendant un tour, tout se dit à voix haute : la discussion reprend après." });
   return [
     h("div", { class: "col" },
       h("header", { class: "tb-head" },

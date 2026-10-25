@@ -2,7 +2,7 @@
 // précédent ; on révèle tout en même temps, jusqu'à ce que la table dise le même
 // mot. Un mot déjà dit dans la manche ne compte plus.
 import { siteGroups, parseWords } from "../../ui/wordbank.js";
-import { norm, shuffle } from "../dessin/logic.js";
+import { norm, shuffle, levenshtein } from "../dessin/logic.js";
 
 const REVEAL_TIME = 6000;
 const END_TIME = 9000;
@@ -24,25 +24,57 @@ export function startWords(settings) {
 // Combien de joueurs doivent écrire le même mot pour gagner la manche.
 export const needed = (n, majority) => (majority ? Math.max(2, Math.ceil((2 * n) / 3)) : n);
 
+// Deux réponses sont « le même mot » si elles ne diffèrent que d'une faute (deux dès 8 lettres).
+// Jusqu'à 5 lettres, il faut l'orthographe exacte : sinon « chat » et « char » se confondraient.
+export function sameWord(a, b) {
+  const x = norm(a), y = norm(b);
+  if (!x || !y) return false;
+  if (x === y) return true;
+  const n = Math.max(x.length, y.length);
+  if (n <= 5) return false;
+  return levenshtein(x, y) <= (n >= 8 ? 2 : 1);
+}
+
+// Regroupe les réponses proches. `words` : { uid: mot | null } → [{ ids, words }].
+export function cluster(words, ids) {
+  const groups = [];
+  for (const id of ids) {
+    if (!words[id]) continue;
+    const near = groups.filter((g) => g.words.some((w) => sameWord(w, words[id])));
+    // Les groupes déjà formés d'abord : le mot affiché reste le premier écrit.
+    const merged = { ids: [], words: [] };
+    for (const g of near) {
+      merged.ids.push(...g.ids);
+      merged.words.push(...g.words);
+      groups.splice(groups.indexOf(g), 1);
+    }
+    merged.ids.push(id);
+    merged.words.push(words[id]);
+    groups.push(merged);
+  }
+  return groups;
+}
+
 // Juge un tour. `answers` : { uid: texte brut } ; `used` : { forme normalisée: mot affiché } déjà dits.
 // Renvoie les mots retenus (null = vide ou refusé), le mot le plus partagé, l'accord et les points du tour.
 export function judge({ players, answers, used, majority }) {
-  const words = {}, refused = {}, count = {};
+  const words = {}, refused = {};
+  const said = Object.values(used);
   for (const id of players) {
     const raw = String(answers[id] ?? "").replace(/\s+/g, " ").trim().slice(0, MAX_LENGTH);
-    const key = norm(raw);
-    if (!raw || !key) { words[id] = null; continue; }
-    if (used[key]) { words[id] = null; refused[id] = raw; continue; }
+    if (!raw || !norm(raw)) { words[id] = null; continue; }
+    // Un mot déjà dit, même mal orthographié, ne compte plus.
+    if (said.some((w) => sameWord(w, raw))) { words[id] = null; refused[id] = raw; continue; }
     words[id] = raw;
-    count[key] = (count[key] || 0) + 1;
   }
-  const best = Math.max(0, ...Object.values(count));
-  const top = Object.keys(count).filter((key) => count[key] === best);
-  const agreed = best >= 2 && best >= needed(players.length, majority) ? top[0] : null;
-  // Un point à ceux qui ont écrit le mot le plus partagé (à au moins deux).
+  const groups = cluster(words, players);
+  const best = Math.max(0, ...groups.map((g) => g.ids.length));
+  const top = groups.filter((g) => g.ids.length === best);
+  const agreed = best >= 2 && best >= needed(players.length, majority) ? top[0].words[0] : null;
   const points = {};
-  if (best >= 2) for (const id of players) if (words[id] && top.includes(norm(words[id]))) points[id] = 1;
-  return { words, refused, best, agreed, points, keys: Object.keys(count) };
+  // Dans l'ordre de la table, pour que le résultat ne dépende pas de l'ordre des fusions.
+  if (best >= 2) for (const id of players) if (top.some((g) => g.ids.includes(id))) points[id] = 1;
+  return { words, refused, best, agreed, points, groups };
 }
 
 // Bonus de manche gagnée : plus l'accord vient vite, plus il rapporte.
@@ -117,7 +149,7 @@ export async function hostTick(ctx) {
     for (const [id, points] of Object.entries(gain)) changes[`state/scores/${id}`] = (s.scores?.[id] || 0) + points;
     if (over) {
       changes["state/history"] = [...(s.history || []), {
-        no: s.manche, start: s.start, tours: s.tour, word: verdict.agreed ? fresh.find((w) => norm(w) === verdict.agreed) : null
+        no: s.manche, start: s.start, tours: s.tour, word: verdict.agreed || null
       }];
       changes["state/until"] = now + END_TIME;
       changes["state/last"].over = true;

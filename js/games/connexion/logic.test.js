@@ -1,6 +1,6 @@
 // Vérification des règles de Connexion (dans le navigateur : la banque de mots dépend du DOM).
 import assert from "node:assert/strict";
-import { judge, needed, bonus } from "./logic.js";
+import { judge, needed, bonus, sameWord } from "./logic.js";
 
 const used = { chat: "Chat", chien: "Chien" };
 const players = ["a", "b", "c"];
@@ -16,12 +16,12 @@ const players = ["a", "b", "c"];
 
 { // Majorité : 2 sur 3 suffisent ; accents et casse ignorés.
   const v = judge({ players, answers: { a: "Éléphant", b: "elephants", c: "Souris" }, used, majority: true });
-  assert.equal(v.agreed, "elephant");
+  assert.equal(v.agreed, "Éléphant", "le mot tel qu'il a été écrit");
 }
 
 { // Accord de tous.
   const v = judge({ players, answers: { a: "Croquette", b: "croquettes", c: "CROQUETTE" }, used });
-  assert.equal(v.agreed, "croquette");
+  assert.equal(v.agreed, "Croquette");
   assert.equal(Object.keys(v.points).length, 3);
 }
 
@@ -37,5 +37,13 @@ assert.equal(needed(6, true), 4);
 assert.equal(needed(2, true), 2);
 assert.equal(bonus(1), 9);
 assert.equal(bonus(12), 1);
+
+// Fautes d'orthographe : à une faute près (deux dès 8 lettres), sauf pour les mots courts.
+assert.ok(sameWord("Ornithorinque", "ornithorynque"));
+assert.ok(!sameWord("chat", "char"), "mots courts : orthographe exacte");
+{ const v = judge({ players, answers: { a: "Marmotte", b: "marmote", c: "Marmottes" }, used });
+  assert.equal(v.agreed, "Marmotte"); }
+{ const v = judge({ players, answers: { a: "Chiens", b: "Lapin", c: "Lapins" }, used: { chien: "Chien" } });
+  assert.equal(v.words.a, null, "faute ou pluriel d'un mot déjà dit : refusé"); }
 
 console.log("connexion : règles vérifiées");

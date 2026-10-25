@@ -546,7 +546,8 @@ export function view(ctx) {
         seated && secret ? myRole(ctx)
           : !seated && h("p", { class: "rule" }, "La partie a commencé sans toi : observe, tu joueras la prochaine."),
         s.phase !== "end" && notebook(ctx)),
-      table(ctx),
-      h("div", { class: "lg-side" }, talk(ctx)))
+      table(ctx)),
+    // La discussion part dans le tiroir de droite, commun à tous les jeux.
+    talk(ctx)
   ];
 }

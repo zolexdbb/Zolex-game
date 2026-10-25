@@ -126,13 +126,32 @@
 /* La main du joueur. */
 .theme-uno .u-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; min-height: 52px; color: var(--cream); }
 .theme-uno .suit-btn { --face: var(--suit); --edge: var(--black); color: var(--on); }
-.theme-uno .hand { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 6px; padding-top: 10px; }
-.theme-uno .hand .ucard { cursor: pointer; transition: transform .1s; }
-.theme-uno .hand .ucard:disabled { cursor: default; }
-.theme-uno .hand .is-dim { filter: brightness(.72) saturate(.8); }
-.theme-uno .hand .is-playable { transform: translateY(-8px); box-shadow: 0 3px 0 var(--ochre), 0 3px 0 2px var(--black), 0 11px 0 rgb(0 0 0 / .3); }
-.theme-uno .hand .is-playable:hover { transform: translateY(-13px); }
-.theme-uno .hand .is-picked { outline: 3px solid var(--ochre); outline-offset: 2px; }
+/* L'éventail : toute la main, toujours. Chaque carte laisse voir de la précédente une part
+   proportionnelle à son poids (--wt : 1 si elle se joue, moins sinon), pour que toute la main tienne
+   en largeur (100cqi : la largeur de .hand, moins une carte entière à droite et jusqu'à 1,2 carte pour
+   l'inclinaison des bords, --tilt). Au plus 78 % de la carte, en proportion du poids. */
+.theme-uno .hand { container-type: inline-size; display: flex; justify-content: center; padding: 40px 12px 10px; touch-action: pan-y; cursor: pointer; }
+.theme-uno .hand .ucard {
+  margin: 0 0 0 calc(min(.78 * var(--w) * var(--wt, 1), (100cqi - (1 + 1.2 * var(--tilt, 1)) * var(--w)) * var(--wt, 1) / var(--sum, 6)) - var(--w));
+  transform: translateY(var(--lift, 0)) rotate(var(--fan, 0deg));
+  transform-origin: 50% 140%;
+  translate: var(--dx, 0px) calc(var(--dy, 0px) + var(--hy, 0px));
+  pointer-events: none; /* c'est la main qui choisit la carte visée (view.js, fanOf) */
+  transition: translate .22s cubic-bezier(.2, .8, .3, 1), scale .22s cubic-bezier(.2, .8, .3, 1), filter .2s, box-shadow .2s;
+}
+.theme-uno .hand .ucard:first-child { margin-left: 0; }
+/* Ce qui se joue : la couleur en jeu et toute carte jouable sortent du tas, cerclées d'ocre, et passent
+   devant les cartes tassées ; à mon tour, le reste s'assombrit. Hors de mon tour, la couleur en jeu dépasse un peu. */
+.theme-uno .hand .is-playable { --dy: -16px; z-index: 1; box-shadow: 0 0 0 3px var(--ochre), 0 4px 0 rgb(0 0 0 / .4); }
+.theme-uno .hand .is-color { --dy: -8px; z-index: 1; box-shadow: 0 0 0 2px rgb(232 168 56 / .7), 0 3px 0 rgb(0 0 0 / .4); }
+.theme-uno .hand .is-dim { filter: brightness(.62) saturate(.7); }
+/* La carte visée monte et grossit ; ses voisines s'écartent pour la dégager. */
+.theme-uno .hand .is-hover, .theme-uno .hand .ucard:focus-visible { --hy: -20px; scale: 1.08; z-index: 3; }
+/* La carte choisie (affichée en grand) reste levée, cerclée de crème, même quand la souris s'en va. */
+.theme-uno .hand .is-chosen { --hy: -24px; scale: 1.1; z-index: 4; outline: 3px solid var(--cream); outline-offset: 2px; }
+.theme-uno .hand .is-hover + .ucard, .theme-uno .hand .ucard:focus-visible + .ucard { --dx: 14px; }
+.theme-uno .hand .ucard:has(+ .is-hover), .theme-uno .hand .ucard:has(+ .ucard:focus-visible) { --dx: -14px; }
+.theme-uno .hand .is-dim.is-hover { filter: brightness(.8) saturate(.85); }
 
 /* Règles maison dans le salon. */
 .house-rule { display: grid; justify-items: start; gap: 4px; padding-top: 8px; border-top: 2px dashed var(--card); }
@@ -196,3 +215,14 @@
 .theme-uno:has(.uno-board.is-dark) { background-color: #2b2433; border-color: #1b1622; }
 .theme-uno:has(.uno-board.is-dark) .round-top { background-color: #3a2c22; }
 .deck-note { font-size: .88rem; line-height: 1.35; }
+@media (max-width: 480px) {
+  .theme-uno .hand { padding-inline: 4px; }
+}
+/* Écran tactile : la carte choisie en grand au-dessus de la main, avec son bouton « Jouer ».
+   Hauteur fixe, pour que la main ne saute pas quand on choisit ou qu'on ferme. */
+.theme-uno .u-preview { display: flex; justify-content: center; align-items: center; gap: 14px; min-height: 128px; }
+.theme-uno .u-preview > .rule { max-width: 16rem; text-align: center; color: var(--cream); }
+.theme-uno .u-preview .u-big { --w: 86px; }
+.theme-uno .u-preview .u-big.is-playable { box-shadow: 0 0 0 3px var(--ochre), 0 4px 0 rgb(0 0 0 / .4); }
+.theme-uno .u-preview-side { display: grid; justify-items: center; gap: 8px; }
+.theme-uno .u-preview-side .rule { margin: 0; color: var(--cream); }

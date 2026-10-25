@@ -1,6 +1,6 @@
-// Vérification des règles de Nom de code (dans le navigateur : la banque de mots dépend du DOM).
+// Vérification des règles de Code Name (dans le navigateur : la banque de mots dépend du DOM).
 import assert from "node:assert/strict";
-import { makeKey, makeTeams, afterReveal, checkClue, total } from "./logic.js";
+import { makeKey, makeTeams, afterReveal, checkClue, total, teamsCheck } from "./logic.js";
 
 { // Carte-clé : 9 pour l'équipe qui commence, 8 pour l'autre, 7 neutres, 1 assassin.
   const key = makeKey("b");
@@ -12,6 +12,16 @@ import { makeKey, makeTeams, afterReveal, checkClue, total } from "./logic.js";
   const { teams, spy } = makeTeams(["a", "b", "c", "d", "e"]);
   assert.ok(Math.abs(teams.r.length - teams.b.length) <= 1);
   assert.ok(teams.r.includes(spy.r) && teams.b.includes(spy.b));
+}
+
+{ // Composition de l'hôte respectée ; nouveau venu dans l'équipe la moins nombreuse ; espion absent remplacé.
+  const { teams, spy } = makeTeams(["a", "b", "c", "d", "e"], { a: "r", b: "r", c: "r", d: "b" }, { r: "b", b: "z" });
+  assert.deepEqual([...teams.r].sort(), ["a", "b", "c"]);
+  assert.deepEqual([...teams.b].sort(), ["d", "e"]);
+  assert.equal(spy.r, "b");
+  assert.ok(teams.b.includes(spy.b), "espion absent remplacé");
+  assert.equal(teamsCheck({ teams: { a: "r", b: "r", c: "r", d: "b" } }, 4), "Il faut au moins 2 joueurs dans chaque équipe.");
+  assert.equal(teamsCheck({ teams: { a: "r", b: "r", c: "b", d: "b" } }, 4), null);
 }
 
 const s = { first: "r", grid: ["Chat", "Chien", "Maison", ...Array(22).fill("x")], revealed: {} };
@@ -31,4 +41,4 @@ assert.deepEqual(afterReveal(s, "r", "r", { c0: "r" }), {});
 const eightBlue = Object.fromEntries(Array.from({ length: 8 }, (_, i) => [`c${i}`, "b"]));
 assert.deepEqual(afterReveal(s, "r", "b", eightBlue), { winner: "b" }, "les bleus finissent leur grille pendant le tour rouge");
 
-console.log("nom de code : règles vérifiées");
+console.log("code name : règles vérifiées");

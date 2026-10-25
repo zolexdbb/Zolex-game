@@ -73,3 +73,15 @@ button.cn-card:hover { transform: translateY(-3px); }
   .theme-codenames .cn-grid { gap: 8px; }
   .theme-codenames .cn-card { min-height: 78px; font-size: clamp(.78rem, 1.1vw, 1rem); }
 }
+
+/* Pastilles de réflexion : on marque une carte avant de la retourner. */
+.theme-codenames .cn-pin { all: unset; display: grid; place-items: center; width: 100%; height: 100%; cursor: pointer; }
+.theme-codenames .cn-pin:focus-visible { outline: 3px solid var(--ochre); }
+.theme-codenames .cn-card.is-pinned { outline: 3px dashed var(--ochre); outline-offset: 2px; }
+.theme-codenames .cn-dots { position: absolute; top: -8px; right: -4px; display: flex; }
+.theme-codenames .cn-dots .token { width: 18px; height: 18px; margin-left: -5px; font-size: .55rem; border-width: 1.5px; }
+.theme-codenames .cn-flip { position: absolute; bottom: -12px; left: 50%; z-index: 1; translate: -50% 0; min-height: 24px; padding: 0 6px; font-size: .68rem; }
+/* La discussion ouverte dans la marge de droite (voir .chat-dock) : le tapis s'arrête avant elle. */
+@media (min-width: 1560px) {
+  #app:has(.cn-main):has(.chat-dock) { max-width: min(1400px, max(1120px, calc(100vw - 744px))); }
+}

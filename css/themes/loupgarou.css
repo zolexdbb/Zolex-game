@@ -134,7 +134,7 @@
 .lg-board .round { order: -1; }
 .lg-side { display: grid; gap: 14px; align-content: start; min-width: 0; }
 @media (min-width: 900px) {
-  .lg-board { grid-template-columns: minmax(0, 1fr) minmax(400px, 480px) minmax(0, 1fr); align-items: start; }
+  .lg-board { grid-template-columns: minmax(0, 1fr) minmax(400px, 560px); align-items: start; }
   .lg-board .round { order: 0; }
 }
 

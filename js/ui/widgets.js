@@ -130,3 +130,31 @@ export function ranking({ ids, score, person, label, low = false, key, big = fal
       h("li", null, h("span", null, h("b", null, `${group.rank}. `), person(id).name), h("b", null, label(id))))))
   ];
 }
+
+// Composition de deux équipes par l'hôte. `teams` : { uid: "r" | "b" } ; `spies` : { r, b }
+// (facultatif : sans lui, pas de maître-espion à désigner). Toucher un joueur le fait
+// changer d'équipe ; l'étoile en fait le maître-espion. Un joueur pas encore placé est
+// réparti en alternance, pour toujours montrer deux équipes équilibrées.
+export function teamPicker({ players, teams = {}, spies, isHost, onChange, names = { r: "Rouges", b: "Bleus" } }) {
+  const current = Object.fromEntries(players.map((p, i) => [p.id, teams[p.id] || (i % 2 ? "b" : "r")]));
+  const shuffleAll = () => {
+    const mixed = [...players].sort(() => Math.random() - 0.5);
+    const next = Object.fromEntries(mixed.map((p, i) => [p.id, i % 2 ? "b" : "r"]));
+    onChange({ teams: next, spies: spies && { r: mixed[0]?.id || null, b: mixed[1]?.id || null } });
+  };
+  const column = (team) => h("div", { class: `team-col team-${team}` },
+    h("h4", null, `${names[team]} · ${players.filter((p) => current[p.id] === team).length}`),
+    players.filter((p) => current[p.id] === team).map((p) => h("div", { class: "team-row" },
+      h("button", {
+        class: "btn btn-mini", type: "button", disabled: !isHost, title: `Passer chez les ${names[team === "r" ? "b" : "r"]}`,
+        onclick: () => onChange({ teams: { ...current, [p.id]: team === "r" ? "b" : "r" }, spies })
+      }, token(p), h("span", null, p.name), " ⇄"),
+      spies && h("button", {
+        class: `btn btn-mini team-spy${spies[team] === p.id ? " is-on" : ""}`, type: "button", disabled: !isHost,
+        title: "Maître-espion", "aria-pressed": String(spies[team] === p.id),
+        onclick: () => onChange({ teams: current, spies: { ...spies, [team]: p.id } })
+      }, "★"))));
+  return h("div", { class: "team-picker" },
+    h("div", { class: "team-cols" }, column("r"), column("b")),
+    isHost && h("button", { class: "btn btn-mini", type: "button", onclick: shuffleAll }, "Au hasard"));
+}

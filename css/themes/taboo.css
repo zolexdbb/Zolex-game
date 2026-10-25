@@ -68,3 +68,8 @@
 .theme-taboo .tb-history { display: grid; gap: 10px; text-align: left; }
 .theme-taboo .tb-history > li { display: grid; gap: 6px; padding: 8px 10px; border-left: 6px solid var(--brick); background: rgb(255 255 255 / .35); border-radius: 3px; }
 .theme-taboo .tb-history > li.team-b { border-left-color: var(--ink); }
+
+/* Par écrit : le fil des indices et des réponses de la carte en cours. */
+.theme-taboo .tb-feed { display: grid; gap: 3px; max-height: 210px; padding: 4px; overflow-y: auto; font-size: .92rem; border: 2px dashed var(--card); border-radius: 4px; }
+.theme-taboo .tb-feed li { padding: 2px 8px; background: #fffaf0; border-radius: 3px; overflow-wrap: anywhere; }
+.theme-taboo .tb-feed .is-clue { background: #f7dcd4; }

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Galerie de Capytalisme</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=Bowlby+One&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes/deal.css">
+  <style>
+    .gal-bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; padding: 10px; color: var(--cream); background: var(--felt-dark); border-radius: 8px; }
+    .gal-check.is-bad { color: #ffb4a8; font-weight: 700; }
+    .gal-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 12px; }
+    .gal-grid.is-mini .dcard { --w: 62px; }
+    .gal-grid .dcard { --w: clamp(110px, 35vw, 150px); }
+    .d-plaque.is-over { outline: 3px solid #e24b4a; outline-offset: 1px; }
+    .gal-fan { display: flex; justify-content: center; padding: 26px 8px 10px; }
+    .gal-fan .dcard { --w: 62px; margin-inline: -9px; transform: rotate(var(--fan)) translateY(var(--lift)); transform-origin: 50% 140%; }
+    .gal-extra { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px; }
+  </style>
+</head>
+<body>
+  <div id="app"><main class="mat"><p class="rule">On étale les cartes…</p></main></div>
+  <script type="module" src="js/games/deal/galerie.js"></script>
+</body>
+</html>

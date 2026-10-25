@@ -2,7 +2,8 @@
 // son équipe (à voix haute, dans la même pièce ou en appel) sans prononcer les
 // cinq mots interdits. L'équipe adverse voit la carte et surveille : « Tabou ! ».
 // La carte n'est lisible que par l'orateur et l'équipe adverse (database.rules.json, taboo/).
-import { shuffle } from "../dessin/logic.js";
+import { shuffle, norm, levenshtein } from "../dessin/logic.js";
+import { makeTeams } from "../codenames/logic.js";
 import { CARDS } from "./cards.js";
 
 export const TEAMS = { r: "Rouges", b: "Bleus" };
@@ -17,20 +18,61 @@ export function pickCard(used = []) {
   return shuffle(free.length ? free : CARDS.map((_, i) => i))[0];
 }
 
+// ---- Par écrit : vérifications avec tolérance aux fautes ----
+
+// Deux mots « pareils » selon la tolérance : 0 = exact ; 1 = une faute (deux dès 8 lettres) ;
+// 2 = deux fautes. Jamais de faute tolérée sous 5 lettres (« mer » et « mur » restent différents).
+// Accents, majuscules et pluriel ne comptent jamais.
+export function near(a, b, tolerance) {
+  const x = norm(a), y = norm(b);
+  if (!x || !y) return false;
+  if (x === y) return true;
+  const n = Math.max(x.length, y.length);
+  if (!tolerance || n <= 4) return false;
+  return levenshtein(x, y) <= (tolerance === 1 ? (n >= 8 ? 2 : 1) : 2);
+}
+
+// Le mot interdit (ou le mot à deviner) trouvé dans un indice, ou null. Refuse aussi une faute
+// volontaire (« sabble »), un mot de la même famille (« plagistes » pour « plage ») et un interdit
+// en plusieurs mots (« salle de bain ») caché dans l'indice.
+// Racine d'un mot pour repérer sa famille : « plage » → « plag », qui attrape « plagiste ».
+const stem = (k) => k.replace(/e$/, "");
+
+export function forbiddenIn(clue, card, tolerance) {
+  const whole = norm(clue);
+  const pieces = String(clue).split(/[\s'’-]+/).filter((piece) => norm(piece));
+  for (const banned of [card.word, ...card.banned]) {
+    const k = norm(banned);
+    if (k.length >= 4 && whole.includes(k)) return banned;
+    for (const piece of pieces) {
+      const p = norm(piece);
+      const a = stem(p), b = stem(k);
+      if (near(piece, banned, tolerance) || (a.length >= 4 && b.length >= 4 && (a.startsWith(b) || b.startsWith(a)))) return banned;
+    }
+  }
+  return null;
+}
+
+// Une proposition de l'équipe est-elle le mot à deviner ?
+export const guessMatches = (guess, word, tolerance) => near(guess, word, tolerance);
+
+// Où ranger le fil écrit d'une carte : indices de l'orateur et propositions de son équipe.
+export const feedKey = (s) => `t${s.turnNo}c${s.card}`;
+
 // Points d'un coup : trouvé +1, tabou -1, passé 0.
 export const POINTS = { found: 1, taboo: -1, pass: 0 };
 
 export function start({ players, settings }) {
   const ids = shuffle(players.map((p) => p.id));
-  const teams = { r: [], b: [] };
-  ids.forEach((id, i) => teams[i % 2 ? "b" : "r"].push(id));
+  // Équipes composées par l'hôte dans le salon, ou au hasard.
+  const { teams } = makeTeams(ids, settings.teams);
   const turn = shuffle(["r", "b"])[0];
   return {
     state: {
       phase: "ready", turn, turnNo: 1, card: 0, teams,
       team: Object.fromEntries(ids.map((id) => [id, teams.r.includes(id) ? "r" : "b"])),
       speaker: teams[turn][0], next: { r: turn === "r" ? 1 : 0, b: turn === "b" ? 1 : 0 },
-      rules: { time: settings.time, turns: settings.turns },
+      rules: { time: settings.time, turns: settings.turns, mode: settings.mode || "oral", tolerance: settings.tolerance ?? 1 },
       scores: { r: 0, b: 0 }, done: { r: 0, b: 0 },
       names: Object.fromEntries(players.map((p) => [p.id, { name: p.name, pawn: p.index }]))
     },

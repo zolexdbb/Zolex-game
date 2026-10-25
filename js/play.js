@@ -11,6 +11,10 @@ import { soundControl, ambience } from "./ui/sound.js";
 let clockOffset = 0;
 let clockWatched = false;
 const serverNow = () => Date.now() + clockOffset;
+// Le tiroir de discussion : ouvert ou non, et le dernier message vu (gardés d'un affichage à l'autre).
+const dock = { code: null, open: false, seen: "" };
+// Assez de place à droite du tapis pour y laisser la discussion ouverte (voir .chat-dock).
+const wide = matchMedia("(min-width: 1560px)");
 
 // `carry` : ce qui passe d'une donne à la suivante (le score d'une série de parties).
 // Renvoie false, sans rien écrire, si la table ne permet plus de jouer.
@@ -163,12 +167,28 @@ export function createPlay(code, show, { onLeave }) {
     }
   }
 
+  // La discussion du jeu, rangée dans un tiroir sur la droite : ouvert d'office sur un grand écran
+  // (dans la marge à côté du tapis), sinon derrière une languette. Un point signale un message non lu.
+  function chatDock(talk) {
+    const last = Object.keys(room.talk?.table || {}).sort().at(-1) || "";
+    if (dock.code !== code) Object.assign(dock, { code, seen: last, open: false });
+    if (dock.open || wide.matches) dock.seen = last;
+    const news = last > dock.seen;
+    return h("aside", { class: `chat-dock${dock.open ? " is-open" : ""}` },
+      h("button", {
+        class: `chat-tab${news ? " has-news" : ""}`, type: "button", "aria-expanded": String(dock.open),
+        "aria-label": dock.open ? "Fermer la discussion" : "Ouvrir la discussion",
+        onclick: () => { dock.open = !dock.open; refresh(); }
+      }, dock.open ? "›" : "‹", h("span", null, "Chat")),
+      talk);
+  }
+
   function refresh() {
     if (!room) return;
     if (isHost() && actions) tick();
     const game = getGame(room.meta.gameId);
     const ctx = context();
-    show(h("main", { class: `mat theme-${game.id}` },
+    const main = h("main", { class: `mat theme-${game.id}` },
       game.view(ctx),
       h("footer", { class: "table-foot" },
         h("button", { class: "btn btn-cream", type: "button", onclick: () => onLeave(room) }, icon("leave"), "Quitter la table"),
@@ -178,7 +198,15 @@ export function createPlay(code, show, { onLeave }) {
         }, icon("box"), "Arrêter la partie")
       ),
       soundControl()
-    ));
+    );
+    const talk = main.querySelector(".sheet.talk");
+    if (talk) {
+      // Le bloc qui ne contenait que la discussion (fin de partie, colonne latérale) part avec elle.
+      const home = talk.parentElement;
+      main.append(chatDock(talk));
+      if (home !== main && !home.children.length) home.remove();
+    }
+    show(main);
   }
 
   return {

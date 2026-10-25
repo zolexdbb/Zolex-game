@@ -23,7 +23,9 @@ const DECKS = { classic: "Uno", flip: "Uno Flip", nomercy: "Uno No Mercy" };
 const ORDER = "rgbyolpnw";
 
 // pick : carte en attente d'une couleur ou d'un joueur ; move : dernier coup déjà animé et sonorisé.
-const ui = { key: null, pick: null, move: null, movedAt: 0 };
+// hover : la carte pointée dans la main ; chosen : la carte choisie, affichée en grand en attendant « Jouer ».
+// Toutes deux gardées d'un affichage à l'autre, pour qu'elles ne retombent pas quand un autre joueur joue.
+const ui = { key: null, pick: null, move: null, movedAt: 0, hover: null, chosen: null };
 
 const nameOf = (s, id) => s.names[id]?.name || "Un joueur";
 // Toutes les cartes se lisent par leur face visible (deux lettres, voir logic.js).
@@ -60,6 +62,7 @@ function cardNode(f, { onclick, cls = "", disabled, side } = {}) {
 
 const send = (ctx, payload) => {
   ui.pick = null;
+  ui.chosen = null;
   return ctx.act(payload).catch(() => ctx.refresh()); // l'étape a déjà changé : on réaffiche
 };
 
@@ -82,6 +85,8 @@ function story(s) {
 }
 
 const FLY = 450;
+// Place laissée à une carte qu'on ne peut pas jouer, par rapport à une carte jouable.
+const TIGHT = 0.3;
 const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 // Cartes piochées par le dernier coup : elles partent une par une, à `gapOf` ms d'écart.
 const drawnBy = (l) => (l?.t === "draw" && l.n ? [l.by, l.n] : l?.t === "catch" ? [l.to, 2] : [null, 0]);
@@ -235,31 +240,138 @@ function handZone(ctx) {
     ui.pick = { i, card, need };
     ctx.refresh();
   };
+  const seen = {};
   const cards = hand.map((card, i) => ({ card, i }))
     .map((x) => ({ ...x, f: face(s, x.card) }))
-    .sort((a, b) => ORDER.indexOf(a.f[0]) - ORDER.indexOf(b.f[0]) || a.f.localeCompare(b.f));
+    .sort((a, b) => ORDER.indexOf(a.f[0]) - ORDER.indexOf(b.f[0]) || a.f.localeCompare(b.f))
+    // key : la carte et son rang parmi ses doubles, pour distinguer deux cartes identiques.
+    .map((x) => ({ ...x, key: `${x.card}#${(seen[x.card] = (seen[x.card] || 0) + 1)}` }));
   // Les cartes que je viens de piocher (les dernières de la main) arrivent une par une.
   const [drawer, count] = drawnBy(s.last);
   const fresh = drawer === me ? count : 0;
   const gap = gapOf(fresh);
   const elapsed = performance.now() - ui.movedAt;
   const reveal = fresh > 0 && !still() && elapsed < FLY + fresh * gap + 260;
+  // Ce qui se joue (à mon tour : les cartes jouables ; sinon : la couleur en jeu) prend de la place
+  // dans l'éventail, le reste se tasse (poids TIGHT). Rien à mettre en avant : toutes pareilles.
+  const marks = cards.map(({ f, i }) => {
+    const ok = !waiting && playable(s, me, hand, i);
+    return { ok, state: ok ? " is-playable" : mine ? " is-dim" : f[0] === s.color ? " is-color" : "" };
+  });
+  const any = marks.some((m) => m.ok || m.state === " is-color");
+  const weight = marks.map((m) => (!any || m.ok || m.state === " is-color" ? 1 : TIGHT));
+  const total = cards.length;
+  const sum = weight.slice(0, -1).reduce((a, b) => a + b, 0) || 1;
+  // Inclinaison maximale des bords : moins forte pour une grosse main, pour laisser la place aux cartes.
+  const tilt = Math.min(18, total * 2, 180 / total);
+  let before = 0;
+  const nodes = cards.map(({ f, i, key }, k) => {
+    const { ok, state } = marks[k];
+    const node = cardNode(f, {
+      side: s.side, onclick: () => choose(i), disabled: !ok,
+      cls: `${state}${ui.pick?.i === i ? " is-picked" : ""}${ui.hover === key ? " is-hover" : ""}${ui.chosen === key ? " is-chosen" : ""}`
+    });
+    // Place dans l'éventail, selon la place réellement prise : le milieu droit, les bords penchés et un peu plus bas.
+    const angle = total > 1 ? (before / sum * 2 - 1) * tilt : 0;
+    node.style.setProperty("--fan", `${angle}deg`);
+    node.style.setProperty("--lift", `${Math.abs(angle) * 0.5}px`);
+    // --wt : la part de cette carte que la suivante laisse voir.
+    if (k > 0) node.style.setProperty("--wt", weight[k - 1]);
+    before += weight[k];
+    node.dataset.card = key;
+    const nth = i - (hand.length - fresh);
+    if (reveal && nth >= 0) {
+      node.animate([{ opacity: 0, translate: "0 -46px", scale: ".5" }, { opacity: 1 }],
+        { duration: 260, delay: FLY * .7 + nth * gap, fill: "backwards", easing: "ease-out" }).currentTime = elapsed;
+    }
+    return node;
+  });
+  // Au doigt, ou à la souris dans une grosse main, on ne joue pas d'un seul geste : la carte choisie
+  // s'affiche en grand, et c'est « Jouer » (ou un second geste sur elle) qui la pose.
+  const confirm = matchMedia("(pointer: coarse)").matches || total > CROWD;
+  const picked = confirm && cards.find(({ key }) => key === ui.chosen);
+  const pickedOk = picked && marks[cards.indexOf(picked)].ok;
+  const preview = confirm && h("div", { class: "u-preview" }, picked
+    ? [cardNode(picked.f, { side: s.side, cls: `u-big${pickedOk ? " is-playable" : ""}` }),
+      h("div", { class: "u-preview-side" },
+        pickedOk
+          ? h("button", { class: "btn btn-brick btn-big", type: "button", onclick: () => choose(picked.i) }, "Jouer")
+          : h("p", { class: "rule" }, mine ? "Pas jouable maintenant" : "Ce n'est pas ton tour"),
+        h("button", { class: "btn btn-mini", type: "button", onclick: () => { ui.chosen = null; ctx.refresh(); } }, "Fermer"))]
+    : h("p", { class: "rule" }, "Choisis une carte pour la voir en grand, puis joue-la."));
   return h("section", { class: "felt-zone" },
     controls(ctx, hand),
-    h("div", { class: "hand", role: "group", "aria-label": "Ta main" }, cards.map(({ f, i }) => {
-      const ok = !waiting && playable(s, me, hand, i);
-      const node = cardNode(f, {
-        side: s.side,
-        onclick: () => choose(i), disabled: !ok,
-        cls: `${ok ? "is-playable" : mine ? "is-dim" : ""}${ui.pick?.i === i ? " is-picked" : ""}`
+    preview,
+    fanOf(nodes, total > 1 ? tilt : 0, sum, confirm, () => ctx.refresh()));
+}
+
+// Au-delà de CROWD cartes, même à la souris, un clic choisit la carte au lieu de la jouer.
+const CROWD = 12;
+// Un toucher à moins de SNAP pixels d'une carte qui se joue la choisit, même tombé sur le tas.
+const SNAP = 24;
+
+// L'éventail. Le pointeur ne vise pas les cartes elles-mêmes (elles bougent quand on les survole,
+// ce qui faisait sauter d'une carte à l'autre) : chaque carte a une place fixe, mesurée avant tout
+// survol ; une carte qui se joue, posée devant le tas, compte en entier, les autres par leur bande visible.
+// Souris : le survol lève la carte, un clic la joue (avec confirm : la choisit, comme le doigt).
+// Doigt : toucher ou glisser choisit la carte, qui reste levée et s'affiche en grand (onPick).
+// Un second geste sur la carte déjà choisie la joue.
+function fanOf(nodes, tilt, sum, confirm, onPick) {
+  const hand = h("div", { class: "hand", role: "group", "aria-label": "Ta main", style: `--sum: ${sum}; --tilt: ${tilt / 18}` }, nodes);
+  let boxes = null, downX = 0, before = null, kind = "mouse";
+  const measure = () => {
+    boxes ||= nodes.map((node) => {
+      const r = node.getBoundingClientRect(), dx = parseFloat(getComputedStyle(node).translate) || 0;
+      return { left: r.left - dx, right: r.right - dx, front: node.matches(".is-playable, .is-color") };
+    });
+    return boxes;
+  };
+  const at = (x, finger) => {
+    const all = measure();
+    // Les cartes qui se jouent passent devant le tas : sous le pointeur, elles l'emportent.
+    const front = all.findLastIndex((b) => b.front && x >= b.left && x < b.right);
+    if (front >= 0) return nodes[front];
+    if (finger) {
+      let best = -1, near = SNAP;
+      all.forEach((b, k) => {
+        const gap = x < b.left ? b.left - x : x - b.right;
+        if (b.front && gap < near) { near = gap; best = k; }
       });
-      const nth = i - (hand.length - fresh);
-      if (reveal && nth >= 0) {
-        node.animate([{ opacity: 0, transform: "translateY(-46px) scale(.5)" }, { opacity: 1 }],
-          { duration: 260, delay: FLY * .7 + nth * gap, fill: "backwards", easing: "ease-out" }).currentTime = elapsed;
-      }
-      return node;
-    })));
+      if (best >= 0) return nodes[best];
+    }
+    let k = 0;
+    while (k < all.length - 1 && x >= all[k + 1].left) k++;
+    return nodes[k];
+  };
+  const point = (node) => {
+    for (const other of nodes) other.classList.toggle("is-hover", other === node);
+    ui.hover = node?.dataset.card ?? null;
+  };
+  // Le geste sur la carte déjà choisie la joue ; sinon il la choisit.
+  const pick = (node) => {
+    if (node.dataset.card === before) return node.click();
+    ui.chosen = node.dataset.card;
+    onPick();
+  };
+  const finger = (e) => e.pointerType !== "mouse";
+  hand.addEventListener("pointerdown", (e) => { downX = e.clientX; before = ui.chosen; kind = e.pointerType; });
+  hand.addEventListener("pointermove", (e) => nodes.length && (!finger(e) || e.buttons || e.pressure) && point(at(e.clientX, finger(e))));
+  hand.addEventListener("pointerleave", (e) => { if (!finger(e)) { point(null); boxes = null; } });
+  hand.addEventListener("pointerup", (e) => {
+    if (!finger(e) || !nodes.length) return;
+    const node = at(e.clientX, true);
+    ui.hover = null;
+    // Le doigt a glissé : on choisit la carte où il s'arrête, sans jamais la jouer.
+    if (Math.abs(e.clientX - downX) > 12) before = null;
+    pick(node);
+  });
+  hand.addEventListener("click", (e) => {
+    if (e.target.closest(".ucard") || !nodes.length) return; // clavier : le bouton s'en charge
+    if (kind !== "mouse") return; // le doigt : pointerup s'en charge
+    const node = at(e.clientX);
+    if (confirm) pick(node); else node.click();
+  });
+  return hand;
 }
 
 const person = ({ state: s, room, me }, id) =>

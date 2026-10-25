@@ -8,8 +8,9 @@ import connexion from "./games/connexion/index.js";
 import petitbac from "./games/petitbac/index.js";
 import codenames from "./games/codenames/index.js";
 import taboo from "./games/taboo/index.js";
+import deal from "./games/deal/index.js";
 
-export const games = [undercover, loupgarou, dessin, uno, connexion, petitbac, codenames, taboo];
+export const games = [undercover, loupgarou, dessin, uno, connexion, petitbac, codenames, taboo, deal];
 
 // Jeux pas encore disponibles, affichés avec la mention « Bientôt ».
 export const upcoming = [];
