@@ -26,7 +26,12 @@ const cardName = (card) => {
   return t.kind === "money" ? `${t.value} mandarines` : t.kind === "wild" ? "un joker propriété" : t.name;
 };
 const coins = (n) => [String(n), man()];
-const send = (ctx, payload) => { reset(); return ctx.act(payload).catch(() => ctx.refresh()); };
+// Firebase refuse toute valeur undefined : les choix inutiles pour une carte (couleur, cible…) sont retirés.
+const clean = (payload) => Object.fromEntries(Object.entries(payload).filter(([, v]) => v !== undefined && v !== null));
+const send = (ctx, payload) => {
+  reset();
+  return ctx.act(clean(payload)).catch((e) => { console.error("Capy Deal : coup refusé", e); ctx.refresh(); });
+};
 const sum = (cards) => cards.reduce((n, c) => n + valueOf(c), 0);
 
 // ---- La table ----
@@ -170,7 +175,7 @@ function needs(s, by, card, plan) {
     && (!list.target || list.target.includes(plan.target))
     && (!list.color || list.color.includes(plan.color))
     && (!list.type || KINDS[plan.type])
-    && (!list.picks || Object.keys(plan.picks || {}).length > 0);
+    && (!list.picks || Object.values(plan.picks || {}).some(Boolean));
   const empty = (list.target && !list.target.length) || (list.color && !list.color.length) || (list.picks && !list.picks.length);
   return { ...list, ready, empty };
 }
