@@ -223,7 +223,9 @@
   border-radius: 3px;
   cursor: pointer;
 }
-.gamebox strong { font: 400 .95rem/1.05 var(--display); text-transform: uppercase; overflow-wrap: anywhere; }
+/* Le titre suit la largeur de la boîte (cqi) : un long nom comme « Capytalisme » tient sur une ligne. */
+.gamebox { container-type: inline-size; }
+.gamebox strong { font: 400 min(.95rem, 12.5cqi)/1.05 var(--display); text-transform: uppercase; overflow-wrap: anywhere; }
 .gamebox small { font-size: .72rem; line-height: 1.25; }
 .gamebox:disabled { cursor: default; color: #fff8ea; }
 .gamebox.is-picked { transform: translateY(-6px); box-shadow: 0 6px 0 var(--ochre), 0 6px 0 2px var(--black); }
@@ -233,7 +235,6 @@
 @media (max-width: 480px) {
   .shelf { grid-template-columns: repeat(2, 1fr); }
   .gamebox { min-height: 88px; }
-  .gamebox strong { font-size: min(.88rem, 3.9vw); }
 }
 .box-undercover { --box: var(--ink); }
 .box-loupgarou { --box: #3d2f52; }
