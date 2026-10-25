@@ -13,17 +13,21 @@ const MODES = [
 function lobbyView({ settings, isHost, setSettings }) {
   const mode = settings.mode || "deal";
   return h("div", { class: "game-settings" },
+    h("p", { class: "rule" }, "Le Monopoly version capybara, où l'on paie en mandarines. Choisis ta façon de jouer :"),
     h("div", { class: "filters", role: "group", "aria-label": "Mode de jeu" },
       MODES.map((m) => h("button", {
         class: "filter-chip", type: "button", "aria-pressed": String(m.id === mode), disabled: !isHost || !m.ready,
         onclick: () => setSettings({ ...settings, mode: m.id })
       }, m.name, !m.ready && " · bientôt"))),
-    h("p", { class: "rule" },
-      `Capy Deal : le Monopoly Deal sans pitié, version capybara. À ton tour, pioche 2 cartes et joue-en jusqu'à 3 : `
-      + `des mandarines dans ta réserve, des propriétés devant toi, ou des actions pour voler, faire payer et ruiner les autres. `
-      + `Le premier à poser ${GOAL} groupes complets de couleurs différentes gagne.`),
-    h("p", { class: "rule" }, "Qui ne peut pas payer donne un jeton Dette, et rembourse d'une carte de sa main à son tour suivant. "
-      + "Le bouton « Règles » rappelle tout pendant la partie."));
+    // Chaque mode a sa règle en bref.
+    mode === "deal"
+      ? [h("p", { class: "rule" },
+        `Capy Deal, le jeu de cartes sans pitié. À ton tour, pioche 2 cartes et joue-en jusqu'à 3 : `
+        + `des mandarines dans ta réserve, des propriétés devant toi, ou des actions pour voler, faire payer et ruiner les autres. `
+        + `Le premier à poser ${GOAL} groupes complets de couleurs différentes gagne.`),
+      h("p", { class: "rule" }, "Qui ne peut pas payer donne un jeton Dette, et rembourse d'une carte de sa main à son tour suivant. "
+        + "Le bouton « Règles » rappelle tout pendant la partie.")]
+      : h("p", { class: "rule" }, "Le plateau : on lance les dés, on achète des rues et on bâtit autour du plateau. Ce mode arrive bientôt."));
 }
 
 export default {
