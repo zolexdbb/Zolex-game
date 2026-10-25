@@ -30,7 +30,7 @@ export default {
   // L'identifiant reste « deal » : il sert de clé dans la base et pour les fichiers du mode Capy Deal.
   id: "deal",
   name: "Capytalisme",
-  tagline: "Capy Deal, sans pitié et en mandarines",
+  tagline: "Le Monopoly version capybara",
   minPlayers: 2,
   defaultSettings: { mode: "deal" },
   checkSettings: (settings, n) => ((settings.mode || "deal") !== "deal" ? "Le plateau arrive bientôt : choisis Capy Deal."
