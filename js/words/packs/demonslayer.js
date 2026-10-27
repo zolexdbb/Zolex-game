@@ -1,0 +1,36 @@
+// Pack Demon Slayer : pourfendeurs, piliers, démons, souffles, lieux et objets (noms français).
+export default {
+  id: "demonslayer", name: "Demon Slayer", kind: "manga", groups: [
+    ["Tanjirô", "Nezuko", "Zen'itsu", "Inosuke"],
+    ["Kanao", "Genya", "Aoi", "Murata"],
+    ["Giyû", "Shinobu", "Rengoku", "Tengen"],
+    ["Mitsuri", "Muichirô", "Gyômei", "Obanai", "Sanemi"],
+    ["Muzan", "Kokushibô", "Dôma", "Akaza"],
+    ["Hantengu", "Gyokko", "Gyûtarô", "Daki", "Kaigaku"],
+    ["Rui", "Enmu", "Kyôgai", "Nakime"],
+    ["Urokodaki", "Sabito", "Makomo", "Jigorô"],
+    ["Kagaya Ubuyashiki", "Amane", "Kiriya", "Hinaki"],
+    ["Tamayo", "Yushirô", "Chachamaru"],
+    ["Haganezuka", "Kotetsu", "Hotaru", "Village des forgerons"],
+    ["Yoriichi", "Michikatsu", "Sumiyoshi", "Souffle du soleil"],
+    ["Souffle de l'eau", "Souffle de la flamme", "Souffle de la foudre", "Souffle de la bête"],
+    ["Souffle de la brume", "Souffle du vent", "Souffle de la pierre", "Souffle du serpent"],
+    ["Souffle de l'amour", "Souffle de l'insecte", "Souffle du son", "Souffle de la fleur"],
+    ["Danse du dieu du feu", "Boucles d'oreilles hanafuda", "Masque de renard", "Haori à carreaux"],
+    ["Lame du Nichirin", "Sabre noir", "Garde de sabre", "Forgeron"],
+    ["Corps des pourfendeurs", "Piliers", "Kakushi", "Corbeau messager"],
+    ["Lunes supérieures", "Lunes inférieures", "Démon", "Sang de Muzan"],
+    ["Boîte en bois", "Bambou", "Lumière du soleil", "Glycine"],
+    ["Sélection finale", "Mont Fujikasane", "Entraînement des piliers", "Domaine des papillons"],
+    ["Train de l'infini", "Quartier des plaisirs", "Château de l'infini", "Mont Natagumo"],
+    ["Marque de pourfendeur", "Monde transparent", "Lame rouge", "Concentration totale"],
+    ["Kimetsu no Yaiba", "Koyoharu Gotôge", "Ufotable", "Shônen Jump"],
+    ["Tanjûrô", "Kie", "Hanako", "Takeo", "Rokuta"],
+    ["Kanae", "Papillon", "Poison de glycine", "Kochô"],
+    ["Senjurô", "Shinjurô", "Ruka"],
+    ["Corbeau Kasugai", "Moineau Chuntarô", "Kaburamaru", "Serpent blanc"],
+    ["Suma", "Makio", "Hinatsuru", "Uzui"],
+    ["Démon des marais", "Démon du tambour", "Démon araignée", "Démon de la main"],
+    ["Nuit", "Lune", "Aube", "Soleil levant"]
+  ]
+};

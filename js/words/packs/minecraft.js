@@ -1,6 +1,6 @@
 // Pack Minecraft : blocs, créatures, objets, biomes et dimensions.
 export default {
-  id: "minecraft", name: "Minecraft", groups: [
+  id: "minecraft", name: "Minecraft", kind: "jeu", groups: [
     ["Creeper", "Zombie", "Squelette", "Araignée"],
     ["Enderman", "Endermite", "Shulker"],
     ["Ender Dragon", "Wither", "Warden", "Gardien ancien"],

@@ -1,6 +1,6 @@
 // Pack Football : clubs, joueurs, compétitions et vocabulaire du terrain.
 export default {
-  id: "football", name: "Football", groups: [
+  id: "football", name: "Football", kind: "sport", groups: [
     ["PSG", "Olympique de Marseille", "Olympique lyonnais", "AS Monaco"],
     ["LOSC", "Stade rennais", "RC Lens", "OGC Nice"],
     ["Real Madrid", "FC Barcelone", "Atlético de Madrid", "FC Séville"],

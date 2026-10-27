@@ -1,6 +1,6 @@
 // Pack Disney et Pixar : personnages, films et lieux (titres français).
 export default {
-  id: "disney", name: "Disney et Pixar", groups: [
+  id: "disney", name: "Disney et Pixar", kind: "film", groups: [
     ["Blanche-Neige", "Cendrillon", "Aurore", "Ariel"],
     ["Belle", "Jasmine", "Pocahontas", "Mulan"],
     ["Raiponce", "Elsa", "Anna", "Vaiana"],

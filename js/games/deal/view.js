@@ -10,7 +10,7 @@ import { dealCard, cardBack, rulesCard, rich } from "./card-view.js";
 import { man } from "./capy.js";
 import {
   info, colorsOf, needOf, complete, completeCount, rentOf, cabanesOf, propCards, valueOf, assetsOf,
-  others, owesNow, KINDS, COLORS, GOAL
+  others, owesNow, waitingFor, KINDS, COLORS, GOAL
 } from "./logic.js";
 
 // chosen : carte de la main affichée en grand ; plan : cible, couleur, type et choix du coup en préparation ;
@@ -81,11 +81,11 @@ function table(ctx) {
   const n = s.order.length, shift = Math.max(s.order.indexOf(me), 0);
   const around = s.order.map((_, i) => s.order[(i + shift) % n]);
   const places = PLACES[n] || PLACES[5];
-  const cur = s.order[s.turn], waiting = s.wait?.who;
+  const cur = s.order[s.turn], waiting = s.wait ? waitingFor(s) : [];
   const seats = around.map((id, i) => h("div", { class: `d-seat is-${places[i]}` },
     h("div", { class: "d-who" },
       pawn({ name: nameOf(s, id), index: s.names[id].pawn, online: !!room.players?.[id]?.online, avatar: room.players?.[id]?.avatar },
-        { isMe: id === me, turn: id === cur, isHost: id === room.meta.hostUid, bubble: id === waiting && id !== cur ? "…" : null,
+        { isMe: id === me, turn: id === cur, isHost: id === room.meta.hostUid, bubble: waiting.includes(id) && id !== cur ? "…" : null,
           note: `${s.counts?.[id] ?? 0} carte${s.counts?.[id] === 1 ? "" : "s"} · ${completeCount(s, id)}/${GOAL} ★` }),
       id !== me && backs(s.counts?.[id] || 0)),
     front(ctx, id)));
@@ -139,7 +139,7 @@ function story(ctx) {
     case "move": return `${say("déplace")} un joker vers le ${GROUPS[l.color].name.toLowerCase()}`;
     case "play": return `${say("joue")} ${cardName(l.card)}${l.target ? ` contre ${who(s, l.target, me)}` : ""}`;
     case "non": return `${say("dit", "dis")} « Non ! »`;
-    case "cancel": return "L'action est annulée";
+    case "cancel": return l.to ? `L'action est annulée pour ${who(s, l.to, me)}` : "L'action est annulée";
     case "pay": {
       const debtNote = l.short ? " et donne un jeton Dette" : "";
       return l.to === me ? `${nameOf(s, l.by)} te paie ${l.paid}${debtNote}` : `${say("paie")} ${l.paid} à ${to}${debtNote}`;
@@ -267,14 +267,20 @@ function prompt(ctx) {
     if (debt) return h("p", { class: "d-status is-me" }, `Tu dois rembourser ${nameOf(s, debt.to)} : choisis une carte de ta main à lui donner.`);
     return null;
   }
-  if (w.who !== me) {
-    const what = w.kind === "discard" ? "défausser" : w.kind === "place" ? "jouer la carte reçue" : w.stage === "counter" ? "répondre au « Non ! »" : "répondre";
-    return h("p", { class: "d-status" }, `On attend ${nameOf(s, w.who)} : ${what}…`);
+  const waiting = waitingFor(s);
+  if (!waiting.includes(me)) {
+    const list = waiting.map((id) => nameOf(s, id)).join(", ");
+    if (w.kind === "effect") {
+      if (w.targets?.[me] === "counter") return h("p", { class: "d-status is-me" }, `Tu as dit « Non ! » : on attend la réponse de ${nameOf(s, w.by)}…`);
+      return h("p", { class: "d-status" }, `${info(w.card).name} : on attend ${list}…`);
+    }
+    return h("p", { class: "d-status" }, `On attend ${list} : ${w.kind === "discard" ? "défausser" : "jouer la carte reçue"}…`);
   }
   if (ctx.myAction) return h("p", { class: "d-status is-me" }, "C'est envoyé…");
   const hand = ctx.watch(`deal/${ctx.code}/${s.g}/hands/${me}`) || [];
   const non = hand.find((c) => info(c).id === "non");
-  const nonBtn = non && h("button", { class: "btn btn-ink", type: "button", onclick: () => send(ctx, { t: "non", card: non }) }, "Non !");
+  const nonFor = (target) => non && h("button", { class: "btn btn-ink", type: "button", onclick: () => send(ctx, { t: "non", card: non, target }) }, "Non !");
+  const nonBtn = nonFor();
 
   if (w.kind === "discard") {
     const ready = ui.drop.length === w.n;
@@ -292,28 +298,45 @@ function prompt(ctx) {
         (t.kind === "action" || t.kind === "rent") && !["non", "rejouer"].includes(t.id) && builder(ctx, me, w.card, (p) => send(ctx, p)))));
   }
   const card = info(w.card);
-  if (w.stage === "counter") {
-    return h("section", { class: "d-ask" }, h("h3", null, `${nameOf(s, w.target)} te dit « Non ! »`),
-      h("p", { class: "d-note-line" }, `Ton ${card.name} est annulé contre ${nameOf(s, w.target)}, sauf si tu réponds par un « Non ! ».`),
-      h("div", { class: "d-row" }, nonBtn, h("button", { class: "btn btn-cream", type: "button", onclick: () => send(ctx, { t: "ok" }) }, "Tant pis")));
+  // La carte jouée, en grand à côté de la demande : on voit ce qui arrive avant de répondre.
+  const ask = (title, ...content) => h("section", { class: "d-ask" }, h("h3", null, title),
+    h("div", { class: "d-preview" }, dealCard(card, { cls: "is-big" }), h("div", { class: "d-preview-side" }, content)));
+  const ok = (label, target) => h("button", { class: "btn btn-cream", type: "button", onclick: () => send(ctx, { t: "ok", target }) }, label);
+  // L'auteur : un « Non ! » à régler (un à la fois), les autres cibles répondent pendant ce temps.
+  if (me === w.by) {
+    const target = Object.keys(w.targets || {}).find((id) => w.targets[id] === "counter");
+    const rest = Object.keys(w.targets || {}).filter((id) => id !== target);
+    return ask(`${nameOf(s, target)} te dit « Non ! »`,
+      h("p", { class: "d-note-line" }, `Ton ${card.name} est annulé contre ${nameOf(s, target)}, sauf si tu réponds par un « Non ! ».`),
+      rest.length > 0 && h("p", { class: "d-note-line" }, `Pendant ce temps, ${rest.map((id) => nameOf(s, id)).join(", ")} répond${rest.length > 1 ? "ent" : ""}.`),
+      h("div", { class: "d-row" }, nonFor(target), ok("Tant pis", target)));
   }
-  const head = h("h3", null, `${nameOf(s, w.by)} joue ${card.name} contre toi`);
+  const title = `${nameOf(s, w.by)} joue ${card.name} contre toi`;
   if (w.effect === "pay") {
     const mine = assetsOf(s, me), total = sum(ui.pay), all = ui.pay.length === mine.length;
+    const short = sum(mine) <= w.amount, tokens = s.tokens?.[me] ?? 0;
     const toggle = (c) => { ui.pay = ui.pay.includes(c) ? ui.pay.filter((x) => x !== c) : [...ui.pay, c]; ctx.refresh(); };
-    return h("section", { class: "d-ask" }, head,
-      h("p", { class: "d-note-line" }, "Tu dois payer ", ...coins(w.amount), " avec ta réserve ou tes propriétés. On ne rend pas la monnaie ; si tout ne suffit pas, tu donnes un jeton Dette."),
-      h("div", { class: "d-pick-row" }, mine.map((c) => h("button", { class: `d-pick${ui.pay.includes(c) ? " is-on" : ""}`, type: "button", title: cardName(c), onclick: () => toggle(c) },
+    return ask(title,
+      h("p", { class: "d-note-line" }, "Tu dois payer ", ...coins(w.amount), " avec ta réserve ou tes propriétés. On ne rend pas la monnaie."),
+      short && h("p", { class: "d-note-line is-warn" }, mine.length ? "Tout ce que tu as ne suffit pas : tu donnes tout" : "Tu n'as rien pour payer",
+        tokens ? ", et un jeton Dette." : ", et tu n'as plus de jeton Dette."),
+      mine.length > 0 && h("div", { class: "d-pick-row" }, mine.map((c) => h("button", { class: `d-pick${ui.pay.includes(c) ? " is-on" : ""}`, type: "button", title: cardName(c), onclick: () => toggle(c) },
         dealCard(info(c), { cls: "is-mini" })))),
       h("div", { class: "d-row" },
-        h("button", { class: "btn btn-brick", type: "button", disabled: total < w.amount && !all, onclick: () => send(ctx, { t: "pay", cards: ui.pay }) }, "Payer ", ...coins(total)),
+        short
+          ? h("button", { class: "btn btn-brick", type: "button", onclick: () => send(ctx, { t: "pay", cards: mine }) }, mine.length ? "Tout donner" : "D'accord")
+          : h("button", { class: "btn btn-brick", type: "button", disabled: total < w.amount && !all, onclick: () => send(ctx, { t: "pay", cards: ui.pay }) }, "Payer ", ...coins(total)),
         nonBtn));
   }
   if (w.effect === "fisc" || w.effect === "saisie") {
     const pool = w.effect === "fisc" ? s.bank?.[me] || [] : propCards(s, me);
+    if (pool.length <= 1) {
+      return ask(title, h("p", { class: "d-note-line" }, pool.length ? "Tu n'as qu'une carte : tu la gardes, il n'y a rien à répartir." : "Tu n'as rien à répartir."),
+        h("div", { class: "d-row" }, nonBtn, ok("D'accord")));
+    }
     const mates = others(s, me);
     const ready = ui.keep && pool.filter((c) => c !== ui.keep).every((c) => ui.give[c]);
-    return h("section", { class: "d-ask" }, head,
+    return ask(title,
       h("p", { class: "d-note-line" }, w.effect === "fisc" ? "Garde 1 carte de ta réserve et donne chacune des autres à un joueur."
         : "Garde 1 propriété et donne chacune des autres (cabanes comprises) à un joueur."),
       h("div", { class: "d-split" }, pool.map((c) => h("div", { class: `d-split-row${ui.keep === c ? " is-kept" : ""}` },
@@ -332,8 +355,7 @@ function prompt(ctx) {
     rafle: `Il te prend toutes tes propriétés ${GROUPS[w.color]?.name.toLowerCase()}, jokers compris.`,
     ardoise: "Tu lui donnes un jeton Dette : à ton prochain tour, tu le rembourses d'une carte de ta main."
   }[w.effect];
-  return h("section", { class: "d-ask" }, head, h("p", { class: "d-note-line" }, what),
-    h("div", { class: "d-row" }, nonBtn, h("button", { class: "btn btn-cream", type: "button", onclick: () => send(ctx, { t: "ok" }) }, "D'accord")));
+  return ask(title, h("p", { class: "d-note-line" }, what), h("div", { class: "d-row" }, nonBtn, ok("D'accord")));
 }
 
 // ---- La main ----
@@ -421,7 +443,7 @@ function endPanel(ctx) {
 
 export function view(ctx) {
   const { state: s, me } = ctx;
-  const key = `${s.g}/${s.wait?.kind || ""}/${s.wait?.who || ""}/${s.wait?.target || ""}/${s.turn}`;
+  const key = `${s.g}/${s.wait?.kind || ""}/${s.wait?.card || ""}/${s.wait?.who || ""}/${s.wait?.targets?.[me] || ""}/${s.turn}`;
   if (ui.key !== key) { ui.key = key; Object.assign(ui, { pay: [], keep: null, give: {}, drop: [] }); }
   if (s.phase === "deal") return h("div", { class: "deal-board" }, h("p", { class: "rule" }, "On distribue…"));
   cue(ctx);

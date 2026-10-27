@@ -1,0 +1,36 @@
+// Pack Fortnite : skins, lieux, armes, objets et termes du battle royale.
+export default {
+  id: "fortnite", name: "Fortnite", kind: "jeu", groups: [
+    ["Jonesy", "Peely", "Fishstick", "Raven"],
+    ["Midas", "Meowscles", "Skye", "Brutus"],
+    ["Drift", "Lynx", "Ragnarok", "Calamity"],
+    ["Bus de combat", "Planeur", "Tempête", "Œil de la tempête"],
+    ["Tilted Towers", "Pleasant Park", "Retail Row", "Salty Springs"],
+    ["Loot Lake", "Dusty Depot", "Greasy Grove", "Lucky Landing"],
+    ["Fusil d'assaut", "Pompe", "Sniper", "Mitraillette", "Lance-roquettes"],
+    ["Bandage", "Kit de soin", "Potion de bouclier", "Mini-potion", "Slurp"],
+    ["Bois", "Pierre", "Métal", "Pioche"],
+    ["Mur", "Rampe", "Sol", "Toit"],
+    ["Commun", "Peu commun", "Rare", "Épique", "Légendaire"],
+    ["Floss", "Danse par défaut", "Orange Justice", "Take the L"],
+    ["Top 1", "Victoire royale", "Élimination", "Réanimation"],
+    ["V-bucks", "Passe de combat", "Boutique", "Skin"],
+    ["Saison", "Chapitre", "Événement live", "Mise à jour"],
+    ["Mode créatif", "Sauver le monde", "Battle Royale", "LEGO Fortnite"],
+    ["Solo", "Duo", "Section", "Zero Build"],
+    ["Coffre", "Caisse de ravitaillement", "Lama", "Distributeur"],
+    ["Grappin", "Faille", "Ballon", "Trampoline"],
+    ["Le Visiteur", "Le Scientifique", "Le Fondateur", "Le Septième"],
+    ["Ninja", "Bugha", "Kinstaar", "TheKairi78"],
+    ["Collab Marvel", "Collab Star Wars", "Collab Naruto", "Collab Dragon Ball"],
+    ["Kevin le cube", "Météorite", "Trou noir", "Zero Point"],
+    ["Lame de l'Infini", "Gant de l'Infini", "Sabre laser", "Kamehameha"],
+    ["Mythique", "Exotique", "Médaillon", "Boss"],
+    ["The Agency", "Sweaty Sands", "Holly Hedges", "Misty Meadows"],
+    ["Emote", "Pioche de collection", "Revêtement", "Traînée"],
+    ["Écran de chargement", "Bannière", "Musique", "Sac à dos"],
+    ["Fortnitemares", "Winterfest", "Fête d'été", "Halloween"],
+    ["Epic Games", "Tim Sweeney", "Unreal Engine", "Epic Games Store"],
+    ["Atterrissage", "Loot", "Rotation", "Zone"]
+  ]
+};

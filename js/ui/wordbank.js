@@ -1,7 +1,7 @@
 // Choix des mots d'une partie, commun aux jeux de mots : thèmes larges de la banque
 // du site, un pack à thème (Pokémon, Harry Potter…), ou mots saisis par l'hôte.
 import { h } from "./dom.js";
-import { CATEGORIES, PACKS } from "../words/index.js";
+import { CATEGORIES, PACKS, KINDS } from "../words/index.js";
 
 export const WORD_DEFAULTS = {
   source: "site",
@@ -86,6 +86,7 @@ export function checkWords(settings, grouped) {
 }
 
 const drafts = {}; // saisie en cours de l'hôte, gardée d'un affichage du salon à l'autre
+const packView = { kind: null }; // genre de packs affiché (filtre propre à chaque joueur)
 
 // Bloc de réglage à placer dans le salon d'un jeu. `grouped` : le jeu a besoin
 // de groupes de mots proches (Undercover) plutôt que d'une simple liste.
@@ -105,13 +106,25 @@ export function wordSetup({ gameId, grouped, settings, isHost, setSettings }) {
   // Un seul univers pour toute la partie : tous les mots sortent du pack choisi.
   if (source === "pack") {
     const chosen = packOf(settings) || PACKS[0];
+    // Le filtre par genre ne change que l'affichage, chez chacun : au départ, le genre du pack choisi.
+    packView.kind ??= chosen.kind;
+    const tiles = PACKS.map((pack) => h("button", {
+      class: `pack-tile${pack.mix ? " is-mix" : ""}`, type: "button", disabled: !isHost, "aria-pressed": String(pack.id === chosen.id),
+      "data-kind": pack.kind, onclick: () => setSettings({ ...settings, source: "pack", pack: pack.id })
+    }, h("strong", null, pack.name), h("small", null, `${pack.groups.flat().length} mots`)));
+    const chips = [["all", "Tout"], ...KINDS].map(([kind, label]) => h("button", {
+      class: "filter-chip", type: "button", "data-kind": kind,
+      onclick: () => { packView.kind = kind; show(); }
+    }, label, ` · ${kind === "all" ? PACKS.length : PACKS.filter((pack) => pack.kind === kind).length}`));
+    const show = () => {
+      for (const chip of chips) chip.setAttribute("aria-pressed", String(chip.dataset.kind === packView.kind));
+      for (const tile of tiles) tile.hidden = packView.kind !== "all" && tile.dataset.kind !== packView.kind;
+    };
+    show();
     return h("div", { class: "word-setup" }, head,
-      h("p", { class: "rule" }, "Partie à thème : seuls les mots de ce pack sortiront."),
-      h("div", { class: "pack-grid", role: "group", "aria-label": "Packs à thème" },
-        PACKS.map((pack) => h("button", {
-          class: "pack-tile", type: "button", disabled: !isHost, "aria-pressed": String(pack.id === chosen.id),
-          onclick: () => setSettings({ ...settings, source: "pack", pack: pack.id })
-        }, h("strong", null, pack.name), h("small", null, `${pack.groups.flat().length} mots`)))));
+      h("p", { class: "rule" }, "Partie à thème : seuls les mots de ce pack sortiront. Un « mélange » réunit tous les packs de son genre."),
+      h("div", { class: "filters", role: "group", "aria-label": "Genres de packs" }, chips),
+      h("div", { class: "pack-grid", role: "group", "aria-label": "Packs à thème" }, tiles));
   }
 
   if (!perso) {

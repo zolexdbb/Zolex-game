@@ -1,0 +1,36 @@
+// Pack My Hero Academia : élèves de Yuei, héros pro, vilains, alters et coups (noms français).
+export default {
+  id: "mha", name: "My Hero Academia", kind: "manga", groups: [
+    ["Deku", "Bakugo", "Todoroki", "Uraraka", "Iida"],
+    ["Kirishima", "Kaminari", "Mina", "Sero", "Jiro"],
+    ["Tsuyu", "Momo", "Tokoyami", "Shoji", "Koda"],
+    ["Mineta", "Aoyama", "Ojiro", "Sato", "Toru"],
+    ["All Might", "Endeavor", "Hawks", "Best Jeanist"],
+    ["Aizawa", "Present Mic", "Midnight", "Cementoss", "Nezu"],
+    ["Shigaraki", "All For One", "Dabi", "Toga", "Twice"],
+    ["Stain", "Overhaul", "Gentle Criminal", "Spinner", "Mr. Compress"],
+    ["Mirio", "Tamaki", "Nejire", "Big Three"],
+    ["Eri", "Kota", "Inko", "Mei Hatsume"],
+    ["One For All", "Alter", "Sans alter", "Facteur alter"],
+    ["Explosion", "Glace et feu", "Apesanteur", "Moteur"],
+    ["Full Cowl", "Delaware Smash", "Detroit Smash", "United States of Smash"],
+    ["Lycée Yuei", "Seconde A", "Seconde B", "Cours de héros"],
+    ["Festival sportif", "Examen de licence", "Camp d'entraînement", "Stage"],
+    ["Ligue des super-vilains", "Front de libération", "Shie Hassaikai", "Nomu"],
+    ["Héros pro", "Agence de héros", "Classement des héros", "Nom de héros"],
+    ["Costume", "Gants", "Matériel de soutien", "Lunettes"],
+    ["Plus Ultra", "Smash", "Symbole de la paix", "Je suis là"],
+    ["Mount Lady", "Kamui Woods", "Gang Orca", "Crust"],
+    ["Shinso", "Monoma", "Kendo", "Tetsutetsu"],
+    ["Fat Gum", "Sir Nighteye", "Gran Torino", "Mirko"],
+    ["Kôhei Horikoshi", "Boku no Hero Academia", "Bones", "Shônen Jump"],
+    ["Toya", "Natsuo", "Fuyumi", "Rei"],
+    ["Lemillion", "Suneater", "Ingenium", "Red Riot"],
+    ["Chargebolt", "Pinky", "Earphone Jack", "Froppy"],
+    ["Creati", "Tsukuyomi", "Uravity", "Ground Zero"],
+    ["Hosu", "Kamino", "Jaku", "Musutafu"],
+    ["Guerre de libération", "Guerre finale", "Raid de Kamino", "Attaque de l'USJ"],
+    ["Lady Nagant", "Star and Stripe", "Gigantomachia", "Kurogiri"],
+    ["Nana Shimura", "Banjo", "Yoichi", "Hikage"]
+  ]
+};

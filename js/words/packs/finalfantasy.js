@@ -1,0 +1,36 @@
+// Pack Final Fantasy : héros et méchants des épisodes, invocations, objets et lieux.
+export default {
+  id: "finalfantasy", name: "Final Fantasy", kind: "jeu", groups: [
+    ["Cloud", "Tifa", "Aerith", "Barret"],
+    ["Sephiroth", "Zack", "Vincent", "Cid"],
+    ["Squall", "Linoa", "Zell", "Selphie", "Quistis"],
+    ["Tidus", "Yuna", "Auron", "Wakka", "Lulu"],
+    ["Noctis", "Prompto", "Gladiolus", "Ignis"],
+    ["Djidane", "Grenat", "Bibi", "Steiner"],
+    ["Terra", "Locke", "Kefka", "Celes"],
+    ["Lightning", "Snow", "Hope", "Vanille"],
+    ["Clive", "Jill", "Joshua", "Torgal"],
+    ["Chocobo", "Mog", "Pampa", "Pampa géant"],
+    ["Shiva", "Ifrit", "Ramuh", "Bahamut", "Odin"],
+    ["Potion", "Éther", "Queue de phénix", "Élixir"],
+    ["Brasier", "Glacier", "Foudre", "Soin", "Météore"],
+    ["Matéria", "Limite", "Overdrive", "Transcendance"],
+    ["Midgar", "Shinra", "Avalanche", "Wall Market"],
+    ["Balamb", "Esthar", "Galbadia", "Garden"],
+    ["Spira", "Zanarkand", "Blitzball", "Sin"],
+    ["Square Enix", "Nobuo Uematsu", "Hironobu Sakaguchi", "Tetsuya Nomura"],
+    ["Final Fantasy VII", "Final Fantasy X", "Final Fantasy XIV", "Final Fantasy XVI"],
+    ["Épée broyeuse", "Gunblade", "Masamune", "Excalibur"],
+    ["Tomberry", "Malboro", "Béhémoth", "Cactuar"],
+    ["Combat au tour par tour", "Jauge ATB", "Points de vie", "Points de magie"],
+    ["Kingdom Hearts", "Dissidia", "Crisis Core", "Advent Children"],
+    ["Guerrier", "Mage blanc", "Mage noir", "Chevalier dragon", "Voleur"],
+    ["Cristal", "Guerriers de la lumière", "Cristal de lumière"],
+    ["Jenova", "Hojo", "Rufus", "Reno", "Rude"],
+    ["Gold Saucer", "Highwind", "Aéronef", "Chocobo doré"],
+    ["Ultima", "Arma Diamant", "Arma Rubis", "Arma Émeraude"],
+    ["Seymour", "Kimahri", "Rikku", "Paine"],
+    ["Ardyn", "Lunafreya", "Regis", "Insomnia"],
+    ["Kuja", "Freyja", "Eiko", "Kweena"]
+  ]
+};

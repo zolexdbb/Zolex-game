@@ -1,0 +1,36 @@
+// Pack Death Note : personnages, Shinigamis, règles du cahier et enquête (noms français).
+export default {
+  id: "deathnote", name: "Death Note", kind: "manga", groups: [
+    ["Light Yagami", "L", "Misa", "Ryuk"],
+    ["Near", "Mello", "Matt", "Watari"],
+    ["Rem", "Sidoh", "Gelus", "Roi des Shinigamis"],
+    ["Soichiro Yagami", "Matsuda", "Aizawa", "Mogi", "Ide"],
+    ["Sayu", "Sachiko", "Famille Yagami"],
+    ["Teru Mikami", "Kiyomi Takada", "Higuchi"],
+    ["Naomi Misora", "Raye Penber", "FBI"],
+    ["Kira", "Justice", "Dieu du nouveau monde", "Criminels"],
+    ["Death Note", "Cahier", "Stylo", "Règles du Death Note"],
+    ["Shinigami", "Monde des Shinigamis", "Yeux de Shinigami", "Durée de vie"],
+    ["Pomme", "Chips", "Montre piégée", "Tiroir secret"],
+    ["Crise cardiaque", "40 secondes", "6 minutes 40", "Nom et visage"],
+    ["Tsugumi Ohba", "Takeshi Obata", "Shônen Jump", "Madhouse"],
+    ["Yotsuba", "Wammy's House", "SPK", "Police japonaise"],
+    ["Université To-Oh", "Tennis", "Examen", "Cours"],
+    ["Bonbons", "Gâteau", "Sucre", "Café"],
+    ["Pieds nus", "Pull blanc", "Accroupi", "Pouce"],
+    ["Puzzle", "Dés", "Figurines", "Jeu vidéo"],
+    ["Caméras", "Micros", "Surveillance", "Hôtel"],
+    ["Second Kira", "Troisième Kira", "Kira de Yotsuba", "Faux Kira"],
+    ["Entrepôt", "Yellow Box", "Combat final", "Mort de L"],
+    ["Ryûzaki", "Ryûga", "Coil", "Deneuve"],
+    ["Anime", "Film", "Drama", "Série Netflix"],
+    ["Policier", "Détective", "Enquête", "Suspect"],
+    ["Déduction", "Piège", "Alibi", "Preuve"],
+    ["Halle Lidner", "Stephen Gevanni", "Anthony Rester"],
+    ["Nouveau monde", "Dieu", "Utopie", "Châtiment"],
+    ["Japon", "Tokyo", "Kanto", "Los Angeles"],
+    ["Échecs", "Jeu du chat et de la souris", "Bluff", "Stratégie"],
+    ["Rire", "Ennui", "Curiosité", "Spectacle"],
+    ["Échange des yeux", "Contrat", "Moitié de vie", "Note de Rem"]
+  ]
+};

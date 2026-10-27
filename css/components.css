@@ -687,6 +687,9 @@ div.card { cursor: default; }
 .pack-tile[aria-pressed="true"] { color: #fff8ea; background: var(--grain), var(--ink); box-shadow: 0 3px 0 var(--ochre); }
 .pack-tile:disabled { cursor: default; }
 .pack-tile:disabled:not([aria-pressed="true"]) { opacity: .6; }
+.pack-tile[hidden] { display: none; }
+/* Le mélange d'un genre : bordure en pointillés, pour le repérer en tête de liste. */
+.pack-tile.is-mix { border-style: dashed; }
 
 /* ---- Composition des équipes dans le salon ---- */
 .team-picker { display: grid; gap: 8px; }
@@ -696,6 +699,12 @@ div.card { cursor: default; }
 .team-col h4 { margin: 0; font: 400 .9rem var(--display); text-transform: uppercase; }
 .team-r h4 { color: var(--brick); }
 .team-b h4 { color: var(--ink); }
+.team-g h4 { color: #3f7a2c; }
+.team-y h4 { color: #9a7410; }
+/* 3 ou 4 équipes : une colonne chacune, sur deux lignes sur téléphone. */
+.team-cols.is-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.team-cols.is-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 640px) { .team-cols.is-3, .team-cols.is-4 { grid-template-columns: 1fr 1fr; } }
 .team-row { display: flex; gap: 4px; }
 .team-row .btn:first-child { flex: 1; min-width: 0; justify-content: flex-start; gap: 4px; }
 .team-row .btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

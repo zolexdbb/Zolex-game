@@ -1,0 +1,36 @@
+// Pack Hunter x Hunter : Hunters, Zoldik, Brigade fantôme, fourmis chimères et Nen (noms français).
+export default {
+  id: "hxh", name: "Hunter x Hunter", kind: "manga", groups: [
+    ["Gon", "Kirua", "Kurapika", "Leorio"],
+    ["Hisoka", "Illumi", "Chrollo", "Feitan"],
+    ["Netero", "Ging", "Biscuit", "Wing"],
+    ["Meruem", "Neferpitou", "Shaiapouf", "Youpi", "Komugi"],
+    ["Zushi", "Kastro", "Tonpa", "Pokkle"],
+    ["Silva", "Zeno", "Alluka", "Kalluto", "Milluki"],
+    ["Brigade fantôme", "Uvo", "Nobunaga", "Machi", "Shalnark"],
+    ["Examen de Hunter", "Licence de Hunter", "Hunter", "Association des Hunters"],
+    ["Nen", "Ten", "Zetsu", "Ren", "Hatsu"],
+    ["Renforcement", "Émission", "Transformation", "Manipulation", "Matérialisation", "Spécialisation"],
+    ["Jajanken", "Godspeed", "Bungee Gum", "Chaînes"],
+    ["Île de la Baleine", "Tour céleste", "Yorknew", "Greed Island"],
+    ["Fourmis chimères", "Reine", "Gardes royaux", "NGL"],
+    ["Vente aux enchères", "Yeux écarlates", "Clan Kuruta", "Nostrade"],
+    ["Yoshihiro Togashi", "Madhouse", "Hiatus", "Shônen Jump"],
+    ["Morel", "Knov", "Knuckle", "Shoot"],
+    ["Pariston", "Cheadle", "Zodiaques", "Élection"],
+    ["Kite", "Ponzu", "Pakunoda", "Franklin"],
+    ["Cartes de Greed Island", "Classeur", "Sort", "Carte magique"],
+    ["Mito", "Canne à pêche", "Renard-ours", "Forêt"],
+    ["Skateboard", "Yo-yo", "Électricité", "Assassin"],
+    ["Chaîne du jugement", "Chaîne de soin", "Chaîne de capture", "Œil de l'empereur"],
+    ["Continent noir", "Beyond Netero", "Black Whale", "Princes de Kakin"],
+    ["Kaito", "Promesse", "Pacte", "Retrouvailles"],
+    ["Gotoh", "Canary", "Majordomes", "Montagne Kukuru"],
+    ["Hanzo", "Gittarackur", "Bodoro", "Geretta"],
+    ["Aura", "Énergie vitale", "Vœu", "Restriction"],
+    ["Satotz", "Menchi", "Buhara", "Lippo"],
+    ["Bisky", "Palm", "Ikalgo", "Welfin"],
+    ["Anime de 1999", "Anime de 2011", "Film", "Manga"],
+    ["Hunter étoilé", "Hunter double étoile", "Hunter triple étoile", "Chasseur de primes"]
+  ]
+};

@@ -203,15 +203,15 @@ function prepare(s, by, card, a) {
 }
 
 // L'effet sur une cible, une fois qu'elle l'a accepté (sans « Non ! » ou après un « Non ! » contré).
-function resolve(game, w) {
+function resolve(game, w, target) {
   const { s, hands } = game;
-  const { by, target } = w;
+  const { by } = w;
   if (w.effect === "pasdebol") {
     const keep = [], take = [];
     for (const c of hands[target] || []) (KINDS[w.type].includes(info(c).kind) ? take : keep).push(c);
     hands[target] = keep;
     (hands[by] ||= []).push(...take);
-    w.got = take.length;
+    return take.length;
   } else if (w.effect === "krach") {
     const pick = w.picks.find(([id]) => id === target);
     if (pick) moveProp(s, target, by, pick[1]);
@@ -233,14 +233,14 @@ function resolve(game, w) {
   } else if (w.effect === "ardoise") {
     if ((s.tokens?.[target] || 0) > 0) giveToken(s, target, by);
   }
+  return null;
 }
 
-// Passe à la cible suivante, ou rend la main au joueur dont c'est le tour.
-function advance(game) {
+// Une cible en a fini avec l'effet ; quand toutes ont fini, la main revient au joueur du tour.
+function finish(game, target) {
   const { s } = game;
-  const w = s.wait;
-  const next = (w.queue || [])[0];
-  s.wait = next ? { ...w, target: next, who: next, stage: "answer", queue: w.queue.slice(1), got: null } : null;
+  delete s.wait.targets[target];
+  if (!Object.keys(s.wait.targets).length) s.wait = null;
   checkWin(s);
 }
 
@@ -261,8 +261,8 @@ function playAction(game, by, card, a) {
   } else {
     const plan = prepare(s, by, card, a);
     if (!plan) return false;
-    const [first, ...queue] = plan.targets;
-    s.wait = { kind: "effect", ...plan, targets: null, card, by, target: first, who: first, stage: "answer", queue };
+    // Toutes les cibles répondent en même temps : chacune « answer », puis « counter » si elle dit « Non ! ».
+    s.wait = { kind: "effect", ...plan, card, by, targets: Object.fromEntries(plan.targets.map((id) => [id, "answer"])) };
   }
   game.pile.push(card);
   return true;
@@ -270,8 +270,17 @@ function playAction(game, by, card, a) {
 
 // ---- Les coups ----
 
-// Qui doit jouer maintenant : le joueur attendu en réponse, sinon celui dont c'est le tour.
-export const expected = (s) => (s.wait ? s.wait.who : s.order[s.turn]);
+// Qui doit jouer maintenant : les cibles d'un effet (toutes à la fois), l'auteur s'il doit répondre
+// à un « Non ! », le joueur attendu (défausse, carte reçue), sinon celui dont c'est le tour.
+export function waitingFor(s) {
+  const w = s.wait;
+  if (!w) return [s.order[s.turn]];
+  if (w.kind !== "effect") return [w.who];
+  const stages = Object.entries(w.targets || {});
+  const list = stages.filter(([, stage]) => stage === "answer").map(([id]) => id);
+  if (stages.some(([, stage]) => stage === "counter")) list.push(w.by);
+  return list;
+}
 
 // Applique le coup `a` du joueur `uid` à game = { s, hands, deck, pile } (modifié sur place).
 // Renvoie false, sans rien changer d'utile, si le coup n'est pas permis.
@@ -293,7 +302,7 @@ export function apply(game, uid, a) {
   if (!s.drawn) return false;
 
   if (w) {
-    if (uid !== w.who) return false;
+    if (w.kind !== "effect" && uid !== w.who) return false;
     if (w.kind === "discard") {
       const cards = a.cards || [];
       if (cards.length !== w.n || new Set(cards).size !== cards.length || !cards.every((c) => hand.includes(c))) return false;
@@ -313,18 +322,30 @@ export function apply(game, uid, a) {
       if (!ok) { s.wait = w; return false; }
       return done({ t: a.t, card, placed: true });
     }
-    // Effet en cours : la cible répond, ou l'auteur contre un « Non ! ».
-    if (a.t === "non") {
+    // Effet en cours : chaque cible répond pour elle-même ; l'auteur répond aux « Non ! », cible par cible.
+    const targets = w.targets || {};
+    const takeNon = () => {
       if (info(a.card)?.id !== "non" || !takeFrom(hand, a.card)) return false;
       game.pile.push(a.card);
-      s.wait = { ...w, stage: w.stage === "answer" ? "counter" : "answer", who: w.stage === "answer" ? w.by : w.target };
-      return done({ t: "non", to: w.stage === "answer" ? w.by : w.target });
-    }
-    if (w.stage === "counter") {
-      // L'auteur accepte le « Non ! » : l'effet est annulé pour cette cible.
+      return true;
+    };
+    if (uid === w.by) {
+      if (targets[a.target] !== "counter") return false;
+      if (a.t === "non") {
+        if (!takeNon()) return false;
+        targets[a.target] = "answer";
+        return done({ t: "non", to: a.target });
+      }
       if (a.t !== "ok") return false;
-      advance(game);
-      return done({ t: "cancel" });
+      // L'auteur accepte le « Non ! » : l'effet est annulé pour cette cible.
+      finish(game, a.target);
+      return done({ t: "cancel", to: a.target });
+    }
+    if (targets[uid] !== "answer") return false;
+    if (a.t === "non") {
+      if (!takeNon()) return false;
+      targets[uid] = "counter";
+      return done({ t: "non", to: w.by });
     }
     if (w.effect === "pay") {
       if (a.t !== "pay") return false;
@@ -333,7 +354,7 @@ export function apply(game, uid, a) {
       const sum = cards.reduce((n, c) => n + valueOf(c), 0);
       if (sum < w.amount && cards.length < mine.length) return false; // il faut couvrir la somme, ou tout donner
       const paid = settle(s, uid, w.by, cards, w.amount);
-      advance(game);
+      finish(game, uid);
       return done({ t: "pay", to: w.by, paid, short: paid < w.amount });
     }
     if (w.effect === "fisc" || w.effect === "saisie") {
@@ -352,13 +373,13 @@ export function apply(game, uid, a) {
         }
         for (const [card, to] of give) (w.effect === "fisc" ? moveBank : moveProp)(s, uid, to, card);
       } else if (a.t !== "ok" && a.t !== "split") return false;
-      advance(game);
+      finish(game, uid);
       return done({ t: w.effect, n: Math.max(0, pool.length - 1) });
     }
     if (a.t !== "ok") return false;
-    resolve(game, w);
-    advance(game);
-    return done({ t: "hit", effect: w.effect, to: w.by, got: w.got ?? null });
+    const got = resolve(game, w, uid);
+    finish(game, uid);
+    return done({ t: "hit", effect: w.effect, to: w.by, got });
   }
 
   if (uid !== cur) return false;
@@ -416,36 +437,31 @@ export function apply(game, uid, a) {
   return false;
 }
 
-// Coup joué d'office : réponse sans choix possible, ou joueur absent.
-export function autoMove(game, gone) {
+// Coup joué d'office pour `uid` : la pioche de début de tour, et tout ce qu'un joueur absent devrait faire.
+// Un joueur présent répond toujours lui-même, même sans autre choix : il voit ainsi ce qu'on lui joue.
+export function autoMove(game, uid, gone) {
   const { s, hands } = game;
-  const w = s.wait, who = expected(s);
-  const hasNon = (hands[who] || []).some((c) => info(c).id === "non");
+  const w = s.wait;
+  if (!w && !s.drawn && uid === s.order[s.turn]) return { t: "draw" };
+  if (!gone) return null;
   if (!w) {
-    if (!s.drawn) return { t: "draw" };
-    if (!gone) return null;
-    const debt = owesNow(s, who);
-    return debt && (hands[who] || []).length && s.left > 0 ? { t: "repay", card: hands[who][0] } : { t: "end" };
+    const debt = owesNow(s, uid);
+    return debt && (hands[uid] || []).length && s.left > 0 ? { t: "repay", card: hands[uid][0] } : { t: "end" };
   }
-  if (w.kind === "discard") return gone ? { t: "discard", cards: (hands[who] || []).slice(0, w.n) } : null;
+  if (w.kind === "discard") return { t: "discard", cards: (hands[uid] || []).slice(0, w.n) };
   if (w.kind === "place") {
-    if (!gone) return null;
     const colors = colorsOf(w.card);
     return colors.length ? { t: "prop", color: colors[0] } : { t: "bank" };
   }
-  if (w.stage === "counter") return !hasNon || gone ? { t: "ok" } : null;
-  if (hasNon && !gone) return null;
-  if (w.effect === "pay") {
-    const all = assetsOf(s, who);
-    const total = all.reduce((n, c) => n + valueOf(c), 0);
-    if (total <= w.amount || gone) return { t: "pay", cards: total <= w.amount ? all : autoPay(s, who, w.amount) };
-    return null;
+  if (uid === w.by) {
+    const target = Object.keys(w.targets || {}).find((id) => w.targets[id] === "counter");
+    return target ? { t: "ok", target } : null;
   }
+  if (w.effect === "pay") return { t: "pay", cards: autoPay(s, uid, w.amount) };
   if (w.effect === "fisc" || w.effect === "saisie") {
-    const pool = w.effect === "fisc" ? s.bank?.[who] || [] : propCards(s, who);
+    const pool = w.effect === "fisc" ? s.bank?.[uid] || [] : propCards(s, uid);
     if (pool.length <= 1) return { t: "ok" };
-    if (!gone) return null;
-    const mates = others(s, who);
+    const mates = others(s, uid);
     return { t: "split", keep: pool[0], give: pool.slice(1).map((c, i) => [c, mates[i % mates.length]]) };
   }
   return { t: "ok" };
@@ -498,14 +514,15 @@ export async function hostTick(ctx) {
   const data = await ctx.read(path);
   if (!data) return;
   const game = { s: structuredClone(s), hands: data.hands || {}, deck: data.deck || [], pile: data.pile || [] };
-  const who = expected(s);
-  let action = actions[who] || autoMove(game, !room.players?.[who]);
-  if (!action) {
-    // Une action d'un joueur qu'on n'attendait pas : on libère l'étape sans rien changer.
-    if (!Object.keys(actions).length) return;
-    action = null;
+  // Toutes les réponses arrivées à cette étape sont appliquées ensemble (un effet sur tous les joueurs
+  // se décide en même temps), avec celles des joueurs absents. Une action qu'on n'attendait pas libère
+  // seulement l'étape.
+  let acted = false;
+  for (const uid of waitingFor(s)) {
+    const action = actions[uid] || autoMove(game, uid, !room.players?.[uid]);
+    if (action) { apply(game, uid, action); acted = true; }
   }
-  if (action) apply(game, who, action);
+  if (!acted && !Object.keys(actions).length) return;
   publish(game);
   game.s.step = ctx.nextStep();
   return ctx.multi({

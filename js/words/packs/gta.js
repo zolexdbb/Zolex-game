@@ -1,0 +1,37 @@
+// Pack GTA : héros, villes, gangs, véhicules et lieux de la série Grand Theft Auto.
+export default {
+  id: "gta", name: "GTA", kind: "jeu", groups: [
+    ["Niko Bellic", "Roman Bellic", "Little Jacob"],
+    ["Michael", "Franklin", "Trevor"],
+    ["CJ", "Big Smoke", "Ryder", "Sweet"],
+    ["Tommy Vercetti", "Lance Vance", "Ken Rosenberg"],
+    ["Los Santos", "Liberty City", "Vice City", "San Fierro", "Las Venturas"],
+    ["Lucia", "Jason", "Leonida", "GTA VI"],
+    ["GTA San Andreas", "GTA IV", "GTA V", "GTA Online"],
+    ["Étoiles de recherche", "Police", "FIB", "NOOSE"],
+    ["Braquage", "Vol de voiture", "Course-poursuite", "Mission"],
+    ["Lamar", "Chop", "Lester", "Wade"],
+    ["Grove Street", "Ballas", "Vagos", "Families"],
+    ["Rockstar Games", "Red Dead Redemption", "Bully", "Max Payne"],
+    ["Banshee", "Infernus", "Cheetah", "Adder"],
+    ["Pegasus", "Hydra", "Buzzard", "Lazer"],
+    ["Ammu-Nation", "Los Santos Customs", "Pay 'n' Spray", "Cluckin' Bell"],
+    ["Mont Chiliad", "Vinewood", "Del Perro", "Sandy Shores"],
+    ["Radio", "Non Stop Pop", "Los Santos Rock Radio", "Flash FM"],
+    ["Code de triche", "Jetpack", "Parachute", "Hélicoptère"],
+    ["Taxi", "Ambulance", "Camion de pompiers", "Voiture de police"],
+    ["Casino Diamond", "Cayo Perico", "Maze Bank", "Penthouse"],
+    ["Gang", "Territoire", "Respect", "Tags"],
+    ["Lifeinvader", "Sprunk", "eCola", "Burger Shot"],
+    ["Bowling", "Fléchettes", "Golf", "Tennis"],
+    ["Simeon", "Devin Weston", "Steve Haines", "Martin Madrazo"],
+    ["Amanda", "Jimmy", "Tracey"],
+    ["Catalina", "Claude", "8-Ball"],
+    ["Johnny Klebitz", "Luis Lopez", "Gay Tony"],
+    ["Toni Cipriani", "Salvatore Leone", "Donald Love"],
+    ["Moto", "Quad", "Vélo", "Bateau"],
+    ["Pistolet", "Fusil à pompe", "Lance-roquettes", "Grenade", "Minigun"],
+    ["Feu rouge", "Klaxon", "Embouteillage", "Autoroute"],
+    ["Hôpital", "Commissariat", "Planque", "Garage"]
+  ]
+};

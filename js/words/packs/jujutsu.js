@@ -1,0 +1,36 @@
+// Pack Jujutsu Kaisen : exorcistes, fléaux, techniques, territoires et arcs (noms français).
+export default {
+  id: "jujutsu", name: "Jujutsu Kaisen", kind: "manga", groups: [
+    ["Yuji", "Megumi", "Nobara", "Gojo"],
+    ["Maki", "Inumaki", "Panda", "Yuta"],
+    ["Sukuna", "Mahito", "Jogo", "Hanami", "Dagon"],
+    ["Nanami", "Ijichi", "Utahime", "Mei Mei"],
+    ["Geto", "Kenjaku", "Uraume", "Choso"],
+    ["Toji", "Naoya", "Naobito", "Mai"],
+    ["Todo", "Kamo", "Miwa", "Mechamaru"],
+    ["Hakari", "Kirara", "Yuki Tsukumo", "Higuruma"],
+    ["École d'exorcisme de Tokyo", "École de Kyoto", "Clan Zen'in", "Clan Gojo"],
+    ["Fléau", "Exorciste", "Énergie occulte", "Technique occulte"],
+    ["Extension du territoire", "Infini", "Six Yeux", "Néant infini"],
+    ["Sanctuaire démoniaque", "Clivage", "Démantèlement", "Fuga"],
+    ["Dix ombres", "Chiens divins", "Mahoraga", "Crapaud"],
+    ["Paroles maudites", "Clou", "Marteau", "Poupée de paille"],
+    ["Doigts de Sukuna", "Objet maudit", "Prison de la porte", "Vase maudit"],
+    ["Incident de Shibuya", "Jeu d'extermination", "Échange amical", "Nuit des cent démons"],
+    ["Gege Akutami", "MAPPA", "Jujutsu Kaisen 0", "Shônen Jump"],
+    ["Black Flash", "Énergie inversée", "Simple territoire", "Voile"],
+    ["Rika", "Orimoto", "Bague", "Copie"],
+    ["Bandeau de Gojo", "Lunettes noires", "Uniforme noir", "Capuche"],
+    ["Grade 1", "Grade 2", "Grade spécial", "Grade 4"],
+    ["Tengen", "Barrière de Tengen", "Vaisseau", "Riko Amanai"],
+    ["Junpei", "Ino", "Nitta", "Shoko Ieiri"],
+    ["Eso", "Kechizu", "Neuf peintures de la mort"],
+    ["Yaga", "Gakuganji", "Kusakabe", "Yoshino"],
+    ["Takaba", "Reggie", "Charles", "Angel"],
+    ["Sendai", "Colonie", "Points", "Règles"],
+    ["Cours", "Mission", "Exorcisme", "Entraînement"],
+    ["Yorozu", "Kashimo", "Ishigori", "Hana Kurusu"],
+    ["Nue", "Serpent géant", "Lapin", "Éléphant"],
+    ["Rouge", "Bleu", "Violet", "Infinité"]
+  ]
+};

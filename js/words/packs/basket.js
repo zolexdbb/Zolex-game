@@ -1,0 +1,36 @@
+// Pack Basket : joueurs, équipes, gestes, postes et compétitions.
+export default {
+  id: "basket", name: "Basket", kind: "sport", groups: [
+    ["LeBron James", "Stephen Curry", "Kevin Durant", "Giannis Antetokounmpo"],
+    ["Michael Jordan", "Kobe Bryant", "Shaquille O'Neal", "Magic Johnson"],
+    ["Victor Wembanyama", "Tony Parker", "Rudy Gobert", "Evan Fournier"],
+    ["Lakers", "Celtics", "Bulls", "Warriors", "Spurs"],
+    ["Panier", "Cercle", "Planche", "Filet"],
+    ["Dunk", "Lay-up", "Alley-oop", "Tir à trois points"],
+    ["Dribble", "Passe", "Rebond", "Contre", "Interception"],
+    ["Meneur", "Arrière", "Ailier", "Ailier fort", "Pivot"],
+    ["Lancer franc", "Faute", "Marcher", "Reprise de dribble"],
+    ["NBA", "Euroligue", "Betclic Élite", "WNBA"],
+    ["Finales NBA", "All-Star Game", "Draft", "Playoffs"],
+    ["Quart-temps", "Prolongation", "24 secondes", "Temps mort"],
+    ["Raquette", "Ligne à trois points", "Ligne de lancer franc", "Rond central"],
+    ["Dream Team", "Showtime", "Big Three", "Bulls de 1996"],
+    ["Larry Bird", "Kareem Abdul-Jabbar", "Wilt Chamberlain", "Bill Russell"],
+    ["Nikola Jokic", "Luka Doncic", "Joel Embiid", "Jayson Tatum"],
+    ["Space Jam", "Bugs Bunny", "Monstars", "Tune Squad"],
+    ["Streetball", "Playground", "3x3", "Rucker Park"],
+    ["MVP", "Rookie de l'année", "Meilleur défenseur", "Sixième homme"],
+    ["Triple-double", "Double-double", "Buzzer beater", "And-one"],
+    ["Baskets", "Air Jordan", "Maillot", "Short"],
+    ["Coach", "Entraîneur adjoint", "Arbitre", "Mascotte"],
+    ["Madison Square Garden", "Crypto.com Arena", "TD Garden", "United Center"],
+    ["Knicks", "Heat", "Nets", "Clippers", "Mavericks"],
+    ["Pick and roll", "Défense de zone", "Défense individuelle", "Contre-attaque"],
+    ["Équipe de France", "JO de Paris", "Médaille d'argent", "Coupe du monde FIBA"],
+    ["Ballon orange", "Gonfleur", "Panier de rue", "Parquet"],
+    ["Kyrie Irving", "James Harden", "Russell Westbrook", "Chris Paul"],
+    ["Pistons", "Rockets", "Suns", "Thunder"],
+    ["Concours de dunks", "Concours à trois points", "Skills Challenge", "Rising Stars"],
+    ["Tim Duncan", "Manu Ginobili", "Dirk Nowitzki", "Allen Iverson"]
+  ]
+};

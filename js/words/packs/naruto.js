@@ -1,6 +1,6 @@
 // Pack Naruto : ninjas, villages, clans et techniques.
 export default {
-  id: "naruto", name: "Naruto", groups: [
+  id: "naruto", name: "Naruto", kind: "manga", groups: [
     ["Naruto", "Sasuke", "Sakura", "Kakashi"],
     ["Shikamaru", "Ino", "Choji", "Asuma"],
     ["Hinata", "Kiba", "Shino", "Kurenai"],

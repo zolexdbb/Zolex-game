@@ -1,6 +1,6 @@
 // Pack Marvel : héros, méchants, équipes et objets des films et des comics.
 export default {
-  id: "marvel", name: "Marvel", groups: [
+  id: "marvel", name: "Marvel", kind: "film", groups: [
     ["Iron Man", "Captain America", "Thor", "Hulk"],
     ["Black Widow", "Hawkeye", "Ant-Man", "La Guêpe"],
     ["Spider-Man", "Miles Morales", "Spider-Gwen"],

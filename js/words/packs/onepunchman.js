@@ -1,0 +1,36 @@
+// Pack One Punch Man : héros, monstres, classes et lieux de la série (noms français).
+export default {
+  id: "onepunchman", name: "One Punch Man", kind: "manga", groups: [
+    ["Saitama", "Genos", "King", "Mumen Rider"],
+    ["Tatsumaki", "Fubuki", "Bang", "Bomb"],
+    ["Garou", "Boros", "Orochi", "Psykos"],
+    ["Sonic le supersonique", "Puri-Puri Prisoner", "Atomic Samurai", "Metal Bat"],
+    ["Child Emperor", "Drive Knight", "Zombieman", "Flashy Flash"],
+    ["Superalloy Darkshine", "Watchdog Man", "Pig God", "Tank Top Master"],
+    ["Blast", "Amai Mask", "Metal Knight", "Iaian"],
+    ["Association des héros", "Classe S", "Classe A", "Classe B", "Classe C"],
+    ["Association des monstres", "Niveau Dragon", "Niveau Démon", "Niveau Tigre", "Niveau Loup"],
+    ["Coup de poing normal", "Coup de poing sérieux", "Série de coups normaux"],
+    ["Cape blanche", "Crâne chauve", "Gants rouges", "Combinaison jaune"],
+    ["Entraînement", "100 pompes", "100 abdos", "10 km de course"],
+    ["Supermarché", "Soldes", "Promotion", "Courses"],
+    ["ONE", "Yusuke Murata", "Madhouse", "J.C. Staff"],
+    ["Cyborg", "Docteur Kuseno", "Bras canon", "Incinération"],
+    ["Ville Z", "Ville A", "Ville J", "Quartier abandonné"],
+    ["Vaccine Man", "Roi des mers", "Peuple des profondeurs", "Carnage Kabuto"],
+    ["Mosquito Girl", "Gouketsu", "Elder Centipede", "Homeless Emperor"],
+    ["Jeux vidéo", "Manette", "Visual novel", "King Engine"],
+    ["Tornade", "Blizzard", "Télékinésie", "Esper"],
+    ["Groupe Blizzard", "Lily", "Mountain Ape", "Eyelashes"],
+    ["Croc d'eau", "Charanko", "Dojo", "Arts martiaux"],
+    ["Ninja", "Village ninja", "Shuriken", "Flash"],
+    ["Héros pour le fun", "Héros chauve", "Cape", "Ennui"],
+    ["Tournoi des arts martiaux", "Suiryu", "Snek", "Bakuzan"],
+    ["Monstre", "Héros", "Classement", "Prime"],
+    ["Lune", "Vaisseau spatial", "Météorite", "Extraterrestre"],
+    ["Hellish Blizzard", "Terrible Tornado", "Silver Fang", "Demon Cyborg"],
+    ["Gyoro Gyoro", "Phoenix Man", "Royal Ripper", "Rover"],
+    ["Ramen", "Fondue", "Nouilles", "Riz"],
+    ["Dragon", "Démon", "Tigre", "Loup", "Dieu"]
+  ]
+};

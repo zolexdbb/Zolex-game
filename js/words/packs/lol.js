@@ -1,0 +1,37 @@
+// Pack League of Legends : champions par région, rôles, objectifs, objets et e-sport.
+export default {
+  id: "lol", name: "League of Legends", kind: "jeu", groups: [
+    ["Ahri", "Lux", "Annie", "Syndra"],
+    ["Yasuo", "Yone", "Zed", "Shen"],
+    ["Garen", "Darius", "Jarvan IV", "Katarina"],
+    ["Jinx", "Vi", "Caitlyn", "Ekko", "Jayce"],
+    ["Teemo", "Tristana", "Heimerdinger", "Rumble"],
+    ["Thresh", "Leona", "Braum", "Nami"],
+    ["Lee Sin", "Master Yi", "Kayn", "Graves"],
+    ["Ezreal", "Miss Fortune", "Kai'Sa", "Ashe"],
+    ["Top", "Jungle", "Mid", "ADC", "Support"],
+    ["Nashor", "Dragon", "Héraut de la Faille", "Dragon ancestral"],
+    ["Tour", "Inhibiteur", "Nexus", "Sbires"],
+    ["Faille de l'invocateur", "ARAM", "Abîme hurlant", "TFT"],
+    ["Flash", "Embrasement", "Châtiment", "Téléportation", "Soin"],
+    ["Demacia", "Noxus", "Ionia", "Freljord"],
+    ["Piltover", "Zaun", "Shurima", "Targon"],
+    ["Bilgewater", "Îles obscures", "Néant", "Bandle"],
+    ["Pentakill", "Quadrakill", "First blood", "Ace"],
+    ["Arcane", "Netflix", "Riot Games", "Worlds"],
+    ["Faker", "T1", "G2", "Karmine Corp"],
+    ["Lame d'infini", "Anneau de Doran", "Chapeau de Rabadon", "Trinité"],
+    ["Kindred", "Karthus", "Mordekaiser", "Hecarim"],
+    ["Nasus", "Renekton", "Azir", "Xerath"],
+    ["Malphite", "Ornn", "Volibear", "Anivia"],
+    ["Blitzcrank", "Orianna", "Viktor", "Camille"],
+    ["Draven", "Swain", "LeBlanc", "Sion"],
+    ["Vel'Koz", "Cho'Gath", "Kha'Zix", "Rek'Sai"],
+    ["Sett", "Irelia", "Akali", "Kennen"],
+    ["Bronze", "Argent", "Or", "Platine", "Diamant", "Challenger"],
+    ["Skin", "Essences bleues", "RP", "Coffre Hextech"],
+    ["Balise", "Balise de contrôle", "Brouillard de guerre", "Buisson"],
+    ["Gank", "Farm", "Push", "Roam", "Feed"],
+    ["K/DA", "Groupe Pentakill", "True Damage", "Heartsteel"]
+  ]
+};

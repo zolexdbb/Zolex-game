@@ -1,0 +1,36 @@
+// Pack Super Smash Bros : combattants, objets, stages et modes du jeu de combat de Nintendo.
+export default {
+  id: "smash", name: "Super Smash Bros", kind: "jeu", groups: [
+    ["Mario", "Luigi", "Peach", "Bowser"],
+    ["Link", "Zelda", "Ganondorf", "Sheik"],
+    ["Pikachu", "Rondoudou", "Mewtwo", "Dracaufeu"],
+    ["Samus", "Kirby", "Fox", "Captain Falcon"],
+    ["Ness", "Lucas", "Marth", "Roy"],
+    ["Ike", "Lucina", "Corrin", "Byleth"],
+    ["Snake", "Sonic", "Pac-Man", "Mega Man"],
+    ["Cloud", "Bayonetta", "Ryu", "Ken"],
+    ["Joker", "Héros", "Banjo et Kazooie", "Terry"],
+    ["Steve", "Sephiroth", "Pyra", "Mythra", "Kazuya", "Sora"],
+    ["Donkey Kong", "Diddy Kong", "King K. Rool", "Yoshi"],
+    ["Villageois", "Marie", "Inkling", "Mr. Game & Watch"],
+    ["Pit", "Palutena", "Pit maléfique"],
+    ["Wario", "Olimar", "Little Mac", "Duo Duck Hunt"],
+    ["Smash Ultimate", "Melee", "Brawl", "Smash 64"],
+    ["Smash final", "Balle Smash", "Poké Ball", "Marteau"],
+    ["Destination finale", "Champ de bataille", "Château de Peach", "Smashville"],
+    ["Combat en vies", "Combat en temps", "Mode Esprits", "Mode Classique"],
+    ["Esquive", "Bouclier", "Saisie", "Projection"],
+    ["Attaque Smash", "Attaque spéciale", "Attaque aérienne", "Coup de pied"],
+    ["Créa-Main", "Destructo-Main", "Tabuu", "Kyra"],
+    ["Masahiro Sakurai", "Nintendo", "HAL Laboratory", "Bandai Namco"],
+    ["Pourcentage", "Éjection", "Bord de l'écran", "Rattrapage"],
+    ["Trophée", "Esprit", "Trophée Aide", "Pokémon de Poké Ball"],
+    ["Ice Climbers", "R.O.B.", "Plante Piranha", "Mii Épéiste"],
+    ["Harmonie et Luma", "Bowser Jr.", "Dr. Mario", "Daisy"],
+    ["Amphinobi", "Lucario", "Félinferno", "Dresseur de Pokémon"],
+    ["Shulk", "Daraen", "Chrom", "Min Min"],
+    ["Simon Belmont", "Richter", "Alucard", "Dracula"],
+    ["Meta Knight", "Roi DaDiDou", "Entraîneuse Wii Fit", "Falco"],
+    ["Wolf", "Link enfant", "Link Cartoon", "Pichu"]
+  ]
+};

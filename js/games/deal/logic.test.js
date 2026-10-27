@@ -1,6 +1,6 @@
 // Vérification des règles du Capy Deal (dans le navigateur).
 import assert from "node:assert/strict";
-import { apply, autoMove, deal, completeCount, rentOf, assetsOf, expected, HAND_MAX } from "./logic.js";
+import { apply, autoMove, deal, completeCount, rentOf, assetsOf, propCards, valueOf, info, waitingFor, HAND_MAX } from "./logic.js";
 
 // Une table de trois joueurs : a joue, avec les mains et la table données.
 function table(hands, extra = {}) {
@@ -14,13 +14,31 @@ function table(hands, extra = {}) {
     pile: []
   };
 }
-// Joue puis laisse les réponses sans choix se faire seules, comme l'hôte.
+// Le bouton qu'un joueur toucherait quand il n'a pas d'autre choix : « D'accord », « Tant pis »,
+// ou tout donner quand il ne peut pas couvrir la somme. null : il a un vrai choix à faire.
+function obvious(g, who) {
+  const { s, hands } = g, w = s.wait;
+  if (!w || w.kind !== "effect") return null;
+  if ((hands[who] || []).some((c) => info(c).id === "non")) return null;
+  if (who === w.by) {
+    const target = Object.keys(w.targets).find((id) => w.targets[id] === "counter");
+    return target ? { t: "ok", target } : null;
+  }
+  if (w.effect === "pay") {
+    const all = assetsOf(s, who);
+    return all.reduce((n, c) => n + valueOf(c), 0) <= w.amount ? { t: "pay", cards: all } : null;
+  }
+  if (w.effect === "fisc" || w.effect === "saisie") {
+    return (w.effect === "fisc" ? s.bank?.[who] || [] : propCards(s, who)).length <= 1 ? { t: "ok" } : null;
+  }
+  return { t: "ok" };
+}
+// Joue, puis laisse chacun toucher le bouton évident quand il n'a pas le choix.
 function run(g, uid, a) {
   const ok = apply(g, uid, a);
   for (let k = 0; k < 20; k++) {
-    const auto = autoMove(g, false);
-    if (!auto || auto.t === "draw") break;
-    if (!apply(g, expected(g.s), auto)) break;
+    const moves = waitingFor(g.s).map((who) => [who, obvious(g, who)]).filter(([, next]) => next);
+    if (!moves.length || !moves.some(([who, next]) => apply(g, who, next))) break;
   }
   return ok;
 }
@@ -74,7 +92,7 @@ function run(g, uid, a) {
 { // Payer : il faut couvrir la somme, ou tout donner ; on ne rend pas la monnaie.
   const g = table({ a: ["kaching#1"] }, { bank: { b: ["argent-10#1", "argent-5#1", "argent-1#1"] } });
   assert.ok(run(g, "a", { t: "play", card: "kaching#1", target: "b" }));
-  assert.equal(g.s.wait.who, "b", "b a le choix de quoi payer");
+  assert.deepEqual(waitingFor(g.s), ["b"], "b a le choix de quoi payer");
   assert.ok(!apply(g, "b", { t: "pay", cards: ["argent-5#1"] }), "pas assez");
   assert.ok(run(g, "b", { t: "pay", cards: ["argent-10#1"] }));
   assert.deepEqual(g.s.bank.a, ["argent-10#1"]);
@@ -83,10 +101,11 @@ function run(g, uid, a) {
 { // « Non ! » annule ; un « Non ! » de l'auteur le contre.
   const g = table({ a: ["kaching#1", "non#1"], b: ["non#2"] }, { bank: { b: ["argent-10#1"] } });
   run(g, "a", { t: "play", card: "kaching#1", target: "b" });
-  assert.equal(g.s.wait.who, "b");
+  assert.deepEqual(waitingFor(g.s), ["b"]);
   assert.ok(apply(g, "b", { t: "non", card: "non#2" }));
-  assert.equal(g.s.wait.who, "a", "a peut contrer");
-  assert.ok(run(g, "a", { t: "non", card: "non#1" }));
+  assert.deepEqual(waitingFor(g.s), ["a"], "a peut contrer");
+  assert.ok(!apply(g, "a", { t: "non", card: "non#1", target: "c" }), "c n'a rien contré");
+  assert.ok(run(g, "a", { t: "non", card: "non#1", target: "b" }));
   // b n'a plus de « Non ! » et doit tout donner (10 = la somme).
   assert.deepEqual(g.s.bank.a, ["argent-10#1"]);
 }
@@ -97,7 +116,7 @@ function run(g, uid, a) {
   assert.ok(!apply(g, "b", { t: "end" }), "on ne fuit pas sa dette");
   assert.ok(apply(g, "b", { t: "repay", card: "prop-rose-1#1" }));
   assert.equal(g.s.tokens.b, 3, "le jeton revient");
-  assert.equal(g.s.wait.who, "a");
+  assert.deepEqual(waitingFor(g.s), ["a"]);
   assert.ok(!apply(g, "a", { t: "bank" }), "une propriété ne va pas en réserve");
   assert.ok(apply(g, "a", { t: "prop", color: "rose" }));
   assert.deepEqual(g.s.props.a.rose, ["prop-rose-1#1"]);
@@ -172,10 +191,35 @@ function run(g, uid, a) {
   assert.equal(g.s.turn, 1);
 }
 
+{ // Un effet sur tous les joueurs : chacun répond en même temps, pour lui seul.
+  const g = table({ a: ["loyer-rose-orange#1", "non#1"], b: ["non#2"], c: [] }, {
+    props: { a: { rose: ["prop-rose-1#1", "prop-rose-2#1"] } },
+    bank: { b: ["argent-2#1"], c: ["argent-3#1"] }
+  });
+  apply(g, "a", { t: "play", card: "loyer-rose-orange#1", color: "rose" });
+  assert.deepEqual(waitingFor(g.s).sort(), ["b", "c"], "b et c répondent ensemble");
+  // c paie pendant que b dit « Non ! » : l'un n'attend pas l'autre.
+  assert.ok(apply(g, "c", { t: "pay", cards: ["argent-3#1"] }));
+  assert.ok(apply(g, "b", { t: "non", card: "non#2" }));
+  assert.deepEqual(waitingFor(g.s), ["a"], "seul le « Non ! » de b reste à régler");
+  assert.ok(!apply(g, "c", { t: "pay", cards: [] }), "c a déjà fini");
+  assert.ok(apply(g, "a", { t: "ok", target: "b" }));
+  assert.equal(g.s.wait, null);
+  assert.deepEqual(g.s.bank.a, ["argent-3#1"]);
+}
+
+{ // Un joueur présent répond toujours lui-même, même sans autre choix ; seule la pioche de début de tour se fait seule.
+  const g = table({ a: ["kaching#1"] }, { bank: { b: ["argent-1#1"] } });
+  apply(g, "a", { t: "play", card: "kaching#1", target: "b" });
+  assert.equal(autoMove(g, "b", false), null, "b voit le Ka-ching ! et paie lui-même");
+  const start = table({}, { drawn: null });
+  assert.deepEqual(autoMove(start, "a", false), { t: "draw" });
+}
+
 { // Joueur absent : l'hôte paie à sa place, réserve d'abord.
   const g = table({ a: ["kaching#1"], b: ["non#1"] }, { bank: { b: ["argent-10#1", "argent-15#1"] } });
   apply(g, "a", { t: "play", card: "kaching#1", target: "b" });
-  const auto = autoMove(g, true);
+  const auto = autoMove(g, "b", true);
   assert.deepEqual(auto, { t: "pay", cards: ["argent-10#1"] });
   assert.equal(assetsOf(g.s, "b").length, 2);
 }

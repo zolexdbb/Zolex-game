@@ -1,12 +1,14 @@
-/* Nom de code : un dossier d'agents secrets, rouges contre bleus. */
-.theme-codenames { --red: var(--brick); --blue: var(--ink); }
+/* Nom de code : un dossier d'agents secrets, de 2 à 4 équipes (rouges, bleus, verts, jaunes). */
+.theme-codenames { --red: var(--brick); --blue: var(--ink); --green: #3f7a2c; --yellow: #e2bd2c; }
 .theme-codenames .cn-head { text-align: center; color: var(--cream); }
 .theme-codenames .cn-head h1 { font: 400 1.6rem/1.1 var(--display); text-transform: uppercase; text-shadow: 2px 2px 0 var(--felt-dark); }
 .theme-codenames .cn-head h1.team-r { color: #f2b3a6; }
 .theme-codenames .cn-head h1.team-b { color: #a9c7e8; }
+.theme-codenames .cn-head h1.team-g { color: #bfe3a4; }
+.theme-codenames .cn-head h1.team-y { color: #f5dc7a; }
 
-/* La grille de 25 cartes. */
-.theme-codenames .cn-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+/* La grille : 5, 6 ou 7 colonnes selon le nombre d'équipes (--cols). */
+.theme-codenames .cn-grid { display: grid; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); gap: 6px; }
 .theme-codenames .cn-card {
   position: relative;
   display: grid;
@@ -29,11 +31,15 @@ button.cn-card:hover { transform: translateY(-3px); }
 /* Ce que voit le maître-espion : la couleur en filigrane. */
 .theme-codenames .cn-card.hint-r { background: var(--grain), #f2c1b6; box-shadow: inset 0 0 0 3px var(--red), 0 3px 0 rgb(0 0 0 / .35); }
 .theme-codenames .cn-card.hint-b { background: var(--grain), #bcd3ec; box-shadow: inset 0 0 0 3px var(--blue), 0 3px 0 rgb(0 0 0 / .35); }
+.theme-codenames .cn-card.hint-g { background: var(--grain), #c6e2b0; box-shadow: inset 0 0 0 3px var(--green), 0 3px 0 rgb(0 0 0 / .35); }
+.theme-codenames .cn-card.hint-y { background: var(--grain), #f6e39a; box-shadow: inset 0 0 0 3px #a8850f, 0 3px 0 rgb(0 0 0 / .35); }
 .theme-codenames .cn-card.hint-a { color: #fff8ea; background: var(--grain), #5a524a; box-shadow: inset 0 0 0 3px var(--black), 0 3px 0 rgb(0 0 0 / .35); }
 /* Les cartes retournées. */
 .theme-codenames .cn-card.is-shown { color: #fff8ea; }
 .theme-codenames .cn-card.is-r { background: var(--grain), var(--red); }
 .theme-codenames .cn-card.is-b { background: var(--grain), var(--blue); }
+.theme-codenames .cn-card.is-g { background: var(--grain), var(--green); }
+.theme-codenames .cn-card.is-y { color: var(--black); background: var(--grain), var(--yellow); }
 .theme-codenames .cn-card.is-n { color: var(--black); background: var(--grain), #d9c9a3; opacity: .75; }
 .theme-codenames .cn-card.is-a { background: var(--grain), var(--black); }
 .theme-codenames .cn-card.is-last { outline: 3px solid var(--ochre); outline-offset: 2px; }
@@ -43,12 +49,14 @@ button.cn-card:hover { transform: translateY(-3px); }
 .theme-codenames .cn-clue-shown { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px; color: #fff8ea; border-radius: 6px; }
 .theme-codenames .cn-clue-shown.team-r { background: var(--red); }
 .theme-codenames .cn-clue-shown.team-b { background: var(--blue); }
+.theme-codenames .cn-clue-shown.team-g { background: var(--green); }
+.theme-codenames .cn-clue-shown.team-y { color: var(--black); background: var(--yellow); }
 .theme-codenames .cn-clue-shown span { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
 .theme-codenames .cn-clue-shown strong { font: 400 1.5rem var(--display); text-transform: uppercase; }
 .theme-codenames .cn-clue-shown b { display: grid; place-items: center; width: 2rem; aspect-ratio: 1; color: var(--black); background: var(--cream); border-radius: 50%; }
 .theme-codenames .cn-clue .cn-n { flex: 0 0 4.2rem; }
 
-/* Les deux équipes. */
+/* Les équipes : une case chacune, deux par ligne. */
 .theme-codenames .cn-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .theme-codenames .cn-team { padding: 10px 8px; border: 2px solid rgb(243 233 210 / .35); border-radius: 12px; background: rgb(0 0 0 / .12); }
 .theme-codenames .cn-team.is-turn { border-color: var(--ochre); }
@@ -56,14 +64,24 @@ button.cn-card:hover { transform: translateY(-3px); }
 .theme-codenames .cn-team h3 b { font: 700 .75rem var(--text); text-transform: none; }
 .theme-codenames .team-r h3 { color: #f2b3a6; }
 .theme-codenames .team-b h3 { color: #a9c7e8; }
+.theme-codenames .team-g h3 { color: #bfe3a4; }
+.theme-codenames .team-y h3 { color: #f5dc7a; }
+/* Une équipe qui a touché l'assassin : éliminée, en retrait. */
+.theme-codenames .cn-team.is-out { opacity: .5; border-style: dashed; }
+.theme-codenames .cn-team.is-out h3 b { text-decoration: line-through; }
 .theme-codenames .cn-members { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px 4px; }
 .theme-codenames .cn-winner { padding: 14px; font: 400 1.5rem var(--display); text-align: center; text-transform: uppercase; color: #fff8ea; border-radius: 6px; }
 .theme-codenames .cn-winner.team-r { background: var(--red); }
 .theme-codenames .cn-winner.team-b { background: var(--blue); }
+.theme-codenames .cn-winner.team-g { background: var(--green); }
+.theme-codenames .cn-winner.team-y { color: var(--black); background: var(--yellow); }
 @media (max-width: 480px) {
   /* Téléphone : en minuscules et coupés au besoin, les mots longs tiennent dans leur case. */
   .theme-codenames .cn-card { min-height: 48px; font-size: .6rem; padding: 4px 1px; letter-spacing: -.01em; text-transform: none; overflow-wrap: anywhere; }
   .theme-codenames .cn-grid { gap: 4px; }
+  /* 6 ou 7 colonnes : des cases plus serrées. */
+  .theme-codenames .cn-grid.is-wide { gap: 3px; }
+  .theme-codenames .cn-grid.is-wide .cn-card { min-height: 42px; font-size: .52rem; padding: 3px 1px; border-width: 1.5px; }
 }
 
 /* Grand écran : la grille prend la place, les équipes et la discussion tiennent à droite. */

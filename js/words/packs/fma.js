@@ -1,0 +1,36 @@
+// Pack Fullmetal Alchemist : les frères Elric, l'armée, les homonculus et l'alchimie (noms français).
+export default {
+  id: "fma", name: "Fullmetal Alchemist", kind: "manga", groups: [
+    ["Edward", "Alphonse", "Winry"],
+    ["Roy Mustang", "Riza Hawkeye", "Maes Hughes", "Havoc"],
+    ["Armstrong", "Olivier Armstrong", "Breda", "Falman", "Fuery"],
+    ["Luxure", "Gourmandise", "Envie", "Avarice"],
+    ["Paresse", "Colère", "Orgueil", "Père"],
+    ["Ling", "Lan Fan", "Mei Chang", "Xiao Mei", "Fu"],
+    ["Hohenheim", "Trisha", "Pinako", "Den"],
+    ["Izumi Curtis", "Sig Curtis", "Île de l'entraînement", "Un est tout, tout est un"],
+    ["Scar", "Ishval", "Ishvalien", "Guerre d'Ishval"],
+    ["Alchimie", "Cercle de transmutation", "Transmutation", "Échange équivalent"],
+    ["Pierre philosophale", "Transmutation humaine", "Porte de la vérité", "Vérité"],
+    ["Automail", "Armure", "Bras mécanique", "Clé à molette"],
+    ["Amestris", "Central", "Resembool", "Rush Valley", "Xing"],
+    ["Alchimiste d'État", "Montre d'argent", "Armée", "Généralissime"],
+    ["King Bradley", "Selim", "Madame Bradley"],
+    ["Alchimiste de flamme", "Alchimiste d'acier", "Alchimiste écarlate", "Alchimiste au bras puissant"],
+    ["Kimblee", "Tucker", "Nina", "Chimère"],
+    ["Barry le boucher", "Slicer", "Âme liée", "Armure vide"],
+    ["Hiromu Arakawa", "Brotherhood", "Bones", "Shônen Gangan"],
+    ["Lait", "Petit", "Taille", "Ne m'appelle pas petit"],
+    ["Chat abandonné", "Pluie", "Inutile", "Minijupe"],
+    ["Briggs", "Fort Briggs", "Buccaneer", "Mur de Briggs"],
+    ["Laboratoire 5", "Cité souterraine", "Xerxès", "Sous-sol de Central"],
+    ["Jour promis", "Éclipse", "Cercle national", "Sacrifices"],
+    ["Gracia", "Elicia", "Cabine téléphonique", "Photo de famille"],
+    ["Yoki", "Mine de Youswell", "Lior", "Cornello"],
+    ["Rose", "Léto", "Faux miracle"],
+    ["Gant d'ignition", "Lames", "Pistolet", "Tatouage"],
+    ["Corps", "Âme", "Esprit", "Énergie"],
+    ["Frères Elric", "Promesse", "Retrouver nos corps", "Voyage"],
+    ["Ouroboros", "Tatouage d'Ouroboros", "Homonculus", "Fiole"]
+  ]
+};

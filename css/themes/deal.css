@@ -304,6 +304,7 @@
 .d-explain { display: grid; gap: 4px; margin: 0; padding-left: 18px; font-size: .9rem; line-height: 1.35; }
 .d-note-line { margin: 0; font-size: .88rem; line-height: 1.35; text-align: center; }
 .d-preview-side .d-note-line { text-align: left; }
+.d-note-line.is-warn { font-weight: 700; color: var(--brick-dark); }
 .d-hint { margin: 0; text-align: center; font-size: .85rem; color: rgb(243 233 210 / .8); }
 .d-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
 .d-row.is-bar { margin-top: 2px; }

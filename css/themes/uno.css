@@ -218,9 +218,23 @@
 @media (max-width: 480px) {
   .theme-uno .hand { padding-inline: 4px; }
 }
-/* Écran tactile : la carte choisie en grand au-dessus de la main, avec son bouton « Jouer ».
-   Hauteur fixe, pour que la main ne saute pas quand on choisit ou qu'on ferme. */
-.theme-uno .u-preview { display: flex; justify-content: center; align-items: center; gap: 14px; min-height: 128px; }
+/* Écran tactile : la carte choisie en grand, posée par-dessus la main (la main ne bouge pas). */
+.theme-uno .u-hand-wrap { position: relative; }
+.theme-uno .u-preview {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: calc(100% - 20px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  background: var(--grain), var(--felt-dark);
+  border: 2px solid var(--black);
+  border-radius: 10px;
+  box-shadow: 0 6px 0 rgb(0 0 0 / .35);
+  translate: -50% 0;
+}
 .theme-uno .u-preview > .rule { max-width: 16rem; text-align: center; color: var(--cream); }
 .theme-uno .u-preview .u-big { --w: 86px; }
 .theme-uno .u-preview .u-big.is-playable { box-shadow: 0 0 0 3px var(--ochre), 0 4px 0 rgb(0 0 0 / .4); }

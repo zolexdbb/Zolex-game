@@ -1,0 +1,36 @@
+// Pack L'Attaque des Titans : personnages, titans, armée, murs et lieux (noms français).
+export default {
+  id: "snk", name: "L'Attaque des Titans", kind: "manga", groups: [
+    ["Eren", "Mikasa", "Armin"],
+    ["Jean", "Connie", "Sasha", "Marco"],
+    ["Historia", "Ymir", "Krista"],
+    ["Reiner", "Bertolt", "Annie"],
+    ["Livaï", "Erwin", "Hansi", "Mike"],
+    ["Zeke", "Pieck", "Porco", "Marcel"],
+    ["Falco", "Gaby", "Colt", "Udo"],
+    ["Grisha", "Carla", "Dina", "Hannes"],
+    ["Kenny", "Rod Reiss", "Uri Reiss", "Frieda"],
+    ["Floch", "Yelena", "Onyankopon", "Nicolo"],
+    ["Titan Assaillant", "Titan Colossal", "Titan Cuirassé", "Titan Féminin"],
+    ["Titan Bestial", "Titan Charrette", "Titan Mâchoire", "Titan Marteau d'armes", "Titan Originel"],
+    ["Mur Maria", "Mur Rose", "Mur Sina"],
+    ["Shiganshina", "Trost", "Stohess", "District"],
+    ["Bataillon d'exploration", "Garnison", "Brigades spéciales", "Brigade d'entraînement"],
+    ["Équipement tridimensionnel", "Lames", "Lance-foudre", "Fusée éclairante"],
+    ["Mahr", "Île du Paradis", "Liberio", "Hizuru"],
+    ["Eldiens", "Mahrais", "Ackerman", "Sang royal"],
+    ["Coordonnée", "Chemins", "Ymir Fritz", "Grand Terrassement"],
+    ["Sous-sol", "Clé", "Journal de Grisha", "Mer"],
+    ["Nuque", "Régénération", "Vapeur", "Transformation"],
+    ["Titan pur", "Titan déviant", "Titan dansant", "Titan souriant"],
+    ["Offrez vos cœurs", "Salut militaire", "Ailes de la liberté", "Cape verte"],
+    ["Hajime Isayama", "Shingeki no Kyojin", "Wit Studio", "MAPPA"],
+    ["Patate de Sasha", "Thé de Livaï", "Écharpe de Mikasa", "Lunettes de Hansi"],
+    ["Moblit", "Petra", "Oruo", "Eld", "Gunther"],
+    ["Keith Shadis", "Dot Pixis", "Darius Zackley", "Nile Dawk"],
+    ["Willy Tybur", "Lara Tybur", "Magath", "Kiyomi Azumabito"],
+    ["Expédition", "Formation de reconnaissance", "Fumigène", "Cheval"],
+    ["Chute du mur", "Bataille de Trost", "Reprise du mur Maria", "Raid de Liberio"],
+    ["Liberté", "Horizon", "Oiseaux", "Rêve"]
+  ]
+};

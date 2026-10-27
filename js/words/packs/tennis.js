@@ -1,0 +1,36 @@
+// Pack Tennis : champions et championnes, tournois, coups, surfaces et score.
+export default {
+  id: "tennis", name: "Tennis", kind: "sport", groups: [
+    ["Roger Federer", "Rafael Nadal", "Novak Djokovic", "Andy Murray"],
+    ["Carlos Alcaraz", "Jannik Sinner", "Daniil Medvedev", "Alexander Zverev"],
+    ["Serena Williams", "Venus Williams", "Maria Sharapova", "Steffi Graf"],
+    ["Iga Swiatek", "Aryna Sabalenka", "Coco Gauff", "Naomi Osaka"],
+    ["Yannick Noah", "Amélie Mauresmo", "Gaël Monfils", "Jo-Wilfried Tsonga"],
+    ["Roland-Garros", "Wimbledon", "US Open", "Open d'Australie"],
+    ["Grand Chelem", "Masters 1000", "Coupe Davis", "ATP Finals"],
+    ["Terre battue", "Gazon", "Dur", "Indoor"],
+    ["Raquette", "Balle", "Filet", "Cordage"],
+    ["Service", "Revers", "Coup droit", "Volée", "Smash"],
+    ["Ace", "Double faute", "Let", "Faute"],
+    ["Jeu", "Set", "Match", "Tie-break", "Balle de match"],
+    ["Quinze", "Trente", "Quarante", "Égalité", "Avantage"],
+    ["Arbitre de chaise", "Juge de ligne", "Ramasseur de balles", "Hawk-Eye"],
+    ["Simple", "Double", "Double mixte"],
+    ["Amorti", "Lob", "Slice", "Lift"],
+    ["Court Philippe-Chatrier", "Court Suzanne-Lenglen", "Centre Court", "Arthur Ashe Stadium"],
+    ["Fraises à la crème", "Tenue blanche", "Pimm's", "Toit rétractable"],
+    ["Björn Borg", "John McEnroe", "Pete Sampras", "Andre Agassi"],
+    ["Classement ATP", "Classement WTA", "Numéro 1 mondial", "Points"],
+    ["Bandeau", "Poignet éponge", "Grip", "Antivibrateur"],
+    ["Tennis de table", "Padel", "Badminton", "Squash"],
+    ["Échange", "Montée au filet", "Fond de court", "Passing"],
+    ["Junior", "Qualifications", "Wild card", "Tête de série"],
+    ["Coupe des Mousquetaires", "Coupe Suzanne-Lenglen", "Trophée", "Chèque"],
+    ["Suzanne Lenglen", "René Lacoste", "Henri Cochet", "Les Mousquetaires"],
+    ["Lacoste", "Crocodile", "Polo", "Nike"],
+    ["Gaucher", "Droitier", "Revers à une main", "Revers à deux mains"],
+    ["Entraîneur", "Préparateur physique", "Kiné", "Box du joueur"],
+    ["Pluie", "Bâche", "Interruption", "Session de nuit"],
+    ["Martina Navratilova", "Chris Evert", "Monica Seles", "Justine Henin"]
+  ]
+};

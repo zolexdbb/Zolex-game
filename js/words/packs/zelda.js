@@ -1,0 +1,36 @@
+// Pack Zelda : personnages, peuples, objets, lieux et jeux de la série (noms français).
+export default {
+  id: "zelda", name: "Zelda", kind: "jeu", groups: [
+    ["Link", "Zelda", "Ganondorf", "Navi"],
+    ["Impa", "Midona", "Fay", "Sheik"],
+    ["Épée de légende", "Bouclier hylien", "Triforce", "Ocarina du Temps"],
+    ["Triforce du Courage", "Triforce de la Sagesse", "Triforce de la Force"],
+    ["Hyrule", "Cocorico", "Ordinn", "Lac Hylia"],
+    ["Goron", "Zora", "Gerudo", "Piaf", "Kokiri"],
+    ["Daruk", "Mipha", "Revali", "Urbosa"],
+    ["Créatures divines", "Gardiens", "Sanctuaires", "Tour Sheikah"],
+    ["Tablette Sheikah", "Paravoile", "Arc", "Boomerang", "Grappin"],
+    ["Rubis", "Cœur", "Réceptacle de cœur", "Fée"],
+    ["Bokoblin", "Moblin", "Lynel", "Octorok", "Chuchu"],
+    ["Breath of the Wild", "Tears of the Kingdom", "Twilight Princess", "Skyward Sword"],
+    ["Majora's Mask", "The Wind Waker", "A Link to the Past", "Link's Awakening"],
+    ["Épona", "Célestrier", "Cheval sauvage"],
+    ["Bombe", "Bombchu", "Marteau", "Bottes de plomb"],
+    ["Masque de Majora", "Lune", "Skull Kid", "Bourg-Clocher"],
+    ["Temple de la Forêt", "Temple du Feu", "Temple de l'Eau", "Temple de l'Ombre"],
+    ["Mont du Péril", "Domaine Zora", "Désert Gerudo", "Bois Perdus"],
+    ["Arbre Mojo", "Vénérable Arbre", "Korogu", "Graine de Korogu"],
+    ["Fléau Ganon", "Vaati", "Ghirahim", "Zant"],
+    ["Tingle", "Kaepora Gaebora", "Malon", "Talon"],
+    ["Purah", "Robbie", "Hestu", "Kass"],
+    ["Potion rouge", "Potion verte", "Potion bleue", "Lait de Lon Lon"],
+    ["Ranch Lon Lon", "Château d'Hyrule", "Citadelle", "Temple du Temps"],
+    ["Chant d'Epona", "Berceuse de Zelda", "Chant du Soleil", "Chant du Temps"],
+    ["Ocarina", "Harpe", "Baguette du vent", "Cor"],
+    ["Bracelet de force", "Gantelets d'or", "Bottes de Pégase", "Plume de Roc"],
+    ["Ultra-main", "Amalgame", "Rétrospective", "Infiltration"],
+    ["Stase", "Cryonis", "Magnésis", "Bombes Sheikah"],
+    ["Îles célestes", "Profondeurs", "Ravins", "Grottes"],
+    ["Link enfant", "Link adulte", "Link loup", "Link Cartoon"]
+  ]
+};

@@ -1,0 +1,36 @@
+// Pack Animal Crossing : habitants, outils, saisons, fêtes et vie sur l'île (noms français).
+export default {
+  id: "animalcrossing", name: "Animal Crossing", kind: "jeu", groups: [
+    ["Tom Nook", "Méli", "Mélo", "Marie"],
+    ["Kéké Laglisse", "Thibou", "Céleste", "Rounard"],
+    ["Porcelette", "Djason", "Pêchou", "Layette", "Lisa"],
+    ["Clochettes", "Miles Nook", "Prêt", "Remboursement"],
+    ["Navets", "Marché des navets", "Prix des navets", "Dimanche"],
+    ["Pelle", "Canne à pêche", "Filet à insectes", "Arrosoir", "Hache"],
+    ["Poisson", "Insecte", "Fossile", "Créature marine"],
+    ["Pomme", "Poire", "Pêche", "Orange", "Cerise"],
+    ["Musée", "Boutique", "Services aux résidents", "Aéroport"],
+    ["Île déserte", "Village", "Plage", "Rivière", "Falaise"],
+    ["Villageois", "Voisin", "Habitant", "Visiteur"],
+    ["Chat", "Chien", "Lapin", "Écureuil", "Ours"],
+    ["Grincheux", "Sportif", "Paresseux", "Snob", "Joyeux"],
+    ["Bricolage", "Établi", "Plan de bricolage", "Matériaux"],
+    ["Mobilier", "Papier peint", "Sol", "Tapis"],
+    ["Printemps", "Été", "Automne", "Hiver"],
+    ["Étoile filante", "Fragment d'étoile", "Vœu", "Baguette magique"],
+    ["Fleur", "Tulipe", "Rose", "Pensée", "Cosmos"],
+    ["Mauvaise herbe", "Caillou", "Souche", "Arbre fruitier"],
+    ["Halloween", "Fête de l'œuf", "Concours de pêche", "Concours d'insectes"],
+    ["New Horizons", "New Leaf", "Wild World", "Pocket Camp"],
+    ["Guêpe", "Tarentule", "Scorpion", "Moustique"],
+    ["Requin", "Cœlacanthe", "Barbeau", "Poisson-lune"],
+    ["Code ami", "Visite d'île", "Île mystère", "Billet Nook Miles"],
+    ["Terraformation", "Chemin", "Pont", "Pente"],
+    ["Ballon", "Cadeau", "Lance-pierre", "Boîte"],
+    ["Concert du samedi", "Guitare", "Mélodie de l'île", "Chanson"],
+    ["NookPhone", "Appareil photo", "Passeport", "Carte"],
+    ["Gyroïde", "Fossile de dinosaure", "Œuvre d'art", "Faux tableau"],
+    ["Météo", "Pluie", "Neige", "Arc-en-ciel"],
+    ["Tente", "Maison", "Extension", "Sous-sol", "Grenier"]
+  ]
+};

@@ -286,34 +286,30 @@ function handZone(ctx) {
     }
     return node;
   });
-  // Au doigt, ou à la souris dans une grosse main, on ne joue pas d'un seul geste : la carte choisie
-  // s'affiche en grand, et c'est « Jouer » (ou un second geste sur elle) qui la pose.
-  const confirm = matchMedia("(pointer: coarse)").matches || total > CROWD;
+  // Au doigt, on ne joue pas d'un seul geste : la carte choisie s'affiche en grand, et c'est « Jouer »
+  // (ou un second toucher sur elle) qui la pose. L'aperçu flotte au-dessus de la main sans la déplacer.
+  const confirm = matchMedia("(pointer: coarse)").matches;
   const picked = confirm && cards.find(({ key }) => key === ui.chosen);
   const pickedOk = picked && marks[cards.indexOf(picked)].ok;
-  const preview = confirm && h("div", { class: "u-preview" }, picked
-    ? [cardNode(picked.f, { side: s.side, cls: `u-big${pickedOk ? " is-playable" : ""}` }),
-      h("div", { class: "u-preview-side" },
-        pickedOk
-          ? h("button", { class: "btn btn-brick btn-big", type: "button", onclick: () => choose(picked.i) }, "Jouer")
-          : h("p", { class: "rule" }, mine ? "Pas jouable maintenant" : "Ce n'est pas ton tour"),
-        h("button", { class: "btn btn-mini", type: "button", onclick: () => { ui.chosen = null; ctx.refresh(); } }, "Fermer"))]
-    : h("p", { class: "rule" }, "Choisis une carte pour la voir en grand, puis joue-la."));
+  const preview = picked && h("div", { class: "u-preview" },
+    cardNode(picked.f, { side: s.side, cls: `u-big${pickedOk ? " is-playable" : ""}` }),
+    h("div", { class: "u-preview-side" },
+      pickedOk
+        ? h("button", { class: "btn btn-brick btn-big", type: "button", onclick: () => choose(picked.i) }, "Jouer")
+        : h("p", { class: "rule" }, mine ? "Pas jouable maintenant" : "Ce n'est pas ton tour"),
+      h("button", { class: "btn btn-mini", type: "button", onclick: () => { ui.chosen = null; ctx.refresh(); } }, "Fermer")));
   return h("section", { class: "felt-zone" },
     controls(ctx, hand),
-    preview,
-    fanOf(nodes, total > 1 ? tilt : 0, sum, confirm, () => ctx.refresh()));
+    h("div", { class: "u-hand-wrap" }, preview, fanOf(nodes, total > 1 ? tilt : 0, sum, confirm, () => ctx.refresh())));
 }
 
-// Au-delà de CROWD cartes, même à la souris, un clic choisit la carte au lieu de la jouer.
-const CROWD = 12;
 // Un toucher à moins de SNAP pixels d'une carte qui se joue la choisit, même tombé sur le tas.
 const SNAP = 24;
 
 // L'éventail. Le pointeur ne vise pas les cartes elles-mêmes (elles bougent quand on les survole,
 // ce qui faisait sauter d'une carte à l'autre) : chaque carte a une place fixe, mesurée avant tout
 // survol ; une carte qui se joue, posée devant le tas, compte en entier, les autres par leur bande visible.
-// Souris : le survol lève la carte, un clic la joue (avec confirm : la choisit, comme le doigt).
+// Souris : le survol lève la carte, un clic la joue.
 // Doigt : toucher ou glisser choisit la carte, qui reste levée et s'affiche en grand (onPick).
 // Un second geste sur la carte déjà choisie la joue.
 function fanOf(nodes, tilt, sum, confirm, onPick) {

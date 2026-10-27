@@ -1,6 +1,6 @@
 // Vérification de la banque de mots : `node js/words/words.test.js`
 import assert from "node:assert/strict";
-import { GROUPS, PACKS } from "./index.js";
+import { GROUPS, PACKS, KINDS } from "./index.js";
 
 const norm = (word) => word.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 // Mots au singulier qui finissent quand même par s ou x.
@@ -31,5 +31,19 @@ for (const pack of PACKS) {
   }
 }
 assert.equal(new Set(PACKS.map((pack) => pack.id)).size, PACKS.length, "identifiants de packs uniques");
+
+// Chaque pack a un genre connu ; le mélange d'un genre ne contient que des mots de ce genre,
+// et chaque licence du genre y apporte au moins un mot.
+const kinds = KINDS.map(([kind]) => kind);
+for (const pack of PACKS) assert.ok(kinds.includes(pack.kind), `${pack.name} : genre inconnu`);
+for (const kind of kinds) {
+  const mixes = PACKS.filter((pack) => pack.kind === kind && pack.mix);
+  assert.equal(mixes.length, 1, `un mélange par genre : ${kind}`);
+  const titles = PACKS.filter((pack) => pack.kind === kind && !pack.mix);
+  const inTitles = new Set(titles.flatMap((pack) => pack.groups.flat()));
+  const mixed = new Set(mixes[0].groups.flat());
+  for (const word of mixed) assert.ok(inTitles.has(word), `${mixes[0].name} : ${word} ne vient d'aucun pack du genre`);
+  for (const pack of titles) assert.ok(pack.groups.flat().some((word) => mixed.has(word)), `${pack.name} absent du mélange`);
+}
 
 console.log(`mots : ${GROUPS.length} familles et ${PACKS.length} packs vérifiés`);

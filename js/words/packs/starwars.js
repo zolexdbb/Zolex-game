@@ -1,6 +1,6 @@
 // Pack Star Wars : personnages, planètes, vaisseaux et objets de la saga.
 export default {
-  id: "starwars", name: "Star Wars", groups: [
+  id: "starwars", name: "Star Wars", kind: "film", groups: [
     ["Luke Skywalker", "Leia Organa", "Han Solo"],
     ["Dark Vador", "Empereur Palpatine", "Dark Maul", "Comte Dooku"],
     ["Obi-Wan Kenobi", "Qui-Gon Jinn", "Mace Windu", "Yoda"],

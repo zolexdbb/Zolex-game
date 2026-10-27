@@ -3,7 +3,7 @@ import { icon } from "../../ui/icons.js";
 import { pawn, token } from "../../ui/widgets.js";
 import { chatBox } from "../../ui/chat.js";
 import { play } from "../../ui/sound.js";
-import { TEAMS, other, total, teamOf, revealedCount, checkClue } from "./logic.js";
+import { TEAMS, orderOf, total, teamOf, revealedCount, checkClue } from "./logic.js";
 
 // État d'affichage propre à cet appareil : l'indice en cours d'écriture.
 const ui = { word: "", n: 1, error: "", cue: null };
@@ -11,7 +11,7 @@ const ui = { word: "", n: 1, error: "", cue: null };
 const nameOf = (s, id) => s.names[id]?.name || "?";
 const person = ({ state: s, room, me }, id) =>
   ({ name: nameOf(s, id), index: s.names[id]?.pawn ?? 0, online: !!room.players?.[id]?.online, avatar: room.players?.[id]?.avatar, isMe: id === me });
-const COLOR_NAMES = { r: "rouge", b: "bleu", n: "neutre", a: "l'assassin" };
+const COLOR_NAMES = { r: "rouge", b: "bleu", g: "vert", y: "jaune", n: "neutre", a: "l'assassin" };
 
 function action(label, iconName, run, cls = "btn-cream") {
   const button = h("button", { class: `btn ${cls}`, type: "button" }, iconName && icon(iconName), label);
@@ -28,7 +28,8 @@ function grid(ctx) {
   // Pastilles de réflexion de l'indice en cours : { c3: { uid: true } }.
   const pinKey = `k${s.clueNo || 0}`;
   const pins = s.phase === "guess" ? ctx.room.pins?.[s.g]?.[pinKey] || {} : {};
-  return h("div", { class: "cn-grid", role: "grid" }, s.grid.map((word, i) => {
+  const cols = s.cols || 5;
+  return h("div", { class: `cn-grid${cols > 5 ? " is-wide" : ""}`, role: "grid", style: `--cols: ${cols}` }, s.grid.map((word, i) => {
     const cell = `c${i}`;
     const shown = s.revealed?.[cell];
     const hint = !shown && key?.[cell];
@@ -98,13 +99,15 @@ function story(s) {
   const l = s.last;
   if (!l) return null;
   if (l.pass) return `${nameOf(s, l.by)} passe la main.`;
+  // L'assassin élimine l'équipe du joueur ; s'il reste d'autres équipes, la partie continue.
+  if (l.color === "a" && s.phase !== "end") return `${nameOf(s, l.by)} a touché l'assassin : les ${TEAMS[teamOf(s, l.by)]} sont éliminés !`;
   return `${nameOf(s, l.by)} a touché « ${s.grid[l.cell.slice(1)]} » : ${COLOR_NAMES[l.color]}.`;
 }
 
 function teamsBoard(ctx) {
   const { state: s, room, me } = ctx;
-  return h("section", { class: "cn-teams" }, ["r", "b"].map((team) => h("div", { class: `cn-team team-${team}${s.turn === team && s.phase !== "end" ? " is-turn" : ""}` },
-    h("h3", null, TEAMS[team], h("b", null, `${total(s, team) - revealedCount(s, team)} à trouver`)),
+  return h("section", { class: "cn-teams" }, orderOf(s).map((team) => h("div", { class: `cn-team team-${team}${s.turn === team && s.phase !== "end" ? " is-turn" : ""}${s.out?.[team] ? " is-out" : ""}` },
+    h("h3", null, TEAMS[team], h("b", null, s.out?.[team] ? "Éliminés" : `${total(s, team) - revealedCount(s, team)} à trouver`)),
     h("div", { class: "cn-members" }, s.teams[team].map((id) => h("div", { class: "seat" }, pawn(person(ctx, id), {
       isHost: id === room.meta.hostUid, isMe: id === me, note: id === s.spy[team] ? "maître-espion" : null
     })))))));
@@ -114,7 +117,9 @@ function endPanel(ctx) {
   const { state: s, isHost } = ctx;
   return [
     h("p", { class: `cn-winner team-${s.winner}` }, `Victoire des ${TEAMS[s.winner]}`),
-    s.assassin && h("p", { class: "verdict" }, `Les ${TEAMS[other(s.winner)]} ont touché l'assassin !`),
+    s.assassin && h("p", { class: "verdict" }, orderOf(s).length > 2
+      ? `Les ${TEAMS[s.assassin] || "autres"} ont touché l'assassin : il ne reste que les ${TEAMS[s.winner]} !`
+      : `Les ${TEAMS[TEAMS[s.assassin] ? s.assassin : orderOf(s).find((t) => t !== s.winner)]} ont touché l'assassin !`),
     h("p", { class: "rule" }, "La carte-clé est retournée : toutes les cases montrent leur couleur."),
     isHost
       ? action("Rejouer", "play", () => ctx.backToLobby(), "btn-brick btn-big")

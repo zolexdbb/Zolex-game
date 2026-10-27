@@ -1,0 +1,36 @@
+// Pack Formule 1 : pilotes d'hier et d'aujourd'hui, écuries, circuits, drapeaux et course.
+export default {
+  id: "f1", name: "Formule 1", kind: "sport", groups: [
+    ["Lewis Hamilton", "Max Verstappen", "Charles Leclerc", "Lando Norris"],
+    ["Michael Schumacher", "Ayrton Senna", "Alain Prost", "Niki Lauda"],
+    ["Fernando Alonso", "Sebastian Vettel", "Kimi Räikkönen", "Jenson Button"],
+    ["Pierre Gasly", "Esteban Ocon", "Romain Grosjean", "Isack Hadjar"],
+    ["Ferrari", "Red Bull", "Mercedes", "McLaren"],
+    ["Alpine", "Aston Martin", "Williams", "Haas"],
+    ["Monaco", "Silverstone", "Monza", "Spa-Francorchamps"],
+    ["Suzuka", "Interlagos", "Las Vegas", "Singapour"],
+    ["Pole position", "Grille de départ", "Tour de formation", "Feux rouges"],
+    ["Pneus tendres", "Pneus mediums", "Pneus durs", "Pneus pluie"],
+    ["Arrêt aux stands", "Mécaniciens", "Cric", "Pistolet de roue"],
+    ["Drapeau à damier", "Drapeau jaune", "Drapeau rouge", "Drapeau bleu"],
+    ["Safety car", "Voiture de sécurité virtuelle", "Pénalité", "Commissaires"],
+    ["DRS", "Aileron arrière", "Halo", "Volant"],
+    ["Qualifications", "Course sprint", "Essais libres", "Grand Prix"],
+    ["Champion du monde", "Podium", "Champagne", "Trophée"],
+    ["Dépassement", "Aspiration", "Tête-à-queue", "Sortie de piste"],
+    ["Chicane", "Épingle", "Ligne droite", "Virage"],
+    ["Toto Wolff", "Christian Horner", "Fred Vasseur", "Zak Brown"],
+    ["Adrian Newey", "Ingénieur", "Stratège", "Directeur d'écurie"],
+    ["Moteur V6", "Hybride", "Turbo", "Boîte de vitesses"],
+    ["Casque", "Combinaison", "HANS", "Gants ignifugés"],
+    ["Drive to Survive", "Netflix", "Paddock", "Motorhome"],
+    ["Oscar Piastri", "George Russell", "Carlos Sainz", "Kimi Antonelli"],
+    ["Juan Manuel Fangio", "Jim Clark", "Jackie Stewart", "Nelson Piquet"],
+    ["Meilleur tour", "Record du tour", "Chrono", "Secteur violet"],
+    ["Formule 2", "Formule 3", "Karting", "Endurance"],
+    ["24 Heures du Mans", "Indianapolis", "Rallye", "NASCAR"],
+    ["Abu Dhabi", "Bahreïn", "Djeddah", "Miami"],
+    ["Grand Prix de France", "Magny-Cours", "Circuit Paul-Ricard", "Le Castellet"],
+    ["Radio d'équipe", "Box box", "Undercut", "Overcut"]
+  ]
+};

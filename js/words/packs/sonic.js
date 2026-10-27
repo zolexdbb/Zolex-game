@@ -1,0 +1,36 @@
+// Pack Sonic : personnages, émeraudes, niveaux, techniques et jeux de la série.
+export default {
+  id: "sonic", name: "Sonic", kind: "jeu", groups: [
+    ["Sonic", "Tails", "Knuckles", "Amy Rose"],
+    ["Shadow", "Rouge", "Silver", "Blaze"],
+    ["Docteur Eggman", "Metal Sonic", "Orbot", "Cubot"],
+    ["Cream", "Cheese", "Big", "Froggy"],
+    ["Espio", "Vector", "Charmy", "Mighty"],
+    ["Anneaux", "Émeraudes du Chaos", "Master Emerald", "Super Émeraudes"],
+    ["Super Sonic", "Hyper Sonic", "Dark Sonic", "Sonic Werehog"],
+    ["Green Hill", "Chemical Plant", "Casino Night", "Marble Zone"],
+    ["Station Square", "Angel Island", "Mystic Ruins", "Egg Carrier"],
+    ["Spin Dash", "Homing Attack", "Boost", "Spin Attack"],
+    ["Motobug", "Buzz Bomber", "Crabmeat", "Badnik"],
+    ["Tornado", "Egg Mobile", "Death Egg", "Egg Robo"],
+    ["Chao", "Jardin des Chao", "Chao héros", "Chao sombre"],
+    ["Chaos", "Perfect Chaos", "Tikal", "Pachacamac"],
+    ["Infinite", "Zavok", "Mephiles", "Iblis"],
+    ["Sonic Adventure", "Sonic Generations", "Sonic Mania", "Sonic Frontiers"],
+    ["Sonic Heroes", "Sonic Colours", "Sonic Unleashed", "Sonic Forces"],
+    ["Sonic le film", "Jim Carrey", "Tom Wachowski", "Maddie"],
+    ["Sega", "Mega Drive", "Dreamcast", "Game Gear"],
+    ["Chili dog", "Baskets rouges", "Gants blancs", "Hérisson bleu"],
+    ["Échidné", "Renard à deux queues", "Hérisson", "Chauve-souris"],
+    ["Wisps", "Laser cyan", "Foreuse jaune", "Fusée orange"],
+    ["Sonic Riders", "Extreme Gear", "Jet", "Wave", "Storm"],
+    ["Team Sonic", "Team Dark", "Team Rose", "Team Chaotix"],
+    ["Bumper", "Ressort", "Looping", "Point de contrôle"],
+    ["Sonic & Knuckles", "Sonic CD", "Sonic 3", "Sonic the Hedgehog 2"],
+    ["Gerald Robotnik", "Maria Robotnik", "Ark", "Projet Shadow"],
+    ["Sage", "Starline", "Sonic Prime", "Nine"],
+    ["Lost Hex", "Île de Starfall", "Planète Wisp", "Little Planet"],
+    ["Bouclier de feu", "Bouclier d'eau", "Bouclier électrique", "Invincibilité"],
+    ["Mario et Sonic aux Jeux olympiques", "Sonic Racing", "Sega All-Stars", "Sonic Spinball"]
+  ]
+};

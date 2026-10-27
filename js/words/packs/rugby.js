@@ -1,0 +1,36 @@
+// Pack Rugby : joueurs, nations, clubs, postes, règles et compétitions.
+export default {
+  id: "rugby", name: "Rugby", kind: "sport", groups: [
+    ["Antoine Dupont", "Romain Ntamack", "Thomas Ramos", "Damian Penaud"],
+    ["Jonah Lomu", "Dan Carter", "Richie McCaw", "Jonny Wilkinson"],
+    ["Sébastien Chabal", "Frédéric Michalak", "Thierry Dusautoir", "Serge Blanco"],
+    ["All Blacks", "Springboks", "Wallabies", "XV de France"],
+    ["Angleterre", "Irlande", "Écosse", "Pays de Galles", "Italie"],
+    ["Tournoi des Six Nations", "Coupe du monde", "Top 14", "Champions Cup"],
+    ["Essai", "Transformation", "Pénalité", "Drop"],
+    ["Mêlée", "Touche", "Ruck", "Maul"],
+    ["Pilier", "Talonneur", "Deuxième ligne", "Troisième ligne"],
+    ["Demi de mêlée", "Demi d'ouverture", "Centre", "Ailier", "Arrière"],
+    ["Plaquage", "Raffut", "Cadrage-débordement", "Passe sautée"],
+    ["En-avant", "Hors-jeu", "Carton jaune", "Carton rouge"],
+    ["Haka", "Fougère argentée", "Maillot noir"],
+    ["Stade Toulousain", "Stade Rochelais", "Racing 92", "Stade Français", "RC Toulon"],
+    ["Bouclier de Brennus", "Grand Chelem", "Cuillère de bois", "Triple Couronne"],
+    ["Ballon ovale", "Poteaux", "Ligne d'en-but", "Ligne des 22 mètres"],
+    ["Troisième mi-temps", "Supporters", "Chants", "Banda"],
+    ["Rugby à sept", "Rugby à XIII", "Rugby féminin", "Rugby fauteuil"],
+    ["Stade de France", "Twickenham", "Eden Park", "Murrayfield"],
+    ["Fabien Galthié", "Bernard Laporte", "Guy Novès", "Philippe Saint-André"],
+    ["Coq", "Chardon", "Trèfle", "Poireau", "Rose"],
+    ["Mi-temps", "Prolongation", "Arbitrage vidéo", "Sifflet"],
+    ["Crampons", "Protège-dents", "Casque", "Mitaines"],
+    ["Chandelle", "Coup de pied de dégagement", "Coup d'envoi", "Renvoi aux 22"],
+    ["Grégory Alldritt", "Charles Ollivon", "Uini Atonio", "Julien Marchand"],
+    ["Sud-Ouest", "Toulouse", "Clermont", "Bayonne"],
+    ["École de rugby", "Minimes", "Cadets", "Juniors"],
+    ["Siya Kolisi", "Johnny Sexton", "Owen Farrell", "Beauden Barrett"],
+    ["Bonus offensif", "Bonus défensif", "Classement", "Phases finales"],
+    ["Jeu au pied", "Jeu à la main", "Jeu d'avants", "Jeu de ligne"],
+    ["Pénaltouche", "Essai de pénalité", "Mêlée écroulée", "Maul pénétrant"]
+  ]
+};

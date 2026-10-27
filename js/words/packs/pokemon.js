@@ -1,6 +1,6 @@
 // Pack Pokémon : noms français, familles d'évolution ou de Pokémon très proches.
 export default {
-  id: "pokemon", name: "Pokémon", groups: [
+  id: "pokemon", name: "Pokémon", kind: "jeu", groups: [
     ["Pikachu", "Raichu", "Pichu"],
     ["Bulbizarre", "Herbizarre", "Florizarre"],
     ["Salamèche", "Reptincel", "Dracaufeu"],

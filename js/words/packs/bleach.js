@@ -1,0 +1,36 @@
+// Pack Bleach : shinigamis, capitaines, Espada, zanpakutôs et mondes (noms français).
+export default {
+  id: "bleach", name: "Bleach", kind: "manga", groups: [
+    ["Ichigo", "Rukia", "Orihime", "Uryû", "Chad"],
+    ["Renji", "Byakuya", "Kenpachi", "Hitsugaya"],
+    ["Aizen", "Gin", "Tôsen"],
+    ["Urahara", "Yoruichi", "Tessai", "Jinta", "Ururu"],
+    ["Yamamoto", "Kyôraku", "Ukitake", "Unohana"],
+    ["Soi Fon", "Mayuri", "Komamura", "Shinji"],
+    ["Grimmjow", "Ulquiorra", "Nnoitra", "Stark", "Barragan"],
+    ["Yhwach", "Haschwalth", "Quincy", "Wandenreich"],
+    ["Shinigami", "Hollow", "Arrancar", "Vizard"],
+    ["Zanpakutô", "Shikai", "Bankai", "Hollowification"],
+    ["Zangetsu", "Senbonzakura", "Hyôrinmaru", "Zabimaru", "Sode no Shirayuki"],
+    ["Getsuga Tenshô", "Kidô", "Shunpo", "Cero"],
+    ["Soul Society", "Seireitei", "Rukongai", "Hueco Mundo", "Las Noches"],
+    ["Karakura", "Monde des vivants", "Gigai", "Badge de shinigami remplaçant"],
+    ["Espada", "Gotei 13", "Capitaine", "Lieutenant"],
+    ["Hôgyoku", "Masque de Hollow", "Âme", "Konsô"],
+    ["Isshin", "Karin", "Yuzu", "Masaki"],
+    ["Kon", "Peluche", "Âme modifiée", "Pilule"],
+    ["Tite Kubo", "Studio Pierrot", "La Guerre de mille ans", "Shônen Jump"],
+    ["Rangiku", "Momo Hinamori", "Nanao", "Isane"],
+    ["Ikkaku", "Yumichika", "Yachiru", "Hisagi"],
+    ["Kaien", "Kûkaku", "Ganju", "Clan Shiba"],
+    ["Fullbring", "Ginjô", "Tsukishima", "Xcution"],
+    ["Resurrección", "Sonído", "Garganta", "Numéro d'Arrancar"],
+    ["Hollow intérieur", "Hollow blanc", "Vasto Lorde", "Menos Grande"],
+    ["Ryûken", "Sôken", "Arc de Quincy", "Ginrei Kojaku"],
+    ["Exécution de Rukia", "Sôkyoku", "Invasion de la Soul Society", "Guerre d'hiver"],
+    ["Ichibê", "Garde royale", "Palais du roi", "Roi des âmes"],
+    ["Nelliel", "Pesche", "Dondochakka", "Bawabawa"],
+    ["Halibel", "Zommari", "Aaroniero", "Szayelaporro", "Yammy"],
+    ["Hiyori", "Love", "Rose", "Kensei", "Mashiro"]
+  ]
+};

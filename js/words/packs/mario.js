@@ -1,6 +1,6 @@
 // Pack Mario : personnages, ennemis, objets, jeux et lieux du Royaume Champignon.
 export default {
-  id: "mario", name: "Mario", groups: [
+  id: "mario", name: "Mario", kind: "jeu", groups: [
     ["Mario", "Luigi", "Wario", "Waluigi"],
     ["Peach", "Daisy", "Harmonie", "Pauline"],
     ["Toad", "Toadette", "Capitaine Toad"],

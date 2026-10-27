@@ -1,6 +1,6 @@
 // Pack Harry Potter : noms de la traduction française.
 export default {
-  id: "harrypotter", name: "Harry Potter", groups: [
+  id: "harrypotter", name: "Harry Potter", kind: "film", groups: [
     ["Harry Potter", "Ron Weasley", "Hermione Granger"],
     ["Gryffondor", "Serpentard", "Poufsouffle", "Serdaigle"],
     ["Dumbledore", "McGonagall", "Flitwick", "Chourave"],

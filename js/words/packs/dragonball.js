@@ -1,0 +1,36 @@
+// Pack Dragon Ball : personnages, transformations, techniques, sagas et lieux (noms français).
+export default {
+  id: "dragonball", name: "Dragon Ball", kind: "manga", groups: [
+    ["Goku", "Vegeta", "Gohan", "Piccolo"],
+    ["Krilin", "Yamcha", "Tenshinhan", "Chaozu"],
+    ["Bulma", "Chichi", "Videl", "Lunch"],
+    ["Trunks", "Goten", "Pan", "Bra"],
+    ["Freezer", "Cell", "Boo", "Raditz"],
+    ["Nappa", "Zarbon", "Dodoria", "Ginyu"],
+    ["Beerus", "Whis", "Zeno", "Champa"],
+    ["Jiren", "Hit", "Toppo", "Dyspo"],
+    ["Broly", "Cooler", "Janemba", "Bojack"],
+    ["C-17", "C-18", "C-16", "C-19", "Docteur Gero"],
+    ["Tortue Géniale", "Oolong", "Puerh", "Tortue"],
+    ["Kaïo", "Dende", "Kami-Sama", "Popo"],
+    ["Super Saiyan", "Super Saiyan 2", "Super Saiyan 3", "Super Saiyan God", "Ultra Instinct"],
+    ["Kamehameha", "Final Flash", "Makankosappo", "Genkidama", "Big Bang Attack"],
+    ["Kaioken", "Fusion", "Potara", "Téléportation"],
+    ["Dragon Balls", "Shenron", "Porunga", "Vœu"],
+    ["Nuage magique", "Bâton magique", "Haricot magique", "Capsule"],
+    ["Saiyan", "Namek", "Terrien", "Majin", "Androïde"],
+    ["Planète Namek", "Planète Vegeta", "Planète du Kaïo", "Salle de l'esprit et du temps"],
+    ["Tenkaichi Budokai", "Tournoi du Pouvoir", "Cell Game", "Ruban Rouge"],
+    ["Akira Toriyama", "Dragon Ball Z", "Dragon Ball GT", "Dragon Ball Super"],
+    ["Gotenks", "Vegeto", "Gogeta", "Kefla"],
+    ["Hercule", "Boo gentil", "Bee", "Majin Boo"],
+    ["Bardock", "Gine", "Roi Vegeta", "Tarble"],
+    ["Scouter", "Armure saiyan", "Capsule Corporation", "Machine à remonter le temps"],
+    ["Queue de singe", "Oozaru", "Pleine lune", "Lune artificielle"],
+    ["Yajirobe", "Maître Karin", "Tour de Karin", "Senzu"],
+    ["Zamasu", "Goku Black", "Trunks du futur"],
+    ["Garlic Jr.", "Slug", "Turles", "Baby"],
+    ["Kakarot", "Son Gohan", "Grand-père Gohan"],
+    ["Super C-17", "Dragons maléfiques", "Shenron noir"]
+  ]
+};

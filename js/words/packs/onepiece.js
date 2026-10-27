@@ -1,6 +1,6 @@
 // Pack One Piece : équipages, personnages, fruits du démon et lieux.
 export default {
-  id: "onepiece", name: "One Piece", groups: [
+  id: "onepiece", name: "One Piece", kind: "manga", groups: [
     ["Luffy", "Zoro", "Nami", "Usopp"],
     ["Sanji", "Chopper", "Nico Robin", "Franky"],
     ["Brook", "Jinbe", "Vivi", "Carrot"],
