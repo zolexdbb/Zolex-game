@@ -27,7 +27,7 @@ function lobbyView({ settings, isHost, setSettings }) {
       }, name))),
     h("p", { class: "rule" },
       "Une lettre tombe : trouve un mot qui commence par elle dans chaque catégorie. Le premier qui a tout rempli peut crier « Stop ! », "
-      + "les autres ont alors 10 secondes. Ensuite, la table conteste les réponses douteuses. 10 points pour une réponse unique, 5 si quelqu'un a eu la même.")
+      + "les autres ont alors 10 secondes. Ensuite, la table conteste les réponses douteuses. 20 points si tu es le seul à avoir trouvé un mot dans la catégorie, 10 pour une réponse unique, 5 si quelqu'un a eu la même.")
   );
 }
 

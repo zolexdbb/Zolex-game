@@ -36,6 +36,7 @@
 .theme-petitbac .bac-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .theme-petitbac .bac-actions .btn { flex: 1 1 140px; }
 .theme-petitbac .bac-stop { padding: 6px 10px; font-weight: 700; color: #fff8ea; background: var(--brick); border-radius: 4px; text-align: center; }
+.theme-petitbac .bac-help { margin: 0; font-size: .85rem; }
 .theme-petitbac .bac-mine { display: grid; gap: 4px; }
 .theme-petitbac .bac-mine li { display: flex; justify-content: space-between; gap: 10px; padding: 4px 8px; background: #fffaf0; border-radius: 3px; }
 /* Dépouillement et points, catégorie par catégorie. */
@@ -49,7 +50,59 @@
 .theme-petitbac .bac-cat .is-off b, .theme-petitbac .bac-cat .is-refused b { text-decoration: line-through; opacity: .6; }
 .theme-petitbac .bac-cat .is-contested { background: #f7dcd4; border-radius: 3px; }
 .theme-petitbac .bac-cat small { color: var(--brick); }
+/* Mes réponses, et les réponses données par plusieurs joueurs (5 points). */
+.theme-petitbac .bac-cat .is-me { background: #f6ecc9; border-radius: 3px; }
+.theme-petitbac .bac-cat .is-me .who { font-weight: 700; opacity: 1; }
+.theme-petitbac .bac-cat .bac-twin { padding: 0 5px; font-weight: 700; color: var(--black); background: var(--ochre); border-radius: 8px; }
+.theme-petitbac .bac-cat .is-doubt b { font-style: italic; }
+.theme-petitbac .bac-cat .is-doubt small { color: #9a7410; }
+.theme-petitbac .roles-list .is-me { font-weight: 700; }
 .theme-petitbac .pts { margin-left: auto; font-style: normal; font-weight: 700; }
 .theme-petitbac .pts-10 { color: var(--felt); }
+/* Seul à avoir répondu : 20 points, en tampon. */
+.theme-petitbac .pts-20 { padding: 0 6px; color: #fff8ea; background: var(--felt); border-radius: 8px; }
 .theme-petitbac .pts-5 { color: var(--ochre); }
 .theme-petitbac .pts-0 { opacity: .5; }
+
+/* Le vote (ou « Prêt ») reste collé en bas de la feuille pendant qu'on fait défiler les réponses. */
+.theme-petitbac .bac-send {
+  position: sticky;
+  bottom: 8px;
+  z-index: 2;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  padding: 10px;
+  text-align: center;
+  background: var(--cream);
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / .25);
+}
+.theme-petitbac .bac-send p { margin: 0; font-size: .88rem; font-style: italic; }
+.theme-petitbac .bac-send .btn { width: 100%; }
+.theme-petitbac .bac-send .btn-mini { width: auto; }
+
+/* Téléphone : l'en-tête (lettre et chrono) reste en haut de l'écran, en plus petit. */
+@media (max-width: 899px) {
+  .theme-petitbac .bac-head {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    align-items: center;
+    gap: 4px 14px;
+    margin: -8px -8px 0;
+    padding: 8px;
+    background: var(--grain), var(--felt);
+    border-radius: 0 0 8px 8px;
+  }
+  .theme-petitbac .bac-head .eyebrow { grid-column: 1 / -1; margin: 0; }
+  .theme-petitbac .bac-letter { width: 56px; font-size: 2.2rem; border-width: 2px; box-shadow: 0 3px 0 var(--felt-dark); }
+}
+
+/* Grand écran : au dépouillement et aux points, la feuille prend la place, les pions et la discussion à droite. */
+@media (min-width: 900px) {
+  .theme-petitbac:has(.bac-review) { grid-template-columns: minmax(0, 1fr) 320px; }
+}

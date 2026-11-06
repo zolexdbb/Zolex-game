@@ -15,8 +15,6 @@ const LETTERS = "ABCDEFGHIJLMNOPRSTV";
 
 const STOP_GRACE = 10000; // après un « Stop ! », les autres ont encore 10 s
 const SEAL_GRACE = 2500; // le temps pour chaque téléphone d'envoyer ses réponses à l'échéance
-const REVIEW_TIME = 45000;
-const RECAP_TIME = 12000;
 export const MAX_ANSWER = 40;
 
 export function pickLetter(used = "") {
@@ -24,36 +22,45 @@ export function pickLetter(used = "") {
   return shuffle(free.length ? free : [...LETTERS])[0];
 }
 
-// Une réponse compte si elle n'est pas vide et commence par la lettre (accents ignorés).
+// Une réponse commence par la lettre (accents ignorés).
 export const startsWith = (text, letter) => norm(text).startsWith(letter.toLowerCase());
+// Une réponse compte si elle commence par la lettre et fait au moins 2 lettres (« M » seul ne vaut rien).
+export const isValid = (text, letter) => norm(text).length >= 2 && startsWith(text, letter);
 
-// Points d'une manche. `answers` : { uid: { cat: texte } } ; `refused` : { "uid|cat": true }.
-// 10 points pour une réponse que personne d'autre n'a donnée, 5 si elle est partagée, 0 sinon.
+// Points d'une manche. `answers` : { uid: { cat: texte } } ; `refused` : { "uid|cat": true | "doute" }.
+// 20 points pour le seul joueur à avoir trouvé une réponse dans la catégorie, 10 pour une réponse
+// que personne d'autre n'a donnée, 5 si elle est partagée, 0 sinon.
+// Une réponse « douteuse » (contestée à 2 joueurs) rapporte 5 points au plus.
 export function scoreManche({ players, cats, letter, answers, refused = {} }) {
   const points = Object.fromEntries(players.map((id) => [id, {}]));
   for (const cat of cats) {
     const valid = {};
     for (const id of players) {
       const text = String(answers[id]?.[cat] || "").trim();
-      if (text && startsWith(text, letter) && !refused[`${id}|${cat}`]) valid[id] = norm(text);
+      if (isValid(text, letter) && refused[`${id}|${cat}`] !== true) valid[id] = norm(text);
     }
     const count = {};
     for (const key of Object.values(valid)) count[key] = (count[key] || 0) + 1;
-    for (const id of players) points[id][cat] = valid[id] ? (count[valid[id]] > 1 ? 5 : 10) : 0;
+    const alone = Object.keys(valid).length === 1;
+    for (const id of players) {
+      const full = !valid[id] ? 0 : alone ? 20 : count[valid[id]] > 1 ? 5 : 10;
+      points[id][cat] = refused[`${id}|${cat}`] === "doute" ? Math.min(full, 5) : full;
+    }
   }
   return points;
 }
 
-// Une réponse est refusée quand la majorité des autres joueurs qui ont voté la conteste.
+// Une réponse est refusée quand plus de la moitié des autres joueurs la conteste. Tous les
+// joueurs présents jugent : ne pas voter, c'est accepter. À 2 joueurs, l'autre jugerait seul :
+// sa contestation rend seulement la réponse « douteuse » (5 points au plus).
 export function tallyRefusals({ players, votes }) {
   const refused = {};
-  const voters = players.filter((id) => votes[id]);
   const against = {};
-  for (const id of voters) for (const key of votes[id] || []) against[key] = (against[key] || 0) + 1;
+  for (const id of players) for (const key of votes[id] || []) if (key.split("|")[0] !== id) against[key] = (against[key] || 0) + 1;
   for (const [key, n] of Object.entries(against)) {
-    const owner = key.split("|")[0];
-    const judges = voters.filter((id) => id !== owner).length;
-    if (judges && n * 2 > judges) refused[key] = true;
+    const judges = players.filter((id) => id !== key.split("|")[0]).length;
+    if (judges === 1) refused[key] = "doute";
+    else if (judges && n * 2 > judges) refused[key] = true;
   }
   return refused;
 }
@@ -77,8 +84,10 @@ export function start({ players, settings, now }) {
 
 const present = (s, room) => s.order.filter((id) => room.players?.[id]);
 
-// Commandes de l'hôte.
+// Commandes de l'hôte : clore le vote, ou passer à la suite sans attendre les retardataires.
 export const skipWait = (ctx) => ctx.patch({ "state/until": ctx.now() });
+// Dépouillement et points n'ont pas de chrono : on attend tout le monde, sauf si l'hôte force.
+const forced = (s, now) => !!s.until && now >= s.until;
 
 export async function hostTick(ctx) {
   const { room, state: s, actions } = ctx;
@@ -105,19 +114,19 @@ export async function hostTick(ctx) {
       answers[id] = Object.fromEntries(s.cats.map((cat) => [cat, String(sent[cat] || "").replace(/\s+/g, " ").trim().slice(0, MAX_ANSWER)]));
     }
     return ctx.patch({
-      "state/phase": "review", "state/answers": answers, "state/until": now + REVIEW_TIME, "state/step": ctx.nextStep()
+      "state/phase": "review", "state/answers": answers, "state/until": null, "state/step": ctx.nextStep()
     });
   }
 
   if (s.phase === "review") {
     const voted = players.filter((id) => actions?.[id]);
-    if (voted.length < players.length && now < s.until) return;
+    if (voted.length < players.length && !forced(s, now)) return;
     const votes = Object.fromEntries(voted.map((id) => [id, actions[id].refuse || []]));
     const refused = tallyRefusals({ players, votes });
     const points = scoreManche({ players, cats: s.cats, letter: s.letter, answers: s.answers || {}, refused });
     const changes = {
       "state/phase": "recap", "state/refused": refused, "state/points": points,
-      "state/until": now + RECAP_TIME, "state/step": ctx.nextStep()
+      "state/until": null, "state/step": ctx.nextStep()
     };
     for (const id of players) {
       changes[`state/scores/${id}`] = (s.scores?.[id] || 0) + Object.values(points[id]).reduce((a, b) => a + b, 0);
@@ -125,7 +134,8 @@ export async function hostTick(ctx) {
     return ctx.patch(changes);
   }
 
-  if (s.phase === "recap" && now >= s.until) {
+  // Points : chacun dit « Prêt » quand il a fini de regarder.
+  if (s.phase === "recap" && (players.every((id) => actions?.[id]) || forced(s, now))) {
     if (s.manche >= s.rules.manches) {
       return ctx.patch({ [`ended/${s.g}`]: true, "state/phase": "end", "state/until": null, "state/step": ctx.nextStep() });
     }
